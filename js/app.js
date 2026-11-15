@@ -365,7 +365,7 @@ const FOOTER_CONFIG = {
   hours:    '',                     // e.g. 'Mon – Fri, 8:00am – 4:00pm'
   address:  '',                     // e.g. 'Secretariat, Ibadan, Oyo State'
   year:     2026,
-  version:  'v1.1',
+  version:  'v1.2',
   // Social icons under the about text. Paste each full profile link into url; leave url '' to fall back to the site's home page, delete a line to remove the icon.
   // email: uses the email above (mailto) when set; whatsapp: uses the number above.
   social: [
@@ -391,7 +391,7 @@ const FOOTER_CSS = `
 #slipFooter{position:static;display:block;margin:0;color:rgba(255,255,255,.82);font-family:"DM Sans","Segoe UI",Arial,sans-serif;font-size:13px;line-height:1.6;
   background:linear-gradient(180deg,#4a1220 0%,#350d18 100%);border-top:4px solid #c4962a}
 #slipFooter *{box-sizing:border-box}
-#slipFooter .ft-main{max-width:1280px;margin:0 auto;padding:40px 20px 28px;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) minmax(0,1.2fr) minmax(0,1fr);gap:36px}
+#slipFooter .ft-main{max-width:1500px;margin:0 auto;padding:40px 14px 28px;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) minmax(0,1.2fr) minmax(0,1fr);gap:36px}
 #slipFooter .ft-main>div{min-width:0}
 #slipFooter h4{font-family:"Crimson Pro",Georgia,serif;font-size:15px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#e2b84d;margin:0 0 14px;padding-bottom:8px;position:relative}
 #slipFooter h4::after{content:"";position:absolute;left:0;bottom:0;width:30px;height:2px;background:#c4962a;border-radius:2px}
@@ -400,6 +400,8 @@ const FOOTER_CSS = `
 #slipFooter .crest img{display:block;height:40px;width:auto}
 #slipFooter .brand{display:flex;flex-direction:row;align-items:center;gap:14px;line-height:1.15}
 #slipFooter .brand b{font-family:"Crimson Pro",Georgia,serif;font-size:22px;font-weight:700;letter-spacing:.01em;color:#fff;white-space:nowrap}
+#slipFooter .brand b.stack{display:flex;flex-direction:column;align-items:flex-start;gap:0;line-height:.95;letter-spacing:.02em}
+#slipFooter .brand b.stack span{display:block}
 #slipFooter .brand .sep{width:2px;align-self:stretch;min-height:34px;background:#e2b84d;border-radius:1px;opacity:.85}
 #slipFooter .brand .tag{display:flex;flex-direction:column;gap:3px;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#e2b84d;font-weight:600;white-space:nowrap}
 @media(max-width:420px){#slipFooter .brand .sep,#slipFooter .brand .tag{display:none}}
@@ -476,8 +478,8 @@ const FOOTER_CSS = `
 #slipFooter .st-rw .st-recs .ic{width:16px}
 #slipFooter .st-rw .st-act{width:22px;height:22px;font-size:12px}
 #slipFooter .st-rw.has .st-t{margin-right:23px}
-#slipFooter .st-clr{all:unset;box-sizing:border-box;position:absolute;z-index:1;right:27px;top:calc(50% - 11px);width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;line-height:1;border-radius:50%;border:1px solid rgba(226,184,77,.7);color:#e2b84d;cursor:pointer;transition:background .15s,color .15s}
-#slipFooter .st-clr:hover{background:#e2b84d;color:#350d18}
+#slipFooter .st-clr{all:unset;box-sizing:border-box;position:absolute;z-index:1;right:27px;top:calc(50% - 11px);width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;line-height:1;border-radius:50%;border:1px solid rgba(226,184,77,.7);color:#e2b84d;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+#slipFooter .st-clr:hover,#slipFooter .st-clr:focus-visible{background:rgba(255,77,77,.16);border-color:#ff5252;color:#ff5252}
 #slipFooter .st-clr:focus-visible{outline:2px solid #e2b84d;outline-offset:3px}
 #slipFooter .st-clr[hidden]{display:none}
 #slipFooter .bin{width:100%;height:100%;display:block;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;overflow:visible}
@@ -530,12 +532,12 @@ const FOOTER_CSS = `
 #slipFooter .social svg{width:17px;height:17px;display:block;fill:currentColor}
 @media(prefers-reduced-motion:reduce){#slipFooter .social a{transition:none}#slipFooter .social a:hover{transform:none}}
 #slipFooter .ft-legal{border-top:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.2)}
-#slipFooter .ft-bar{max-width:1280px;margin:0 auto;padding:12px 20px 22px;display:flex;align-items:center;gap:10px 24px;font-size:12px;color:rgba(255,255,255,.6)}
+#slipFooter .ft-bar{max-width:1500px;margin:0 auto;padding:12px 14px 22px;display:flex;align-items:center;gap:10px 24px;font-size:12px;color:rgba(255,255,255,.6)}
 #slipFooter .ft-ver{flex:1 1 auto;text-align:center}
 #slipFooter .ft-top{flex:none}
 @media(max-width:900px){#slipFooter .ft-bar{flex-direction:column;align-items:flex-start}#slipFooter .ft-ver{flex:none;text-align:left}}
 @media(max-width:980px){#slipFooter .ft-main{grid-template-columns:1fr 1fr;gap:30px}}
-@media(max-width:560px){#slipFooter .ft-main{grid-template-columns:1fr;padding:30px 18px 20px}#slipFooter .ft-bar{padding-left:18px;padding-right:18px}}
+@media(max-width:560px){#slipFooter .ft-main{grid-template-columns:1fr;padding:30px 14px 20px}}
 @media print{#slipFooter{display:none !important}}`;
 
 function footerHTML(crest) {
@@ -559,7 +561,7 @@ function footerHTML(crest) {
 <div class="ft-main">
   <div>
     <div class="brandrow"><span class="crest"><img src="${crest}" alt="Oyo State crest"></span>
-      <div class="brand"><b>Slip Desk</b><i class="sep" aria-hidden="true"></i><span class="tag"><span>Oyo State</span><span>2026 Compulsory Exam</span></span></div></div>
+      <div class="brand"><b class="stack"><span>Slip</span><span>Desk</span></b><i class="sep" aria-hidden="true"></i><span class="tag"><span>Oyo State</span><span>2026 Compulsory Exam</span></span></div></div>
     <p>${c.about}</p>
     ${social ? '<ul class="social" aria-label="Social links">' + social + '</ul>' : ''}
   </div>
