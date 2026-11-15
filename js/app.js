@@ -526,6 +526,7 @@ const FOOTER_CSS = `
 #slipFooter .social{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 0;padding:0;list-style:none}
 #slipFooter .social a{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;padding:0;border-radius:50%;border:1px solid rgba(226,184,77,.55);background:rgba(0,0,0,.18);color:#e2b84d;text-decoration:none;transition:background .15s,color .15s,border-color .15s,transform .15s}
 #slipFooter .social a:hover{background:#e2b84d;border-color:#e2b84d;color:#350d18;text-decoration:none;transform:translateY(-2px)}
+#slipFooter .social a[data-k=email]:hover{background:#EA4335;border-color:#EA4335;color:#fff}#slipFooter .social a[data-k=whatsapp]:hover{background:#25D366;border-color:#25D366;color:#fff}#slipFooter .social a[data-k=x]:hover{background:#fff;border-color:#fff;color:#000}#slipFooter .social a[data-k=github]:hover{background:#fff;border-color:#fff;color:#181717}#slipFooter .social a[data-k=linkedin]:hover{background:#0A66C2;border-color:#0A66C2;color:#fff}
 #slipFooter .social svg{width:17px;height:17px;display:block;fill:currentColor}
 @media(prefers-reduced-motion:reduce){#slipFooter .social a{transition:none}#slipFooter .social a:hover{transform:none}}
 #slipFooter .ft-legal{border-top:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.2)}
@@ -552,7 +553,7 @@ function footerHTML(crest) {
   const social = (c.social || []).filter(s => SOCIAL_ICONS[s.k]).map(s => {
     const url = s.url || (s.k === 'email' && c.email ? 'mailto:' + c.email : SOC_HOME[s.k]);
     const ic = SOCIAL_ICONS[s.k];
-    return '<li><a href="' + url + '" target="_blank" rel="noopener" aria-label="' + s.label + '" title="' + s.label + '"><svg viewBox="' + ic[0] + '" aria-hidden="true" focusable="false"><path d="' + ic[1] + '"/></svg></a></li>';
+    return '<li><a data-k="' + s.k + '" href="' + url + '" target="_blank" rel="noopener" aria-label="' + s.label + '" title="' + s.label + '"><svg viewBox="' + ic[0] + '" aria-hidden="true" focusable="false"><path d="' + ic[1] + '"/></svg></a></li>';
   }).join('');
   return `
 <div class="ft-main">
