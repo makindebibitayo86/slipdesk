@@ -1,0 +1,350 @@
+/* ── Analysis page · same margins, card material, dividers and colours as the Activity log ── */
+#anPage{
+  --ap-ease:cubic-bezier(.23,1,.32,1);
+  --ap-hair:rgba(60,20,30,.09);
+  --ap-shadow:0 1px 2px rgba(53,13,24,.05),0 8px 24px -12px rgba(53,13,24,.14);
+  --dv:#e8d0d5;
+  background:#f2eeef;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+}
+#anPage .lg-head h1{font-size:34px;font-weight:600;letter-spacing:-.022em}
+#anPage .lg-head p{color:#6e5d61;letter-spacing:-.003em;min-height:3.1em}   /* always room for two lines, so the header does not jump between the Analysis and Revenue tabs */
+#anPage .lg-btn{font-weight:600;letter-spacing:-.005em;border-width:1px}
+#anPage .lg-btn:focus-visible{outline:none;box-shadow:0 0 0 3.5px rgba(196,150,42,.4)}
+
+/* Cards: borderless, soft shadow, like the log's table card */
+#anPage .an-card,#anPage .an-empty{
+  border:0;border-radius:20px;background:rgba(255,255,255,.9);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 0 0 .5px var(--ap-hair),var(--ap-shadow);
+}
+#anPage .an-empty{color:#7d6c70}
+#anPage .rp-head{background:rgba(249,243,244,.82);border-radius:20px 20px 0 0;border-bottom:0;box-shadow:0 .5px 0 rgba(60,20,30,.14)}
+#anPage .rp-foot{background:rgba(249,243,244,.82);border-top:0;border-radius:0 0 20px 20px;box-shadow:0 -.5px 0 rgba(60,20,30,.14)}
+#anPage .an-card .rp-foot{border-top:0}
+#anPage .rp-note{color:#7d6c70}
+/* Donut and the two tables sit apart, each in its own tile */
+#anPage .rp-top{border-bottom:0;grid-template-columns:210px minmax(0,1fr) minmax(0,1fr);gap:16px;padding:16px 18px}
+#anPage .rp-c-donut,#anPage .rp-tbl{border:1px solid var(--dv);border-radius:14px;overflow:hidden;background:rgba(255,255,255,.7)}
+#anPage .rp-dup-tbl,#anPage .rp-status-tbl{border-left:1px solid var(--dv)}
+#anPage .rp-tr[data-go]{cursor:pointer}
+#anPage .rp-tr[data-go]:focus-visible{outline:none;box-shadow:inset 0 0 0 2px #c4962a}
+
+/* The two tables: vertical column dividers (same line as the log table) */
+#anPage .rp-th,#anPage .rp-tr{grid-template-columns:36px minmax(0,1fr) 84px 64px;column-gap:0;padding:0}
+#anPage .rp-dup-tbl .rp-th,#anPage .rp-dup-tbl .rp-tr{grid-template-columns:36px minmax(0,1fr) 76px 84px 64px}
+#anPage .rp-tr .n.pp{font-weight:600;color:#7d6c70}
+#anPage .rp-th>*,#anPage .rp-tr>*{min-width:0;padding:0 12px}
+#anPage .rp-th>:not(:first-child),#anPage .rp-tr>:not(:first-child){border-left:1px solid var(--dv);align-self:stretch;display:flex;align-items:center}
+#anPage .rp-th>:first-child,#anPage .rp-tr>:first-child{align-self:stretch}
+#anPage .rp-tr>.dot{align-self:center;justify-self:center;padding:0;width:10px;height:10px;display:block;border:0}
+#anPage .rp-tr .lbl{display:block;line-height:40px;align-self:stretch}
+#anPage .rp-tr>.n,#anPage .rp-tr>.pc,#anPage .rp-th>.r{justify-content:flex-end}
+
+/* Header row: frosted, hairline instead of hard border */
+#anPage .rp-th{
+  background:rgba(249,243,244,.82);
+  -webkit-backdrop-filter:blur(16px) saturate(170%);backdrop-filter:blur(16px) saturate(170%);
+  color:#7d6c70;font-weight:600;font-size:10.5px;letter-spacing:.07em;
+  border-bottom:0;box-shadow:0 .5px 0 rgba(60,20,30,.14);
+}
+/* Rows: hairlines, and one hue per kind, as in the log (--c is r,g,b) */
+#anPage .rp-tr{--c:0,0,0;border-bottom:0;box-shadow:inset 0 -.5px 0 rgba(60,20,30,.09);color:#350d18;transition:background-color .14s var(--ap-ease)}
+#anPage .rp-tbl .rp-tr:last-child{box-shadow:none}
+#anPage .rp-tr[data-seg="0"]{--c:46,160,80}
+#anPage .rp-tr[data-seg="1"]{--c:196,150,42}
+#anPage .rp-tr[data-seg="2"]{--c:214,69,69}
+#anPage .rp-tr[data-seg="3"]{--c:125,110,114}
+#anPage .rp-dup-tbl .rp-tr.warn{--c:214,69,69}
+#anPage .rp-tr[data-seg],#anPage .rp-dup-tbl .rp-tr.warn{
+  background:rgba(var(--c),.075);
+  box-shadow:inset 3px 0 0 rgba(var(--c),.85),inset 0 -.5px 0 rgba(var(--c),.22);
+}
+#anPage .rp-tr[data-seg="0"]{background:rgba(var(--c),.15)}
+#anPage .rp-tr.zero{background:transparent;box-shadow:inset 0 -.5px 0 rgba(60,20,30,.09)}
+#anPage .rp-total{background:rgba(249,243,244,.82);box-shadow:0 -.5px 0 rgba(60,20,30,.14)}
+#anPage .rp-total>:first-child{box-shadow:none}
+@media (any-hover:hover){
+  #anPage .rp-tr[data-seg]:hover,#anPage .rp-dup-tbl .rp-tr.warn:hover{background:rgba(var(--c),.19)}
+  #anPage .rp-tr[data-seg="0"]:hover{background:rgba(var(--c),.27)}
+  #anPage .rp-tr.zero:hover{background:rgba(109,31,46,.03)}
+}
+#anPage .rp-rowbtn.on{background:rgba(var(--c),.22);box-shadow:inset 3px 0 0 #c4962a,inset 0 -.5px 0 rgba(var(--c),.22)}
+#anPage .rp-tr .mean,#anPage .rp-tr .pc{color:#7d6c70}
+#anPage .rp-tr.zero .n,#anPage .rp-tr.zero .lbl{color:#a8989c}
+#anPage .rp-tr.warn .n{color:#a12a2a}
+
+@media (max-width:860px){#anPage .rp-top{grid-template-columns:1fr 1fr}#anPage .rp-c-donut{grid-column:1/-1}}
+@media (max-width:620px){#anPage .rp-top{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){#anPage *{transition-duration:.01ms !important}}
+@media (prefers-reduced-transparency:reduce){#anPage .rp-th{-webkit-backdrop-filter:none;backdrop-filter:none;background:#f9f3f4}}
+
+/* ── Sections under the breakdown ── */
+#anPage .an-sec{margin-top:34px}
+#anPage .an-sec-h h2{font-family:'Crimson Pro',Georgia,serif;font-size:28px;font-weight:600;letter-spacing:-.018em;color:#350d18;line-height:1.1}
+#anPage .an-sec-h p,#anPage .an-grp-h p{font-size:12.5px;color:#6e5d61;margin-top:6px;max-width:700px;line-height:1.55}
+#anPage .an-grp-h{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin:26px 0 12px}
+#anPage .an-grp-h h3{font-family:'Crimson Pro',Georgia,serif;font-size:21px;font-weight:600;color:#350d18}
+#anPage .an-sec-h{margin-bottom:14px}
+
+/* Issue cards: same soft material as the log's stat tiles */
+#anPage .an-issues{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+#anPage .an-iss{--c:196,150,42;position:relative;display:flex;flex-direction:column;align-items:flex-start;padding:16px 18px 16px;border-radius:18px;
+  background:rgba(255,255,255,.78);-webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 0 0 .5px var(--ap-hair),var(--ap-shadow)}
+#anPage .an-iss::before{content:"";position:absolute;left:18px;top:10px;width:18px;height:3px;border-radius:2px;background:rgb(var(--c));opacity:.85}
+#anPage .an-iss.c-red{--c:214,69,69}#anPage .an-iss.c-gold{--c:196,150,42}#anPage .an-iss.c-grey{--c:125,110,114}
+#anPage .an-iss.zero{--c:150,135,140;opacity:.7}
+#anPage .an-iss-n{margin-top:8px;font-family:'Crimson Pro',Georgia,serif;font-size:32px;font-weight:600;letter-spacing:-.02em;color:#350d18;line-height:1.1;font-variant-numeric:tabular-nums}
+#anPage .an-iss-t{margin-top:2px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6d1f2e}
+#anPage .an-iss-s{margin-top:6px;font-size:11.5px;font-weight:600;color:#7d6c70}
+#anPage .an-iss-tip{margin:6px 0 12px;font-size:12px;line-height:1.5;color:#5c4a4e;flex:1}
+#anPage .an-iss .lg-btn{height:34px;padding:0 16px;font-size:12.5px}
+#anPage .an-f{display:flex;flex-direction:column;gap:3px;font-size:10.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:#7d6c70}
+#anPage .an-f.grow{flex:0 1 320px;min-width:200px}
+/* Records toolbar: a compact, centred cluster instead of stretching edge to edge */
+#anPage .an-tools{justify-content:center}
+#anPage .an-tools .an-f:not(.grow){flex:0 0 auto;width:215px}
+#anPage .an-tools .an-f select{width:100%;min-width:0;text-overflow:ellipsis}
+@media (max-width:720px){#anPage .an-tools{justify-content:stretch}#anPage .an-tools .an-f,#anPage .an-tools .an-f.grow,#anPage .an-tools .an-f:not(.grow){flex:1 1 100%;width:auto}}
+#anPage .an-f select,#anPage .an-f input,#anPage .an-pager select{
+  height:36px;padding:0 10px;border:0;border-radius:10px;background-color:rgba(60,20,30,.055);color:#1c1216;font:13px 'DM Sans','Segoe UI',sans-serif;text-transform:none;letter-spacing:0;font-weight:400;
+  box-shadow:inset 0 0 0 .5px rgba(60,20,30,.10);transition:background-color .16s var(--ap-ease),box-shadow .16s var(--ap-ease)}
+#anPage .an-f select:focus,#anPage .an-f input:focus,#anPage .an-pager select:focus{outline:none;background-color:#fff;box-shadow:0 0 0 3.5px rgba(196,150,42,.32),inset 0 0 0 1px rgba(196,150,42,.85)}
+#anPage .an-tools{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;padding:12px 14px;border-radius:20px;margin-bottom:12px;
+  background:rgba(255,255,255,.78);-webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 0 0 .5px var(--ap-hair),var(--ap-shadow)}
+#anPage .an-tools .lg-btn{height:36px}
+#anPage .an-chip{display:inline-flex;align-items:center;gap:8px;margin:0 0 12px;padding:5px 6px 5px 14px;border-radius:999px;background:rgba(196,150,42,.16);color:#6b4b00;font-size:12.5px}
+#anPage .an-chip[hidden]{display:none}
+#anPage .an-chip button{width:22px;height:22px;border:0;border-radius:50%;background:rgba(107,75,0,.15);color:#6b4b00;font-size:15px;line-height:1;cursor:pointer}
+
+/* The two new tables: the log table's look, dividers included */
+#anPage .an-card2{border-radius:20px;background:rgba(255,255,255,.9);overflow:auto;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 0 0 .5px var(--ap-hair),var(--ap-shadow)}
+#anPage .an-table{width:100%;border-collapse:collapse;font-size:12.5px;color:#350d18}
+#anPage .an-rtable{min-width:980px;table-layout:fixed}
+#anPage .an-table th,#anPage .an-table td{border-right:1px solid var(--dv);text-align:left}
+#anPage .an-table th:last-child,#anPage .an-table td:last-child{border-right:none}
+#anPage .an-table th{position:sticky;top:0;z-index:1;padding:10px 12px;white-space:nowrap;background:rgba(249,243,244,.9);
+  -webkit-backdrop-filter:blur(16px) saturate(170%);backdrop-filter:blur(16px) saturate(170%);
+  color:#7d6c70;font-weight:600;font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;box-shadow:0 .5px 0 rgba(60,20,30,.14)}
+#anPage .an-table td{padding:10px 12px;vertical-align:middle;box-shadow:inset 0 -.5px 0 rgba(60,20,30,.09)}
+#anPage .an-table tbody tr:last-child td{box-shadow:none}
+#anPage .an-table .r{text-align:right}
+#anPage .an-table th.c-no{width:60px}#anPage .an-table th.c-ref{width:150px}#anPage .an-table th.c-exam{width:120px}#anPage .an-table th.c-ph{width:130px}
+#anPage .an-table th.c-dob{width:120px}#anPage .an-table th.c-st{width:112px}#anPage .an-table th.c-is{width:210px}#anPage .an-table th.c-go{width:84px}
+#anPage .an-rtable td.c-go{text-align:center;padding:10px 8px}
+#anPage .an-rtable td{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#anPage .an-rtable td.c-is{white-space:normal}
+#anPage .an-mut{color:#7d6c70}
+/* Row hues, as in the log: green confirmed, gold pending, red flagged, grey no status */
+#anPage .an-rtable tbody tr{--c:0,0,0}
+#anPage .an-rtable tbody tr.st-confirmed{--c:46,160,80}#anPage .an-rtable tbody tr.st-pending{--c:196,150,42}
+#anPage .an-rtable tbody tr.st-flagged{--c:214,69,69}#anPage .an-rtable tbody tr.st-none{--c:125,110,114}
+#anPage .an-rtable tbody tr td{background:rgba(var(--c),.06);box-shadow:inset 0 -.5px 0 rgba(var(--c),.2);transition:background-color .12s var(--ap-ease)}
+#anPage .an-rtable tbody tr td:first-child{box-shadow:inset 3px 0 0 rgba(var(--c),.85),inset 0 -.5px 0 rgba(var(--c),.2)}
+@media (any-hover:hover){#anPage .an-rtable tbody tr:hover td{background:rgba(var(--c),.17)}}
+#anPage .an-badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:10px;font-weight:600;letter-spacing:.03em;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.06)}
+#anPage .an-badge.b-confirmed{background:rgba(52,168,83,.14);color:#1d6b35}
+#anPage .an-badge.b-pending{background:rgba(232,168,36,.18);color:#8a5a00}
+#anPage .an-badge.b-flagged{background:rgba(214,69,69,.13);color:#a12a2a}
+#anPage .an-badge.b-none{background:rgba(60,60,67,.10);color:#4a4a52}
+#anPage .an-tag{display:inline-block;margin:1px 4px 1px 0;padding:1px 8px;border-radius:999px;font-size:10px;font-weight:600;background:rgba(109,31,46,.08);color:#6d1f2e}
+#anPage .an-open{height:26px;padding:0 12px;border-radius:999px;border:1px solid rgba(109,31,46,.35);background:#fff;color:#6d1f2e;font:600 11.5px 'DM Sans',sans-serif;cursor:pointer}
+#anPage .an-open:hover{background:#f9f0f2}
+#anPage .an-open:focus-visible,#anPage .an-cnt:focus-visible,#anPage #anGMore button:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(196,150,42,.45)}
+#anPage .an-none{padding:34px 16px;text-align:center;color:#a8989c;font-size:13px}
+#anPage .an-none[hidden],#anPage .an-gmore[hidden],#anPage .an-gtable[hidden]{display:none}
+/* group table */
+#anPage .an-gl{font-weight:600}
+#anPage .an-gl i{font-weight:400;color:#a8989c}
+#anPage .an-cnt{border:0;background:none;padding:2px 6px;border-radius:8px;font:600 12.5px 'DM Sans',sans-serif;color:#350d18;cursor:pointer;font-variant-numeric:tabular-nums}
+#anPage .an-cnt:hover{background:rgba(196,150,42,.2)}
+#anPage .an-z{color:#a8989c;padding:0 6px}
+#anPage .an-bar{display:inline-block;vertical-align:middle;width:110px;height:7px;border-radius:4px;background:rgba(60,20,30,.1);overflow:hidden}
+#anPage .an-bar i{display:block;height:100%;background:#2fa355;border-radius:4px}
+#anPage .an-pc{display:inline-block;vertical-align:middle;margin-left:8px;color:#7d6c70;font-size:11.5px;font-variant-numeric:tabular-nums}
+#anPage .an-gtable td:nth-child(n+2):nth-child(-n+8){width:96px}
+#anPage .an-gtable td.r,#anPage .an-gtable th.r{font-variant-numeric:tabular-nums;white-space:nowrap}
+#anPage .an-sv{font-weight:600;color:#350d18}
+#anPage .an-gtable tbody tr.gt-total td{font-weight:700;background:rgba(249,243,244,.9)!important;border-top:1px solid rgba(60,20,30,.18)}
+#anPage .an-gmore{padding:10px 14px;text-align:center;box-shadow:0 -.5px 0 rgba(60,20,30,.09)}
+#anPage .an-gmore button{border:0;background:none;color:#6d1f2e;font:600 12px 'DM Sans',sans-serif;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+#anPage .an-pager{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px;font-size:12px;color:#7d6c70}
+#anPage .an-pager .pg{display:inline-flex;align-items:center;gap:10px}
+#anPage .an-pager label{display:inline-flex;align-items:center;gap:6px}
+@media (prefers-contrast:more){#anPage .an-tools,#anPage .an-card2,#anPage .an-iss{box-shadow:0 0 0 1px rgba(60,20,30,.45)}}
+@media (prefers-reduced-transparency:reduce){#anPage .an-tools,#anPage .an-iss{-webkit-backdrop-filter:none;backdrop-filter:none;background:#fff}#anPage .an-table th{-webkit-backdrop-filter:none;backdrop-filter:none;background:#f9f3f4}}
+
+/* Duplicate rows fill the Records list instead of opening a pop-up */
+#anPage #rpDups,#anPage .rp-dtoggle{display:none !important}
+#anPage .rp-rowbtn{cursor:pointer}
+#anPage .an-gnote{margin:0 0 12px;font-size:12.5px;color:#6e5d61;line-height:1.5}
+#anPage .an-gnote[hidden]{display:none}
+#anPage .an-rtable tbody tr.g-head td{padding:9px 12px;background:rgba(109,31,46,.09);box-shadow:inset 0 -.5px 0 rgba(109,31,46,.25);border-right:none;font-size:12px;color:#6d1f2e}
+#anPage .an-rtable tbody tr.g-gap td{height:34px;padding:0;background:#f2eeef;border-right:none;box-shadow:none}
+#anPage .an-rtable tbody tr.g-head b{font-size:12.5px;color:#350d18;margin-right:12px}
+#anPage .an-rtable tbody tr.g-head span{display:inline-block;margin-right:10px;padding:1px 9px;border-radius:999px;background:rgba(109,31,46,.1);font-size:10.5px;font-weight:600}
+#anPage .an-rtable tbody tr.g-head span.warn{background:rgba(214,69,69,.15);color:#a12a2a}
+#anPage .an-build{font-weight:600;color:#a8989c;white-space:nowrap}
+
+/* each issue card gets its own soft tint */
+#anPage .an-iss.c-green{--c:46,150,86}
+#anPage .an-iss{background:linear-gradient(160deg,rgba(var(--t),.20),rgba(255,255,255,.80) 62%)}
+#anPage .an-iss.tn1{--t:46,160,90}
+#anPage .an-iss.tn2{--t:230,170,40}
+#anPage .an-iss.tn3{--t:225,95,95}
+#anPage .an-iss.tn4{--t:150,100,200}
+#anPage .an-iss.tn5{--t:230,120,160}
+#anPage .an-iss.tn6{--t:60,150,200}
+#anPage .an-iss.tn7{--t:235,130,60}
+#anPage .an-iss.tn8{--t:40,170,170}
+@media (prefers-reduced-transparency:reduce){#anPage .an-iss{background:linear-gradient(160deg,rgba(var(--t),.16),#fff 62%)}}
+
+/* ── Analysis / Revenue title tabs ── */
+#anPage .an-tabs{display:flex;align-items:center;gap:16px}
+#anPage .an-tab{font:inherit;letter-spacing:inherit;line-height:inherit;color:#c3b6ba;background:none;border:0;padding:0;margin:0;cursor:pointer;transition:color .16s ease}
+#anPage .an-tab:hover{color:#8c7a7f}
+#anPage .an-tab.on{color:#350d18;cursor:default}
+#anPage .an-tab:focus-visible{outline:2px solid #c4962a;outline-offset:5px;border-radius:4px}
+#anPage .an-tab-sep{width:2px;height:.72em;border-radius:2px;background:#d8cbcf}
+#anPage.tab-rv #anCard,#anPage.tab-rv #anMore{display:none!important}
+#anPage:not(.tab-rv) #rvMore{display:none!important}
+#anPage #rvMore[hidden],#anPage #rvBody[hidden]{display:none}
+
+/* ── Revenue ── */
+#anPage .an-iss.tn9{--t:110,120,190}
+#anPage .rv-n{font-size:28px}
+#anPage .rv-bar{display:block;width:100%;height:8px;margin:2px 0 4px;border-radius:5px;background:rgba(60,20,30,.1);overflow:hidden}
+#anPage .rv-bar i{display:block;height:100%;border-radius:5px;background:#2fa355}
+#anPage .an-rvtable{min-width:820px}
+#anPage .an-rvtable td.r,#anPage .an-rvtable th.r{font-variant-numeric:tabular-nums;white-space:nowrap}
+#anPage .an-rvtable td:nth-child(n+2):nth-child(-n+5){width:132px}
+#anPage .rv-owe{color:#a8741a;font-weight:600}
+#anPage .rv-ex{color:#6d3fa0;font-weight:600}
+#anPage .rv-gv{font:inherit;font-weight:600;color:#350d18;background:none;border:0;padding:0;cursor:pointer;text-align:left}
+#anPage .rv-gv:hover{text-decoration:underline;text-underline-offset:3px}
+#anPage .an-rvtable tr.rv-total td{font-weight:700;background:rgba(249,243,244,.9);border-top:1px solid rgba(60,20,30,.18)}
+
+/* ── Records: paid and fee columns ── */
+#anPage .an-table th.c-amt{width:104px;text-align:right}
+#anPage .an-rtable td.c-amt{text-align:right;font-variant-numeric:tabular-nums;font-weight:600;color:#350d18}
+#anPage .an-rtable{min-width:1060px}
+@media (prefers-reduced-motion:reduce){#anPage .an-tab{transition:none}}
+
+/* ── Records table: give the candidate name room, and scroll sideways rather than squeeze it ── */
+#anPage .an-rtable{min-width:1320px}
+#anPage .an-table th.c-no{width:52px}
+#anPage .an-table th.c-name{width:240px}
+#anPage .an-table th.c-ref{width:132px}
+#anPage .an-table th.c-exam{width:150px}
+#anPage .an-table th.c-ph{width:118px}
+#anPage .an-table th.c-dob{width:108px}
+#anPage .an-table th.c-st{width:98px}
+#anPage .an-table th.c-amt{width:92px}
+#anPage .an-table th.c-is{width:190px}
+#anPage .an-table th.c-go{width:76px}
+#anPage .an-rtable td.c-name{white-space:normal;line-height:1.3}
+
+/* ── Revenue breakdown card ── */
+#anPage .rv-tbl .rp-th,#anPage .rv-tbl .rp-tr{grid-template-columns:36px minmax(0,1fr) 140px 68px}
+#anPage .rv-ptbl .rp-th,#anPage .rv-ptbl .rp-tr{grid-template-columns:36px minmax(0,1fr) 84px 140px 68px}
+#anPage .rv-tbl .rp-tr{flex:1 1 auto;min-height:40px}
+#anPage .rv-tbl .rp-tr.rp-total{flex:0 0 auto;margin-top:0}
+#anPage .rv-tbl .rp-tr .n{white-space:nowrap}
+#anPage .rv-dc b{font-size:21px}
+#anPage .rv-dc span{margin-top:3px;line-height:1.2}
+#anPage .rv-dc .rv-rate{margin-top:1px;font-weight:700;color:#2a7f48}
+#anPage #rvCard{margin-bottom:6px}
+
+/* Revenue tables: every row has its own colour and opens the Records list */
+#anPage .rv-tbl .rp-tr[data-rv]:not(.rp-total):not(.zero){background:rgba(var(--c),.09);box-shadow:inset 3px 0 0 rgba(var(--c),.85),inset 0 -.5px 0 rgba(var(--c),.22)}
+#anPage .rv-tbl .rp-tr[data-rv].zero{box-shadow:inset 3px 0 0 rgba(var(--c),.3),inset 0 -.5px 0 rgba(60,20,30,.09)}
+#anPage .rv-tbl .rp-tr[data-rv] .lbl{color:#350d18}
+@media (any-hover:hover){
+  #anPage .rv-tbl .rp-tr[data-rv][data-go]:not(.rp-total):hover{background:rgba(var(--c),.2)}
+  #anPage .rv-tbl .rp-total[data-go]:hover{background:rgba(109,31,46,.07)}
+}
+
+/* ── Column picker (Analysis "Break it down by" and Revenue "Money by") ── */
+#anPage .an-ddw{display:flex;align-items:center;gap:8px}
+#anPage .an-dd-ic{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;flex:none;background:rgba(196,150,42,.16);color:#7a5a00}
+#anPage .an-dd{position:relative}
+#anPage .an-dd-btn{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:230px;height:36px;padding:0 10px 0 12px;border:0;border-radius:10px;background:rgba(60,20,30,.055);color:#1c1216;font:600 13px 'DM Sans','Segoe UI',sans-serif;cursor:pointer;text-align:left;box-shadow:inset 0 0 0 .5px rgba(60,20,30,.10);transition:background-color .16s var(--ap-ease),box-shadow .16s var(--ap-ease)}
+#anPage .an-dd-btn:hover{background:rgba(60,20,30,.09)}
+#anPage .an-dd-btn:focus-visible,#anPage .an-dd-btn[aria-expanded="true"]{outline:none;background:#fff;box-shadow:0 0 0 3.5px rgba(196,150,42,.32),inset 0 0 0 1px rgba(196,150,42,.85)}
+#anPage .an-dd-btn:disabled{opacity:.5;cursor:default}
+#anPage .an-dd-btn svg{flex:none;color:#7d6c70;transition:transform .16s var(--ap-ease)}
+#anPage .an-dd-btn[aria-expanded="true"] svg{transform:rotate(180deg)}
+#anPage .an-dd-pop{position:absolute;right:0;top:calc(100% + 6px);z-index:40;width:max(100%,300px);max-height:340px;display:flex;flex-direction:column;padding:6px;background:#fff;border-radius:14px;box-shadow:0 14px 44px rgba(60,20,30,.24),0 0 0 .5px rgba(60,20,30,.14)}
+#anPage .an-dd-pop[hidden]{display:none}
+#anPage .an-dd-q{flex:none;height:34px;margin:2px 2px 6px;padding:0 10px;border:0;border-radius:8px;background:rgba(60,20,30,.055);font:13px 'DM Sans','Segoe UI',sans-serif;color:#1c1216}
+#anPage .an-dd-q[hidden]{display:none}
+#anPage .an-dd-q:focus{outline:none;background:#fff;box-shadow:inset 0 0 0 1px rgba(196,150,42,.85)}
+#anPage .an-dd-list{min-height:0;overflow:auto;outline:none}
+#anPage .an-dd-o{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 10px;border-radius:8px;font-size:13px;color:#350d18;cursor:pointer}
+#anPage .an-dd-o em{font-style:normal;font-size:11px;color:#9c8a8e;white-space:nowrap}
+#anPage .an-dd-o:hover,#anPage .an-dd-o.act{background:rgba(196,150,42,.16)}
+#anPage .an-dd-o.on{font-weight:700}
+#anPage .an-dd-o.on span::after{content:' \2713';color:#2a7f48}
+#anPage .an-dd-none{padding:10px;font-size:12.5px;color:#7d6c70}
+@media (max-width:560px){#anPage .an-ddw{width:100%}#anPage .an-dd{flex:1}#anPage .an-dd-btn{min-width:0;width:100%}}
+
+/* Group tables: alternating row colours */
+#anPage .an-gtable tbody tr:nth-child(even) td,#anPage .an-rvtable tbody tr:nth-child(even):not(.rv-total) td{background:rgba(196,150,42,.10)}
+#anPage .an-gtable tbody tr:nth-child(odd) td,#anPage .an-rvtable tbody tr:nth-child(odd):not(.rv-total) td{background:rgba(255,255,255,.9)}
+@media (any-hover:hover){
+  #anPage .an-gtable tbody tr:hover td,#anPage .an-rvtable tbody tr:not(.rv-total):hover td{background:rgba(196,150,42,.22)}
+}
+
+/* ══ Records: sortable headings, exam-centre column, attendance-list dialog ══ */
+#anPage .an-table th[data-sort]{padding:0}
+#anPage .an-sort{display:flex;align-items:center;justify-content:space-between;gap:6px;width:100%;height:100%;padding:10px 12px;border:0;border-radius:0;background:none;font:inherit;letter-spacing:inherit;text-transform:inherit;color:inherit;text-align:inherit;cursor:pointer;white-space:nowrap}
+#anPage .an-table th.r .an-sort{justify-content:flex-end}
+#anPage .an-sort i{flex:none;display:inline-block;width:12px;text-align:center;font-style:normal}
+#anPage .an-sort i::after{content:"\2195";font-size:11px;opacity:.32}
+#anPage .an-table th.s-on{background:rgba(109,31,46,.1)}
+#anPage .an-table th.s-on .an-sort{color:#6d1f2e}
+#anPage .an-table th.s-on .an-sort i::after{content:"\25B2";font-size:9px;opacity:1}
+#anPage .an-table th.s-on.s-desc .an-sort i::after{content:"\25BC"}
+#anPage .an-sort:focus-visible{outline:2px solid #c4962a;outline-offset:-3px}
+@media (any-hover:hover){#anPage .an-sort:hover{background:rgba(109,31,46,.07)}}
+#anPage .an-sort:active{transform:none !important;box-shadow:inset 0 0 0 100px rgba(60,20,30,.07) !important}
+#anPage .an-table th.c-ctr{width:170px}
+#anPage .an-rtable{min-width:1490px}
+
+.at-back{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(53,13,24,.55);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+.at-back[hidden]{display:none}
+.at-dlg{width:100%;max-width:470px;max-height:100%;overflow:auto;background:#fff;border:2px solid #c4962a;border-radius:20px;padding:22px 22px 18px;box-shadow:0 24px 70px rgba(0,0,0,.45);font-family:'DM Sans','Segoe UI',sans-serif;color:#1c1216}
+.at-dlg h2{font-family:'Crimson Pro',Georgia,serif;font-size:22px;color:#350d18;margin:0 0 6px}
+.at-p{font-size:12.5px;line-height:1.6;color:#5c4a4e;margin:0 0 14px}
+.at-f{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:600;color:#5c4a4e}
+.at-f select{width:100%;padding:10px 12px;border:1.5px solid #ddd4d6;border-radius:10px;font:inherit;font-size:13px;font-weight:500;color:#1c1216;background:#fff}
+.at-f select:focus{outline:none;border-color:#c4962a;box-shadow:0 0 0 3.5px rgba(196,150,42,.3)}
+.at-sum{margin:12px 0 2px;font-size:13px;font-weight:700;color:#6d1f2e}
+.at-warn{margin-top:8px;padding:9px 12px;border-radius:10px;background:#f7ecd4;color:#7a5000;font-size:12px;line-height:1.55}
+.at-act{display:flex;justify-content:flex-end;gap:10px;margin-top:16px}
+
+#anPage .an-gtable th.gh{text-align:center;border-bottom:1px solid rgba(60,20,30,.14)}
+#anPage .an-gtable th.gh small{font-weight:400;text-transform:none;letter-spacing:0;opacity:.75}
+#anPage .an-gtable th.gh-c{color:#1a6b3a;border-left:1px solid rgba(60,20,30,.14)}
+#anPage .an-gtable th.gh-u{color:#8a5a00;border-left:1px solid rgba(60,20,30,.14)}
+#anPage .an-gtable td.gs-c,#anPage .an-gtable td.gs-u{border-left:1px solid rgba(60,20,30,.14)}
+#anPage .an-gtable{min-width:900px}
+
+
+/* Records rows open the slip that is ready (Exam Slip if confirmed, otherwise Registration Slip) */
+#anPage .an-rtable tbody tr.an-row{cursor:pointer;transition:filter .12s}
+#anPage .an-rtable tbody tr.an-row:hover td{filter:brightness(.96)}
+#anPage .an-rtable tbody tr.an-row:focus-visible{outline:none}
+#anPage .an-rtable tbody tr.an-row:focus-visible td{box-shadow:inset 0 2px 0 rgba(196,150,42,.8),inset 0 -2px 0 rgba(196,150,42,.8)}
+
+/* Show dropdown while a cell of the breakdown table is open in Records: highlighted, wider so the label fits */
+#anPage .an-f select.an-ctx{background-color:rgba(196,150,42,.24);color:#5a3d00;font-weight:600;box-shadow:0 0 0 2px rgba(196,150,42,.85),inset 0 0 0 1px rgba(196,150,42,.6)}
+@media(min-width:1021px){#anPage .an-tools>.an-f:first-child:has(select.an-ctx){flex:0 0 400px!important;width:400px!important}}
+#anPage .an-gtable .an-cnt{min-width:44px}
+
+/* One tab strip for all five analytics pages: Report | Analysis | Revenue | Attendances | Others */
+#anPage .an-tabs{flex-wrap:wrap;gap:4px 14px}
+#anPage .an-tab{white-space:nowrap}
+@media (max-width:760px){#anPage .lg-head h1{font-size:26px}#anPage .an-tabs{gap:2px 10px}}

@@ -1,0 +1,10 @@
+# Candidate registers and personal data - never commit
+*.xlsx
+*.xls
+*.xlsm
+*.csv
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

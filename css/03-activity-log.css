@@ -1,0 +1,175 @@
+/* ── Activity log · Apple-style feel (look only; layout untouched) ── */
+#logPage{
+  --ap-ease:cubic-bezier(.23,1,.32,1);
+  --ap-hair:rgba(60,20,30,.09);
+  --ap-card:rgba(255,255,255,.78);
+  --ap-shadow:0 1px 2px rgba(53,13,24,.05),0 8px 24px -12px rgba(53,13,24,.14);
+  background:#f2eeef;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+}
+#logPage .lg-head h1{font-size:34px;font-weight:600;letter-spacing:-.022em}
+#logPage .lg-head p{color:#6e5d61;letter-spacing:-.003em}
+
+/* Stat cards — soft material, no coloured side bar */
+#logPage .lg-stat{
+  position:relative;border:0;border-radius:18px;padding:12px 16px;
+  background:var(--ap-card);
+  -webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 0 0 .5px var(--ap-hair),var(--ap-shadow);
+}
+#logPage .lg-stat::before{content:"";position:absolute;left:16px;top:10px;width:18px;height:3px;border-radius:2px;background:#c4962a;opacity:.85}
+#logPage .lg-stat.warn::before{background:#d64545}
+#logPage .lg-stat b{margin-top:8px;font-size:28px;font-weight:600;letter-spacing:-.02em}
+#logPage .lg-stat span{font-size:10.5px;font-weight:600;letter-spacing:.06em;color:#7d6c70}
+
+/* Filter toolbar */
+#logPage .lg-tools{
+  border:0;border-radius:20px;padding:12px 14px;gap:12px;
+  background:var(--ap-card);
+  -webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 0 0 .5px var(--ap-hair),var(--ap-shadow);
+}
+#logPage .lg-f{font-size:10.5px;font-weight:600;letter-spacing:.05em;color:#7d6c70}
+#logPage .lg-tools select,#logPage .lg-tools input,#logPage .lg-pager select{
+  border:0;border-radius:10px;background-color:rgba(60,20,30,.055);color:#1c1216;
+  box-shadow:inset 0 0 0 .5px rgba(60,20,30,.10);
+  transition:background-color .16s var(--ap-ease),box-shadow .16s var(--ap-ease);
+}
+#logPage .lg-tools select:focus,#logPage .lg-tools input:focus,#logPage .lg-pager select:focus{
+  outline:none;background-color:#fff;
+  box-shadow:0 0 0 3.5px rgba(196,150,42,.32),inset 0 0 0 1px rgba(196,150,42,.85);
+}
+#logPage .lg-tools :is(select,input):focus-visible{outline:none}
+@media (any-hover:hover){
+  #logPage .lg-tools select:hover:not(:focus),#logPage .lg-tools input:hover:not(:focus),#logPage .lg-pager select:hover:not(:focus){background-color:rgba(60,20,30,.08)}
+}
+#lgQ::placeholder{color:#a8989c}
+#lgQ::-webkit-search-cancel-button{opacity:.5}
+
+/* Table card */
+#logPage .lg-card{
+  border:0;border-radius:20px;background:rgba(255,255,255,.9);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 0 0 .5px var(--ap-hair),var(--ap-shadow);
+  scrollbar-width:thin;scrollbar-color:rgba(60,20,30,.22) transparent;
+}
+#logPage .lg-card::-webkit-scrollbar{width:10px;height:10px}
+#logPage .lg-card::-webkit-scrollbar-thumb{background:rgba(60,20,30,.2);border-radius:10px;border:3px solid transparent;background-clip:content-box}
+
+/* Header row: frosted, hairline instead of hard border */
+#logPage .lg-table th{
+  background:rgba(249,243,244,.82);
+  -webkit-backdrop-filter:blur(16px) saturate(170%);backdrop-filter:blur(16px) saturate(170%);
+  color:#7d6c70;font-weight:600;font-size:10.5px;letter-spacing:.07em;
+  border-bottom:0;box-shadow:0 .5px 0 rgba(60,20,30,.14);
+}
+/* Your vertical column dividers are kept; zebra removed, hairline rows */
+#logPage .lg-table td{border-bottom:0;box-shadow:inset 0 -.5px 0 rgba(60,20,30,.09);padding:11px 12px}
+#logPage .lg-table tbody tr:nth-child(even) td{background:transparent}
+#logPage .lg-table tbody tr:last-child td{box-shadow:none}
+/* Row hues: one colour per kind of event; hover deepens it. --c is the colour, as r,g,b */
+#logPage .lg-table tbody tr[class*="lg-"]{--c:0,0,0}
+#logPage .lg-table tbody tr.lg-loaded{--c:46,160,80}
+#logPage .lg-table tbody tr.lg-h-in{--c:0,150,150}
+#logPage .lg-table tbody tr.lg-h-out{--c:235,130,60}
+#logPage .lg-table tbody tr.lg-h-search{--c:196,150,42}
+#logPage .lg-table tbody tr.lg-h-red{--c:214,69,69}
+#logPage .lg-table tbody tr.lg-h-amber{--c:225,190,20}
+#logPage .lg-table tbody tr.lg-h-blue{--c:10,132,255}
+#logPage .lg-table tbody tr.lg-h-violet{--c:125,85,205}
+#logPage .lg-table tbody tr:is(.lg-loaded,.lg-h-in,.lg-h-out,.lg-h-search,.lg-h-red,.lg-h-amber,.lg-h-blue,.lg-h-violet) td{
+  background:rgba(var(--c),.075);box-shadow:inset 0 -.5px 0 rgba(var(--c),.22);
+  transition:background-color .14s var(--ap-ease),box-shadow .14s var(--ap-ease);
+}
+#logPage .lg-table tbody tr.lg-h-search td{background:rgba(var(--c),.05)}
+#logPage .lg-table tbody tr.lg-loaded td{background:rgba(var(--c),.15)}
+#logPage .lg-table tbody tr:is(.lg-loaded,.lg-h-in,.lg-h-out,.lg-h-search,.lg-h-red,.lg-h-amber,.lg-h-blue,.lg-h-violet) td:first-child{
+  box-shadow:inset 3px 0 0 rgba(var(--c),.85),inset 0 -.5px 0 rgba(var(--c),.22);
+}
+@media (any-hover:hover){
+  #logPage .lg-table tbody tr:is(.lg-loaded,.lg-h-in,.lg-h-out,.lg-h-search,.lg-h-red,.lg-h-amber,.lg-h-blue,.lg-h-violet):hover td{background:rgba(var(--c),.19)}
+  #logPage .lg-table tbody tr.lg-loaded:hover td{background:rgba(var(--c),.27)}
+}
+#logPage .lg-table tbody td{transition:background-color .12s var(--ap-ease)}
+@media (any-hover:hover){
+  #logPage .lg-table tbody tr:hover td{background:rgba(109,31,46,.03)}
+}
+#logPage .lg-q{letter-spacing:-.005em}
+#logPage .lg-num,#logPage .lg-time,#logPage .lg-sub{color:#7d6c70}
+#logPage .lg-empty{color:#a8989c}
+
+/* Badges: tinted capsules, SF-like */
+#logPage .lp-badge{padding:2px 9px;border-radius:999px;font-size:10px;font-weight:600;letter-spacing:.03em;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.06)}
+#logPage .lp-badge.ok{background:rgba(52,168,83,.14);color:#1d6b35}
+#logPage .lp-badge.pend,#logPage .lp-badge.ev-lock{background:rgba(232,168,36,.18);color:#8a5a00}
+#logPage .lp-badge.miss,#logPage .lp-badge.ev-fail,#logPage .lp-badge.ev-clear{background:rgba(214,69,69,.13);color:#a12a2a}
+#logPage .lp-badge.multi,#logPage .lp-badge.ev-out,#logPage .lp-badge.ev-sess{background:rgba(60,60,67,.10);color:#4a4a52}
+#logPage .lp-badge.ev-print{background:rgba(10,132,255,.12);color:#0b4fa8}
+
+/* Buttons: refine the existing glass pills (sizes/order unchanged) */
+#logPage .lg-btn{font-weight:600;letter-spacing:-.005em;border-width:1px}
+#logPage .lg-btn:focus-visible{outline:none;box-shadow:0 0 0 3.5px rgba(196,150,42,.4)}
+
+/* Pager */
+#logPage .lg-pager{color:#7d6c70}
+#logPage .lg-pager #lgPg{font-variant-numeric:tabular-nums}
+
+/* Badges to match: sign-in teal, sign-out warm, searches gold */
+#logPage .lp-badge.ev-in{background:rgba(0,150,150,.14);color:#006b6b}
+#logPage .lp-badge.ev-out{background:rgba(235,130,60,.16);color:#9a4a10}
+#logPage .lp-badge.ev-lock{background:rgba(225,190,20,.2);color:#7a5f00}
+/* Quick log popover: same event colours as the full table */
+#lpList li{--c:0,0,0;transition:background-color .14s cubic-bezier(.23,1,.32,1)}
+#lpList li.lg-loaded{--c:46,160,80}#lpList li.lg-h-in{--c:0,150,150}#lpList li.lg-h-out{--c:235,130,60}
+#lpList li.lg-h-search{--c:196,150,42}#lpList li.lg-h-red{--c:214,69,69}#lpList li.lg-h-amber{--c:225,190,20}
+#lpList li.lg-h-blue{--c:10,132,255}#lpList li.lg-h-violet{--c:125,85,205}
+#lpList li:is(.lg-loaded,.lg-h-in,.lg-h-out,.lg-h-search,.lg-h-red,.lg-h-amber,.lg-h-blue,.lg-h-violet){
+  background:rgba(var(--c),.08);border-bottom-color:rgba(var(--c),.2);box-shadow:inset 3px 0 0 rgba(var(--c),.85)}
+#lpList li.lg-h-search{background:rgba(var(--c),.05)}
+#lpList li.lg-loaded{background:rgba(var(--c),.15)}
+@media (any-hover:hover){
+  #lpList li:is(.lg-loaded,.lg-h-in,.lg-h-out,.lg-h-search,.lg-h-red,.lg-h-amber,.lg-h-blue,.lg-h-violet):hover{background:rgba(var(--c),.19)}
+  #lpList li.lg-loaded:hover{background:rgba(var(--c),.27)}
+}
+#lpList .lp-badge.ev-in{background:rgba(0,150,150,.14);color:#006b6b}
+#lpList .lp-badge.ev-out{background:rgba(235,130,60,.16);color:#9a4a10}
+#lpList .lp-badge.ev-lock{background:rgba(225,190,20,.2);color:#7a5f00}
+#lpList .lp-badge.ev-fail,#lpList .lp-badge.ev-clear{background:rgba(214,69,69,.13);color:#a12a2a}
+#lpList .lp-badge.ev-print{background:rgba(10,132,255,.12);color:#0b4fa8}
+
+/* Activity popup: staff rows read differently from candidate cards */
+#lpList li.lp-evt{display:flex;align-items:flex-start;gap:12px;padding:11px 16px}
+.lp-evt .av{border-radius:10px;margin-top:1px;box-shadow:0 0 0 1.5px rgba(var(--c,0,0,0),.45),0 1px 3px rgba(53,13,24,.18)}
+.lp-evt .av.av-sys{background:#e9dfe1;color:#7d6c70;font-size:9px;letter-spacing:.06em}
+.lp-evt .ev-col{flex:1;min-width:0}
+.lp-evt .ev-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.lp-evt .ev-name{font-weight:700;font-size:13px;line-height:1.3;color:#350d18;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lp-evt .ev-name.none{color:#7d6c70;font-weight:600}
+.lp-evt .ev-line{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;margin-top:5px;font-size:11.5px;line-height:1.35;color:#5c4a4e}
+.lp-evt .lp-badge{display:inline-flex;align-items:center;gap:5px;margin-right:0;padding:2px 9px 2px 7px;font-size:9.5px;letter-spacing:.08em;border-radius:999px}
+.lp-evt .lp-badge::before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.85}
+.lp-evt .lg-role{font-weight:600;color:#4a3a3e}
+.lp-dot{display:inline-block;width:3px;height:3px;border-radius:50%;background:#cdb8bd;vertical-align:middle;margin:0 7px}
+.lp-evt .lp-dot{margin:0 -1px}
+.lg-rtext{color:#7d6c70}
+.lp-vbar{display:inline-block;width:1.5px;height:14px;border-radius:1px;background:#d9c5ca;flex-shrink:0}
+.lp-evt .ev-line{gap:4px 9px}
+@media (prefers-reduced-motion:reduce){
+  #logPage *{transition-duration:.01ms !important}
+}
+@media (prefers-reduced-transparency:reduce){
+  #logPage .lg-stat,#logPage .lg-tools,#logPage .lg-table th{-webkit-backdrop-filter:none;backdrop-filter:none}
+  #logPage .lg-stat,#logPage .lg-tools{background:#fff}
+  #logPage .lg-table th{background:#f9f3f4}
+}
+@media (prefers-contrast:more){
+  #logPage .lg-stat,#logPage .lg-tools,#logPage .lg-card{box-shadow:0 0 0 1px rgba(60,20,30,.45)}
+  #logPage .lg-table td{box-shadow:inset 0 -1px 0 rgba(60,20,30,.3)}
+}
+
+/* Blank filler rows: keep the table at 25 rows even when there are fewer entries */
+#logPage .lg-card{position:relative}
+#logPage .lg-table tbody tr.lg-fill td{height:56px;padding:0;pointer-events:none}
+#logPage .lg-table tbody tr.lg-fill:hover td{background:transparent}
+/* "No activity / nothing matches" message floats over the blank rows instead of sitting under them */
+#logPage .lg-empty{position:absolute;left:0;right:0;top:44px;bottom:0;display:flex;align-items:center;justify-content:center;padding:0 16px;pointer-events:none;font-weight:600}
+#logPage .lg-empty[hidden]{display:none}

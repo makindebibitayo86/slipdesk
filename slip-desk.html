@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Oyo State 2026 Compulsory Examination — Slip Desk</title>
+<link rel="icon" href="assets/icons/favicon.ico" sizes="48x48">
+<link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<meta name="theme-color" content="#0B6B3A">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/01-base.css?v=4">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link rel="stylesheet" href="css/02-portal.css">
+<link rel="stylesheet" href="css/03-activity-log.css">
+<link rel="stylesheet" href="css/04-tab-drop.css?v=2">
+<link rel="stylesheet" href="css/05-gate-polish.css">
+<link rel="stylesheet" href="css/07-legal.css">
+<link rel="stylesheet" href="css/08-press.css">
+<link rel="stylesheet" href="css/09-nav-notch.css?v=2">
+<link rel="stylesheet" href="css/10-upload-panel.css">
+<style>
+/* The Analysis page has its own Load register button, so the navbar one hides automatically while it is open */
+body.on-analysis #loadBtn,body:has(.tab[data-page="analysis"].active) #loadBtn{visibility:hidden!important;pointer-events:none!important}
+body.on-analysis #recPop,body:has(.tab[data-page="analysis"].active) #recPop{display:none!important}
+</style>
+</head>
+<body>
+<div id="gate" role="dialog" aria-modal="true" aria-labelledby="gateTitle">
+  <div class="gate-bg" aria-hidden="true"><i class="gb1"></i><i class="gb2"></i><b></b></div>
+  <div class="gate-box two" id="gateBox">
+    <div class="gate-grid">
+    <aside class="gate-info" aria-label="Instructions for staff">
+      <div class="gi-kick">Oyo State · 2026 Compulsory Exam</div>
+      <h3>Before you begin</h3>
+      <p class="gi-lead">Follow these steps each time you use the desk.</p>
+      <ol class="gi-steps">
+        <li><b>Sign in.</b> Type your own password. The desk recognises you and records your activity under your name. Never share it.</li>
+        <li><b>Load the register.</b> Use the gold <b>Load register</b> button at the top of the screen. Check that the record count matches the latest approved file.</li>
+        <li><b>Find the candidate.</b> Type a name, payment reference, exam number or phone number, then pick the person from the list.</li>
+        <li><b>Check payment.</b> Confirmed payments open the <b>Exam Slip</b>. Pending ones open the Registration Slip, and the exam slip stays greyed out.</li>
+        <li><b>Print, then step away safely.</b> Never issue a greyed-out slip. Hand it only to the candidate, and never alter it. Press <b>Clear</b> so no candidate details stay on screen. The desk also locks after 5 minutes idle.</li>
+      </ol>
+      <div class="gi-note">Candidate records are personal data. Do not photograph, copy or forward them. Report any lost device or misdirected printout to your supervising officer immediately.</div>
+    </aside>
+    <aside class="gate-info gi-pw" aria-label="Changing your password">
+      <div class="gi-kick">Oyo State · 2026 Compulsory Exam</div>
+      <h3>Change your password</h3>
+      <p class="gi-lead">You are signing in for the first time with a temporary password. Change it to your own now. It takes less than a minute.</p>
+      <ol class="gi-steps">
+        <li><b>Make it your own.</b> Use at least <span id="giMinPw">8</span> characters. Only you should know it.</li>
+        <li><b>Type it twice.</b> Enter it in both boxes. The two must match. Use the eye icon to check what you typed.</li>
+        <li><b>Make it different.</b> It cannot be the temporary password you were given, or the password of any other officer on this computer.</li>
+        <li><b>Keep it private.</b> Never share it or write it where others can see it. Your activity is recorded under your name.</li>
+        <li><b>Use the same computer.</b> Your password is saved on this computer only, so sign in here with it from now on.</li>
+      </ol>
+      <div class="gi-note">If you see a <b>Skip for now</b> link, you may keep the temporary password for the moment. Changing to your own password is strongly advised, so that only you can sign in under your name.</div>
+    </aside>
+    <div class="gate-form">
+    <button type="button" class="gate-back" id="gateBack" aria-label="Back to sign in"><span aria-hidden="true">←</span> Back</button>
+    <div class="gate-emblem"><div class="gate-crest"><img id="gateCrest" alt="Oyo State crest"></div>
+    <div class="gate-div" aria-hidden="true"><i></i></div>
+    <div class="gate-lock" aria-hidden="true"><svg viewBox="0 0 48 56" width="40" height="46"><g class="gl-shackle"><path d="M14 26V17a10 10 0 0 1 20 0v9" fill="none" stroke="#8b2d40" stroke-width="5" stroke-linecap="round"/></g><rect x="6" y="25" width="36" height="28" rx="6" fill="#c4962a"/><rect x="6" y="25" width="36" height="28" rx="6" fill="none" stroke="#8a6512" stroke-width="1.5"/><circle cx="24" cy="36.5" r="4" fill="#4a1220"/><rect x="22.4" y="38" width="3.2" height="8" rx="1.6" fill="#4a1220"/></svg></div></div>
+    <script>document.addEventListener("DOMContentLoaded",function(){var s=document.querySelector(".brandwrap .crest img"),g=document.getElementById("gateCrest");if(s&&g)g.src=s.src;});</script>
+    <h2 id="gateTitle">Slip Desk</h2>
+    <div class="gate-sep gs-in" aria-hidden="true"><i></i></div>
+    <div class="gate-greet gs-in">Welcome back</div>
+    <p id="gateSub">Enter your password to continue.</p>
+    <form id="gateForm" autocomplete="on" novalidate>
+    <input type="text" name="username" id="gateUser" value="slipdesk" autocomplete="username" tabindex="-1" aria-hidden="true" class="gate-ghost">
+    <label class="gate-lab" id="gateLab1" for="gatePw">Password</label>
+    <div class="gate-row">
+      <input type="password" id="gatePw" name="password" placeholder="Password" autocomplete="current-password" autocapitalize="off" spellcheck="false">
+      <button type="button" class="gate-eye" id="gateEye" aria-label="Show password" aria-pressed="false" title="Show / hide password"><svg class="ee" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><svg class="eo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.9 17.9A10.3 10.3 0 0 1 12 19C5.6 19 2 12 2 12a18.5 18.5 0 0 1 4.1-5.1M9.9 5.2A9.7 9.7 0 0 1 12 5c6.4 0 10 7 10 7a18.6 18.6 0 0 1-2.2 3.2M1 1l22 22"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg></button>
+    </div>
+    <label class="gate-lab" for="gatePw2">Confirm password</label>
+    <div class="gate-row" id="gateRow2" style="display:none">
+      <input type="password" id="gatePw2" name="new-password-confirm" placeholder="Repeat your new password" autocomplete="new-password" autocapitalize="off" spellcheck="false">
+      <button type="button" class="gate-eye" id="gateEye2" aria-label="Show password" aria-pressed="false" title="Show / hide password"><svg class="ee" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><svg class="eo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.9 17.9A10.3 10.3 0 0 1 12 19C5.6 19 2 12 2 12a18.5 18.5 0 0 1 4.1-5.1M9.9 5.2A9.7 9.7 0 0 1 12 5c6.4 0 10 7 10 7a18.6 18.6 0 0 1-2.2 3.2M1 1l22 22"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg></button>
+    </div>
+    <ul class="gate-hints" id="gateHints"><li id="ghLen"><i></i><span>At least 8 characters</span></li><li id="ghMatch"><i></i><span>Both passwords match</span></li></ul>
+    <button type="submit" class="gate-go" id="gateGo">Sign in</button>
+    <button type="button" id="gateSkip" class="gate-skip" style="display:none">Skip for now</button>
+    <div class="gate-help gs-in"><b>Forgot your password?</b><br>Ask your supervising officer to reset it.</div>
+    </form>
+    <div id="gateMsg" aria-live="polite"></div>
+    <div class="gate-foot">Every sign-in, sign-out and search is recorded under your name. Locks automatically after 5 minutes of inactivity.</div>
+    </div>
+    </div>
+    <div class="gate-hello" id="gateHello" aria-live="polite"></div>
+  </div>
+</div>
+<nav>
+  <div class="navleft">
+  <div class="brandwrap"><span class="crest"><img src="assets/crest.png" alt="Oyo State crest"></span><div class="brand"><b>Slip Desk</b><i class="sep" aria-hidden="true"></i><span class="tag"><span>Oyo State</span><span>2026 Compulsory Exam</span></span></div></div>
+  </div>
+  <div class="tabs-slot">
+  <div class="tabs">
+    <button class="tab active" data-page="registration">Registration Slip</button>
+    <button class="tab" data-page="exam">Exam Slip</button>
+    <button class="tab tab-an" id="anBtn" data-page="analysis" aria-haspopup="true" aria-expanded="false" title="Report, Analysis, Revenue, Attendances and Others"><span>Analytics</span><svg class="an-caret" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+    <button class="tab tab-log" id="logBtn" data-page="log" aria-haspopup="true" aria-expanded="false" title="Who signed in, when, what they searched, which register files were loaded and what was printed"><span class="lg-word">Activity log</span><span class="lg-n" id="logN">0</span></button>
+  </div>
+    <div class="logwrap">
+      <div class="logpop anpop" id="anPop" hidden role="menu" aria-label="Analytics">
+        <div class="lp-head"><b>Analytics</b><span>Jump straight to a page</span></div>
+        <div class="an-menu">
+          <button type="button" role="menuitem" data-an="breakdown"><b>Report</b><span>Confirmed and unconfirmed by zone or centre</span></button>
+          <button type="button" role="menuitem" data-an="analysis"><b>Analysis</b><span>Payment status, duplicates and records</span></button>
+          <button type="button" role="menuitem" data-an="revenue"><b>Revenue</b><span>What is expected, collected and owed</span></button>
+          <button type="button" role="menuitem" data-an="attendance"><b>Attendances</b><span>Attendance lists by zone and exam centre</span></button>
+          <button type="button" role="menuitem" data-an="others"><b>Others</b><span>Pending, flagged, missing details, duplicates</span></button>
+        </div>
+      </div>
+    </div>
+    <div class="logwrap">
+      <div class="logpop" id="logPop" hidden>
+        <div class="lp-head"><b>Activity log</b><span id="lpCount"></span></div>
+        <div class="lp-filter"><select id="lpUser" aria-label="Filter by user"><option value="">All users</option></select><select id="lpType" aria-label="Filter by activity"><option value="">All activity</option><option value="search">Searches</option><option value="file">Register files</option><option value="print">Printing</option><option value="access">Sign-ins &amp; account</option></select></div>
+        <ul class="lp-list" id="lpList"></ul>
+        <div class="lp-foot">
+          <button type="button" class="lp-open" id="lpOpen">Open full log <span class="arw arw-r" aria-hidden="true">&rarr;</span></button>
+          <button type="button" class="lp-dl" id="lpDl"><span class="arw arw-d" aria-hidden="true">⬇</span> Download log (.xlsx)</button>
+          <button type="button" class="lp-clr" id="lpClr">Clear log</button>
+          <div class="lp-note">Records who signed in and out, every search each person ran, every register file loaded or changed, and every slip printed. Kept in this browser on this station. It contains candidate names and references: download it regularly and handle it under the same privacy rules as the register. Only an administrator can clear it.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="navright">
+    <label class="loadbtn" id="loadBtn" for="xlsxFile" data-state="empty" aria-haspopup="true" aria-expanded="false" title="Load the candidates register (.xlsx / .csv)">
+      <span class="lb-prog" aria-hidden="true"></span>
+      <span class="lb-ico">📂</span>
+      <span class="lb-text"><span class="lb-main">Load register</span></span>
+      <input type="file" id="xlsxFile" accept=".xlsx,.xls,.csv">
+    </label>
+    <div class="recpop" id="recPop" hidden role="dialog" aria-label="Register breakdown">
+      <div class="rp-head"><b>Register breakdown</b><span id="rpSub"></span></div>
+      <div class="rp-body" id="rpBody"></div>
+      <div class="rp-foot">
+        <label for="xlsxFile" id="rpLoad">📂 Load a different register</label>
+        <div class="rp-note">Counted from the register loaded on this desk. A duplicate is the same person registered more than once: same date of birth and name, in any order or with a middle name left off.</div>
+      </div>
+    </div>
+    <div class="uppop" id="upPop" hidden role="dialog" aria-label="Load register">
+      <div class="up-head"><b>Load register</b><span>.xlsx, .xls or .csv</span></div>
+      <div class="up-body">
+        <div class="up-zone" id="upZone" role="button" tabindex="0" aria-label="Choose a register file, or drop one here">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+          <b class="up-t"></b><span class="up-s"></span>
+        </div>
+        <div class="up-file">
+          <span class="up-fi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg></span>
+          <div class="up-fm">
+            <div class="up-fn"><span class="up-name"></span><em class="up-pct">0%</em></div>
+            <div class="up-fs" aria-live="polite"></div>
+            <div class="up-bar"><i></i></div>
+          </div>
+        </div>
+        <div class="up-ask" role="alertdialog" aria-label="Replace the loaded register?">
+          <b>Replace the loaded register?</b>
+          <p class="up-askp"></p>
+          <div class="up-btns"><button type="button" class="up-no">Cancel</button><button type="button" class="up-yes">Replace</button></div>
+        </div>
+        <p class="up-msg" role="alert"></p>
+      </div>
+    </div>
+    <button type="button" class="signoutbtn" id="signOutBtn" aria-label="Sign out" title="Sign out and lock the desk"><span class="so-av" id="soAv"></span><span class="so-t"><span class="so-name" id="soName"></span><span class="so-who" id="soWho"></span></span><i class="so-div" aria-hidden="true"></i><svg class="so-ico" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><g class="so-arrow"><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></g></svg></button>
+
+  </div>
+</nav>
+<main>
+  <iframe id="f-registration" class="active" title="Registration Slip"></iframe>
+  <iframe id="f-exam" title="Exam Slip"></iframe>
+  <iframe id="f-log" title="Activity log"></iframe>
+  <iframe id="f-analysis" title="Analytics"></iframe>
+  <iframe id="f-legal" title="Legal"></iframe>
+  <iframe id="f-print" title="Print attendance list"></iframe>
+</main>
+
+<script src="pages/registration.js"></script>
+<script src="pages/exam.js"></script>
+<script src="pages/log.js"></script>
+<script src="pages/analysis.js?v=26"></script>
+<script src="pages/legal.js"></script>
+<script src="pages/print.js?v=18"></script>
+<script src="js/app.js?v=11"></script>
+<script src="js/upload-panel.js"></script>
+<script src="js/gate.js"></script>
+<script src="js/sync.js"></script>
+<script src="js/nav-notch.js?v=2"></script>
+</body>
+</html>

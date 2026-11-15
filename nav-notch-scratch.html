@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Slip Desk — nav notch scratch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- The project's own stylesheets, same order as slip-desk.html: the navbar is styled by the real rules, not a copy -->
+<link rel="stylesheet" href="css/01-base.css?v=4">
+<link rel="stylesheet" href="css/02-portal.css">
+<link rel="stylesheet" href="css/03-activity-log.css">
+<link rel="stylesheet" href="css/04-tab-drop.css?v=2">
+<link rel="stylesheet" href="css/05-gate-polish.css">
+<link rel="stylesheet" href="css/07-legal.css">
+<link rel="stylesheet" href="css/08-press.css">
+<style>
+/* ===== NOTCH. Adds an idle state to .tabs. Its look, its height and the tabs themselves are untouched ===== */
+:root{
+  --ease-in-out:cubic-bezier(0.77,0,0.175,1);        /* --ease-out already exists in 02-portal.css */
+  --ease-island:cubic-bezier(.32,.72,0,1);           /* long, soft landing: the fold and every resize */
+  --ease-spring:cubic-bezier(.34,1.32,.5,1);         /* a small overshoot that settles: the unfold */
+  --nt-gold:#e2b84d;--nt-gold-hi:#f6dc8c;--nt-gold-lo:#b48620;
+}
+.tabs{
+  --nt-dur:560ms;--nt-ease:var(--ease-spring);
+  transition:width var(--nt-dur) var(--nt-ease),background-color 400ms ease-out,border-color 400ms ease-out,box-shadow 400ms ease-out;
+}
+
+/* ===== The notch: lacquered oxblood-black, a hairline of gold, a faint light from above ===== */
+.tabs.idle{
+  --nt-dur:520ms;--nt-ease:var(--ease-island);
+  background-color:rgba(18,5,9,.96);border-color:rgba(226,184,77,.55);
+  box-shadow:
+    inset 0 1px 0 rgba(255,238,190,.22),
+    inset 0 -1px 0 rgba(0,0,0,.5),
+    0 0 0 1px rgba(0,0,0,.4),
+    0 14px 30px -10px rgba(0,0,0,.75),
+    0 0 22px -6px rgba(226,184,77,.28);
+}
+.tabs.idle,.tabs.morph{overflow:hidden}
+
+.nt-sheen{position:absolute;inset:0;border-radius:inherit;overflow:hidden;pointer-events:none;z-index:0;opacity:0;transition:opacity 420ms ease-out}
+.nt-sheen::before{content:"";position:absolute;inset:0;
+  background:radial-gradient(90% 160% at 50% -55%,rgba(226,184,77,.26),transparent 62%),linear-gradient(180deg,rgba(255,255,255,.07),transparent 46%)}
+.nt-sheen::after{content:"";position:absolute;top:0;bottom:0;left:0;width:46%;transform:translateX(-140%);
+  background:linear-gradient(105deg,transparent 28%,rgba(255,238,190,.2) 50%,transparent 72%)}
+.tabs.idle .nt-sheen{opacity:1}
+.tabs.idle .nt-sheen::after{animation:ntSheen 8s var(--ease-in-out) 1.4s infinite}
+@keyframes ntSheen{0%{transform:translateX(-140%)}38%,100%{transform:translateX(330%)}}
+
+/* Choreography. Folding: the tabs blur out fast while the bar narrows, then the notch text arrives once the pill is nearly its size.
+   Unfolding: the notch text leaves at once, the bar opens, then the tabs arrive one after another (--i is set per tab in the script). */
+.tabs .tab{transition:transform 140ms var(--ease-out),color 260ms ease-out,
+  opacity 280ms ease-out calc(170ms + var(--i,0)*40ms),filter 280ms ease-out calc(170ms + var(--i,0)*40ms)}
+.tabs.idle .tab{flex:none;opacity:0;filter:blur(3px);pointer-events:none;
+  transition-duration:140ms,260ms,150ms,150ms;transition-delay:0s,0s,0s,0s}
+.tabs.idle .tab-drop{opacity:0!important}
+
+.nt-inner{
+  position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;
+  opacity:0;filter:blur(4px);transform:scale(.9);pointer-events:none;
+  transition:opacity 140ms ease-out,filter 140ms ease-out,transform 200ms ease-out;
+}
+.tabs.idle .nt-inner{
+  opacity:1;filter:none;transform:none;
+  transition:opacity 240ms ease-out 220ms,filter 240ms ease-out 220ms,transform 420ms var(--ease-island) 220ms;
+}
+/* slide change inside the notch: the old slide blurs away quickly, the pill resizes, the new slide settles in */
+.tabs.idle .nt-inner.swap{
+  opacity:0;filter:blur(4px);transform:scale(.94);
+  transition:opacity 150ms ease-out,filter 150ms ease-out,transform 150ms ease-out;
+}
+
+/* ===== Type. Numerals are the hero: Crimson Pro, lining + tabular figures, gold leaf gradient.
+         Labels are small, upper-case and widely tracked. Everything else is quiet DM Sans. ===== */
+.nt-row{display:flex;align-items:center;gap:15px;white-space:nowrap;color:#fff;font-family:'DM Sans',system-ui,sans-serif;font-variant-numeric:lining-nums tabular-nums}
+.nt-num{
+  display:inline-flex;align-items:baseline;font-family:'Crimson Pro',Georgia,serif;font-weight:700;font-size:28px;line-height:1;letter-spacing:-.012em;
+  font-feature-settings:'lnum' 1,'tnum' 1;
+  background:linear-gradient(180deg,#fff6d4 0%,var(--nt-gold-hi) 28%,var(--nt-gold) 62%,var(--nt-gold-lo) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 1px 0 rgba(0,0,0,.45));
+}
+.nt-num small{font-size:15px;font-weight:600;letter-spacing:0;margin-left:2px;opacity:.78}
+.nt-num.word{font-size:25px;letter-spacing:.005em;font-style:italic}
+.nt-clock{display:inline-flex;align-items:center;gap:6px}
+.nt-ss{display:flex;flex-direction:column;align-items:flex-start;gap:0;line-height:1}
+.nt-ampm{font-family:'DM Sans',system-ui,sans-serif;font-size:9.5px;font-weight:700;letter-spacing:.2em;color:var(--nt-gold)}
+.nt-sec{font-family:'Crimson Pro',Georgia,serif;font-size:16px;font-weight:700;line-height:.8;margin-top:-1px;color:var(--nt-gold-hi);opacity:.85;font-feature-settings:'lnum' 1,'tnum' 1}
+.nt-rule{display:block;width:1px;height:24px;background:linear-gradient(180deg,transparent,rgba(226,184,77,.75) 50%,transparent)}
+.nt-stack{display:flex;flex-direction:column;gap:3px;line-height:1;text-align:left}
+.nt-cap{display:flex;align-items:center;gap:6px;font-size:9.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--nt-gold)}
+.nt-line{font-size:12.5px;font-weight:500;letter-spacing:.01em;color:rgba(255,255,255,.92)}
+.nt-live{display:block;width:5px;height:5px;border-radius:50%;background:var(--nt-gold-hi);box-shadow:0 0 0 0 rgba(246,220,140,.7);animation:ntLive 2s ease-out infinite}
+@keyframes ntLive{0%{box-shadow:0 0 0 0 rgba(246,220,140,.7)}70%,100%{box-shadow:0 0 0 6px rgba(246,220,140,0)}}
+.nt-done{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;border:1px solid rgba(226,184,77,.7);color:var(--nt-gold-hi);box-shadow:inset 0 0 8px rgba(226,184,77,.25)}
+
+/* weather */
+.nt-day{display:flex;align-items:center;gap:9px}
+.nt-wi{display:grid;place-items:center;color:var(--nt-gold-hi);filter:drop-shadow(0 0 6px rgba(226,184,77,.35))}
+.nt-day .nt-line{display:flex;align-items:baseline;gap:6px}
+.nt-deg{font-family:'Crimson Pro',Georgia,serif;font-size:18px;font-weight:700;line-height:1;color:#fff;font-feature-settings:'lnum' 1,'tnum' 1}
+.nt-lo{font-family:'Crimson Pro',Georgia,serif;font-size:15px;font-weight:600;line-height:1;color:rgba(255,255,255,.5);font-feature-settings:'lnum' 1,'tnum' 1}
+.nt-rain{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--nt-gold);margin-left:2px}
+
+/* keyboard wake is instant: a Tab press should never wait on an animation */
+.tabs.snap,.tabs.snap .tab,.tabs.snap .nt-inner{transition-duration:0s!important;transition-delay:0s!important}
+/* reduced motion: no width morph, keep the gentle fades */
+@media (prefers-reduced-motion:reduce){
+  .tabs{transition-property:background-color,border-color,box-shadow}
+  .tabs .tab,.nt-inner{transition-delay:0s!important;filter:none!important;transform:none!important}
+  .nt-sheen::after,.nt-live{animation:none!important}
+}
+
+.scratch-note{margin:auto;max-width:520px;padding:64px 24px;text-align:center;color:#6b4a54;font-size:14px;line-height:1.7}
+/* ===== UPLOAD PANEL (opens under the Load register button) ===== */
+#upPanel{position:fixed;z-index:2000;top:0;left:0;width:620px;max-width:calc(100vw - 24px);box-sizing:border-box;padding:28px;border-radius:16px;
+  background:rgb(22,6,11);color:#fff;border:1px solid rgba(226,184,77,.5);
+  box-shadow:inset 0 1px 0 rgba(255,238,190,.16),0 22px 44px -12px rgba(0,0,0,.7),0 0 26px -8px rgba(226,184,77,.25);
+  font:18px/1.4 "DM Sans",system-ui,sans-serif;
+  opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-8px) scale(.97);transform-origin:var(--ax,85%) 0;
+  transition:opacity .2s ease,transform .32s var(--ease-spring),visibility 0s .32s}
+#upPanel.open{opacity:1;visibility:visible;pointer-events:auto;transform:none;transition:opacity .2s ease,transform .32s var(--ease-spring),visibility 0s}
+#upPanel::before{content:"";position:absolute;top:-6px;left:var(--ax,85%);width:10px;height:10px;margin-left:-5px;transform:rotate(45deg);
+  background:rgb(22,6,11);border-left:1px solid rgba(226,184,77,.5);border-top:1px solid rgba(226,184,77,.5)}
+#upPanel .up-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin:0 2px 20px}
+#upPanel .up-head b{font-family:"Crimson Pro",Georgia,serif;font-size:30px;font-weight:700;letter-spacing:.2px}
+#upPanel .up-head small{color:rgba(255,255,255,.55);font-size:16px}
+#upPanel .up-zone{display:flex;flex-direction:column;align-items:center;gap:6px;padding:72px 28px;text-align:center;cursor:pointer;outline:none;
+  border:1.5px dashed rgba(226,184,77,.55);border-radius:12px;background:rgba(226,184,77,.05);
+  transition:background .15s,border-color .15s,transform .25s var(--ease-spring)}
+#upPanel .up-zone:hover{background:rgba(226,184,77,.1);border-color:#e2b84d}
+#upPanel .up-zone:focus-visible{border-color:#e2b84d;box-shadow:0 0 0 2px rgba(226,184,77,.5)}
+#upPanel .up-zone svg{width:60px;height:60px;margin-bottom:10px;fill:none;stroke:#e2b84d;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:transform .25s var(--ease-spring)}
+#upPanel .up-zone:hover svg{transform:translateY(-2px)}
+#upPanel .up-t{font-size:24px;font-weight:600}
+#upPanel .up-s{font-size:18px;color:rgba(255,255,255,.6)}
+#upPanel.is-hint .up-zone{border-color:#e2b84d;background:rgba(226,184,77,.12);animation:upPulse 1.2s ease-in-out infinite}
+#upPanel.is-drag .up-zone{animation:none;border-style:solid;border-color:#f6dc8c;background:rgba(226,184,77,.2);transform:scale(1.02)}
+#upPanel.is-drag .up-zone svg{transform:translateY(-4px)}
+@keyframes upPulse{50%{box-shadow:0 0 0 4px rgba(226,184,77,.18)}}
+#upPanel.is-err .up-zone{border-color:#ef8a80;background:rgba(236,120,110,.1);animation:upShake .4s}
+@keyframes upShake{20%{transform:translateX(-6px)}40%{transform:translateX(5px)}60%{transform:translateX(-4px)}80%{transform:translateX(2px)}}
+#upPanel .up-msg{margin:14px 2px 0;font-size:16.5px;color:#f19a91}
+#upPanel .up-msg:empty{display:none}
+#upPanel .up-file,#upPanel .up-ask{display:none}
+#upPanel.is-load .up-file{display:flex;align-items:center;gap:11px;padding:12px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(226,184,77,.3)}
+#upPanel.is-ask .up-ask{display:block}
+#upPanel.is-load .up-zone,#upPanel.is-ask .up-zone{display:none}
+#upPanel .up-fi{flex:none;width:60px;height:60px;border-radius:15px;display:grid;place-items:center;background:rgba(226,184,77,.15)}
+#upPanel .up-fi svg{width:30px;height:30px;fill:none;stroke:#e2b84d;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#upPanel .up-fm{flex:1;min-width:0}
+#upPanel .up-fn{display:flex;justify-content:space-between;gap:8px;font-weight:600;font-size:19px}
+#upPanel .up-fn span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#upPanel .up-fn em{font-style:normal;color:#e2b84d;font-variant-numeric:tabular-nums}
+#upPanel .up-fs{margin-top:3px;font-size:16px;color:rgba(255,255,255,.55)}
+#upPanel .up-bar{height:9px;margin-top:12px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden}
+#upPanel .up-bar i{display:block;height:100%;width:calc(var(--p,0)*100%);border-radius:inherit;background:linear-gradient(90deg,#b48620,#f6dc8c)}
+#upPanel .up-ask b{display:block;font-size:22px}
+#upPanel .up-ask p{margin:6px 0 20px;font-size:17.5px;color:rgba(255,255,255,.65)}
+#upPanel .up-btns{display:flex;gap:8px}
+#upPanel .up-btns button{flex:1;padding:16px 16px;border-radius:12px;font-size:17.5px;font:inherit;font-weight:600;cursor:pointer;color:#fff;background:transparent;border:1px solid rgba(226,184,77,.5)}
+#upPanel .up-btns button:hover{background:rgba(226,184,77,.14)}
+#upPanel .up-btns .up-yes{background:#e2b84d;border-color:#e2b84d;color:#350d18}
+#upPanel .up-btns .up-yes:hover{background:#f6dc8c}
+#upPanel .up-btns button:focus-visible{outline:2px solid #e2b84d;outline-offset:2px}
+/* the navbar button while a file is being read (the project's own .lb-prog rules can replace this) */
+#loadBtn[data-state="loading"]{position:relative;overflow:hidden}
+#loadBtn[data-state="loading"] .lb-prog{position:absolute;left:0;top:0;bottom:0;width:calc(var(--lbp,0)*100%);background:rgba(226,184,77,.3);pointer-events:none;opacity:1}
+@media(prefers-reduced-motion:reduce){#upPanel,#upPanel.open{transition:opacity .15s}#upPanel.is-hint .up-zone,#upPanel.is-err .up-zone{animation:none}}
+</style>
+</head>
+<body>
+
+<!-- Navbar: copied verbatim from slip-desk.html (hidden dropdown panels left out) -->
+<nav>
+  <div class="navleft">
+  <div class="brandwrap"><span class="crest"><img src="assets/crest.png" alt="Oyo State crest"></span><div class="brand"><b>Slip Desk</b><i class="sep" aria-hidden="true"></i><span class="tag"><span>Oyo State</span><span>2026 Compulsory Exam</span></span></div></div>
+  </div>
+  <div class="tabs-slot">
+  <div class="tabs">
+    <button class="tab active" data-page="registration">Registration Slip</button>
+    <button class="tab" data-page="exam">Exam Slip</button>
+    <button class="tab tab-an" id="anBtn" data-page="analysis" aria-haspopup="true" aria-expanded="false" title="Report, Analysis, Revenue, Attendances and Others"><span>Analytics</span><svg class="an-caret" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+    <button class="tab tab-log" id="logBtn" data-page="log" aria-haspopup="true" aria-expanded="false" title="Who signed in, when, what they searched, which register files were loaded and what was printed"><span class="lg-word">Activity log</span><span class="lg-n" id="logN">0</span></button>
+  </div>
+  </div>
+  <div class="navright">
+    <label class="loadbtn" id="loadBtn" for="xlsxFile" data-state="empty" aria-haspopup="true" aria-expanded="false" title="Load the candidates register (.xlsx / .csv)">
+      <span class="lb-prog" aria-hidden="true"></span>
+      <span class="lb-ico">📂</span>
+      <span class="lb-text"><span class="lb-main">Load register</span></span>
+      <input type="file" id="xlsxFile" accept=".xlsx,.xls,.csv">
+    </label>
+    <button type="button" class="signoutbtn" id="signOutBtn" aria-label="Sign out" title="Sign out and lock the desk"><span class="so-av" id="soAv"></span><span class="so-t"><span class="so-name" id="soName"></span><span class="so-who" id="soWho"></span></span><i class="so-div" aria-hidden="true"></i><svg class="so-ico" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><g class="so-arrow"><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></g></svg></button>
+  </div>
+</nav>
+<main style="flex:1;display:flex"><p class="scratch-note">Slip Desk is an IT support tool from the Office of the Head of Service, Oyo State Government Secretariat, to help colleagues deal with issues on site during the 2026 Compulsory Examination. Load the candidates’ register to look up a candidate, check payment and print their slip, or to analyse the registration data. The activity log records who signed in, what they searched and what was printed.</p></main>
+
+<script>
+/* ---- demo state so the bar looks like your screenshot (the real app fills these from sign-in and the register) ---- */
+(function(){
+  var av=document.createElement('span');av.className='av';av.style.width=av.style.height='32px';av.style.fontSize='13px';
+  var im=new Image();im.alt='';im.src='assets/avatars/makinde.jpg';av.appendChild(im);document.getElementById('soAv').appendChild(av);
+  document.getElementById('soName').textContent='Makinde';
+  document.getElementById('soWho').textContent='Computer Engineer';
+  document.getElementById('logN').textContent='5';
+  var lb=document.getElementById('loadBtn');lb.dataset.state='loaded';
+  lb.querySelector('.lb-ico').textContent='✓';
+  lb.querySelector('.lb-main').innerHTML='<span class="lb-num">22,589</span> <span class="lb-word">Records</span>';
+})();
+
+/* ---- Tab switcher: copied verbatim from js/app.js (your sliding bubble) ---- */
+(function () {
+  const tabs = document.querySelector('.tabs'); if (!tabs) return;
+  const drop = document.createElement('span'); drop.className = 'tab-drop'; drop.setAttribute('aria-hidden', 'true');
+  tabs.prepend(drop);
+  let cur = null, anim = null, shown = false;
+  const reduced = () => window.matchMedia && matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const put = g => { drop.style.top = g.y + 'px'; drop.style.height = g.h + 'px'; drop.style.width = g.w + 'px'; drop.style.transform = 'translateX(' + g.x + 'px)'; };
+  window.moveTabDrop = function (animate) {
+    const t = tabs.querySelector('.tab.active');
+    if (!t) { drop.style.opacity = '0'; shown = false; return; }
+    const g = { x: t.offsetLeft, w: t.offsetWidth, y: t.offsetTop, h: t.offsetHeight };
+    if (anim) { anim.cancel(); anim = null; }
+    const from = cur;
+    put(g); cur = g;
+    if (!shown) { drop.style.opacity = '1'; shown = true; return; }
+    if (!animate || !from || reduced() || (from.x === g.x && from.w === g.w)) return;
+    const x0 = Math.min(from.x, g.x), x1 = Math.max(from.x + from.w, g.x + g.w);
+    const dur = 560;
+    anim = drop.animate([
+      { transform: 'translateX(' + from.x + 'px)', width: from.w + 'px', offset: 0 },
+      { transform: 'translateX(' + x0 + 'px)', width: (x1 - x0) + 'px', offset: .42, easing: 'cubic-bezier(.25,1,.35,1)' },
+      { transform: 'translateX(' + g.x + 'px)', width: g.w + 'px', offset: 1 }
+    ], { duration: dur, easing: 'cubic-bezier(.45,0,.2,1)' });
+    anim.onfinish = anim.oncancel = () => { anim = null; };
+  };
+  moveTabDrop(false);
+  if (window.ResizeObserver) new ResizeObserver(() => { if (!anim) { const t = tabs.querySelector('.tab.active'); if (t) { shown = true; put(cur = { x: t.offsetLeft, w: t.offsetWidth, y: t.offsetTop, h: t.offsetHeight }); } } }).observe(tabs);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => moveTabDrop(false));
+})();
+/* scratch-only: in the real app show() does this */
+document.querySelector('.tabs').addEventListener('click', e => {
+  const b = e.target.closest('.tab'); if (!b || b.id === 'anBtn') return;
+  document.querySelectorAll('.tabs .tab').forEach(t => t.classList.toggle('active', t === b));
+  moveTabDrop(true);
+});
+
+/* ================= CLICK AWAY =================
+   Any popover or box that can be open registers here: { els: [elements that count as "inside"], isOpen(), close() }.
+   A press anywhere outside those elements closes it. In the project, the Analytics and Activity-log dropdowns register the same way. */
+window.ClickAway = (function () {
+  const uis = [];
+  document.addEventListener('pointerdown', e => {
+    uis.forEach(u => {
+      try {
+        const els = typeof u.els === 'function' ? u.els() : u.els;
+        if (u.isOpen() && !els.some(el => el && el.contains(e.target))) u.close();
+      } catch (_) {}
+    });
+  }, true);
+  return { register: u => uis.push(u) };
+})();
+
+/* ================= NOTCH ================= */
+(function () {
+  const IDLE_MS = 3000, NEAR_PX = 90, LEAVE_MS = 900, SLIDE_MS = 5000, TZ = 'Africa/Lagos';
+  const EX1 = '2026-11-27', EX2 = '2026-11-28';
+  const tabs = document.querySelector('.tabs');
+  const sheen = document.createElement('div'); sheen.className = 'nt-sheen'; sheen.setAttribute('aria-hidden', 'true'); tabs.appendChild(sheen);
+  const inner = document.createElement('div'); inner.className = 'nt-inner';
+  const row = document.createElement('div'); row.className = 'nt-row';
+  inner.appendChild(row); tabs.appendChild(inner);
+  tabs.querySelectorAll('.tab').forEach((t, i) => t.style.setProperty('--i', i));   // stagger order for the unfold
+
+  /* --- slide data --- */
+  const ymd = (d = new Date()) => new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit' }).format(d);
+  const utc = s => { const [y, m, d] = s.split('-').map(Number); return Date.UTC(y, m - 1, d); };
+  const tf = new Intl.DateTimeFormat('en-US', { timeZone: TZ, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+  const wdF = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, weekday: 'long' });
+  const dmF = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, day: 'numeric', month: 'long' });
+  const dayLbl = s => new Intl.DateTimeFormat('en-GB', { timeZone: 'UTC', weekday: 'short', day: 'numeric' }).format(new Date(utc(s)));
+  const part = (ps, t) => (ps.find(p => p.type === t) || {}).value || '';
+
+  /* building blocks: a big gold numeral, a hairline rule, and a two-line stack (tracked CAPS label over a quiet line) */
+  const rule = '<i class="nt-rule"></i>';
+  const num = (n, small) => '<span class="nt-num">' + n + (small ? '<small>' + small + '</small>' : '') + '</span>';
+  const stack = (cap, line, live) => '<span class="nt-stack"><span class="nt-cap">' + (live ? '<i class="nt-live"></i>' : '') + cap + '</span><span class="nt-line">' + line + '</span></span>';
+  const svg = (inner, w) => '<svg viewBox="0 0 24 24" width="' + (w || 22) + '" height="' + (w || 22) + '" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + inner + '</svg>';
+  const CLOUD = '<path d="M7 16a4 4 0 0 1-.6-7.96A5.5 5.5 0 0 1 17 7.5a4.2 4.2 0 0 1 .5 8.5H7z"/>';
+  const ICON = {
+    sun:   '<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4L6 18M18 6l1.4-1.4"/>',
+    part:  '<circle cx="8.5" cy="8.5" r="3"/><path d="M8.5 2.5v1.5M2.5 8.5H4M4.4 4.4l1 1M12.6 4.4l-1 1"/><path d="M10 20a3.5 3.5 0 0 1-.4-7A4.8 4.8 0 0 1 19 13.2a3.4 3.4 0 0 1 .2 6.8H10z"/>',
+    cloud: '<path d="M7 19a4 4 0 0 1-.6-7.96A5.5 5.5 0 0 1 17 10.5a4.2 4.2 0 0 1 .5 8.5H7z"/>',
+    fog:   '<path d="M4 9h16M3 13h18M6 17h12"/>',
+    rain:  CLOUD + '<path d="M8.5 19l-1 2M12.5 19l-1 2M16.5 19l-1 2"/>',
+    storm: CLOUD + '<path d="M12.8 14.5l-2.3 3.5h3l-2.3 3.5"/>'
+  };
+  const wmo = c => svg(ICON[c === 0 ? 'sun' : c <= 2 ? 'part' : c === 3 ? 'cloud' : c <= 48 ? 'fog' : c >= 95 ? 'storm' : 'rain']);
+  const DROP = '<svg viewBox="0 0 24 24" width="9" height="9" fill="currentColor" aria-hidden="true"><path d="M12 2.5c3.2 4 6 7.3 6 11a6 6 0 0 1-12 0c0-3.7 2.8-7 6-11z"/></svg>';
+
+  function countdown() {
+    const t = utc(ymd()), d1 = (utc(EX1) - t) / 864e5, d2 = (utc(EX2) - t) / 864e5;
+    if (d1 > 1)  return num(d1) + rule + stack('Days to exam', 'Fri 27 – Sat 28 November');
+    if (d1 === 1) return '<span class="nt-num word">Tomorrow</span>' + rule + stack('Exam begins', 'Friday 27 November');
+    if (d1 === 0) return num(1, '/2') + rule + stack('Exam day', 'Today · Day 2 is tomorrow', true);
+    if (d2 === 0) return num(2, '/2') + rule + stack('Exam day', 'Today · final day', true);
+    return '<span class="nt-done">' + svg('<path d="M5 12.5l4.5 4.5L19 7.5"/>', 15) + '</span>' + rule + stack('Exam complete', '27 – 28 November');
+  }
+  let wx = null;
+  fetch('https://api.open-meteo.com/v1/forecast?latitude=7.38&longitude=3.95&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Africa%2FLagos&forecast_days=16')
+    .then(r => r.json()).then(j => {
+      const o = {}; j.daily.time.forEach((d, i) => o[d] = { c: j.daily.weather_code[i], hi: Math.round(j.daily.temperature_2m_max[i]), lo: Math.round(j.daily.temperature_2m_min[i]), p: j.daily.precipitation_probability_max[i] });
+      if (o[EX1] || o[EX2]) wx = o;
+    }).catch(() => {});
+
+  const slides = [
+    () => countdown(),
+    () => {
+      const now = new Date(), p = tf.formatToParts(now);
+      return '<span class="nt-clock"><span class="nt-num" id="ntHM">' + part(p, 'hour') + ':' + part(p, 'minute') + '</span>' +
+        '<span class="nt-ss"><span class="nt-ampm" id="ntAP">' + part(p, 'dayPeriod') + '</span><span class="nt-sec" id="ntS">' + part(p, 'second') + '</span></span></span>' +
+        rule + stack(wdF.format(now), dmF.format(now));
+    },
+    () => {
+      if (!wx) return null;
+      const d = k => { const w = wx[k]; if (!w) return ''; return '<span class="nt-day"><span class="nt-wi">' + wmo(w.c) + '</span><span class="nt-stack"><span class="nt-cap">' + dayLbl(k) + '</span><span class="nt-line"><b class="nt-deg">' + w.hi + '°</b><span class="nt-lo">' + w.lo + '°</span><span class="nt-rain">' + DROP + w.p + '%</span></span></span></span>'; };
+      return stack('Ibadan', 'Exam forecast') + rule + d(EX1) + rule + d(EX2);
+    }
+  ];
+
+  /* --- sizing: only width ever changes, the height stays exactly the tab bar's --- */
+  let fullW = 0, idx = 0, slideT = null, notchW = 0;
+  const idle = () => tabs.classList.contains('idle');
+  function measureFull() { if (!idle()) fullW = tabs.offsetWidth; }
+  /* Clock slide: size the hour:minute numerals so their ink is exactly as tall as the AM + seconds stack, and line the two up top and bottom.
+     Measured from real glyph ink (canvas metrics + the element's text rect), so it holds for any font size or if the font falls back. */
+  const cv = document.createElement('canvas').getContext('2d');
+  function fitClock() {
+    const hm = document.getElementById('ntHM'), ap = document.getElementById('ntAP'), sc = document.getElementById('ntS');
+    if (!hm || !ap || !sc) return;
+    const ss = ap.parentNode, k = (inner.getBoundingClientRect().width / inner.offsetWidth) || 1;   // the notch scales while it fades in
+    const ink = (el, txt) => {
+      const cs = getComputedStyle(el); cv.font = cs.fontStyle + ' ' + cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+      const m = cv.measureText(txt); if (m.fontBoundingBoxAscent == null) return null;
+      const r = document.createRange(); r.selectNodeContents(el);
+      const base = r.getBoundingClientRect().top + m.fontBoundingBoxAscent * k;
+      return { top: base - m.actualBoundingBoxAscent * k, bot: base + m.actualBoundingBoxDescent * k, asc: m.actualBoundingBoxAscent };
+    };
+    ss.style.transform = ''; hm.style.fontSize = '';
+    let a = ink(ap, ap.textContent), c = ink(sc, '0'), h = ink(hm, 'H');
+    if (!a || !c || !h) return;
+    const target = (c.bot - a.top) / k;                          // AM top to seconds baseline, in CSS px
+    hm.style.fontSize = (parseFloat(getComputedStyle(hm).fontSize) * target / h.asc) + 'px';
+    a = ink(ap, ap.textContent); c = ink(sc, '0'); h = ink(hm, 'H');
+    ss.style.transform = 'translateY(' + ((((h.top + h.bot) - (a.top + c.bot)) / 2) / k) + 'px)';   // centre the stack on the numerals
+  }
+  function render(animate) {
+    let s = null, tries = 0;
+    while (!s && tries++ < slides.length) { s = slides[idx % slides.length](); if (!s) idx++; }
+    const paint = () => {
+      row.innerHTML = s; fitClock();
+      notchW = Math.ceil(row.offsetWidth) + 56;
+      if (idle()) tabs.style.width = notchW + 'px';
+    };
+    if (!animate) { paint(); return; }
+    inner.classList.add('swap');
+    setTimeout(() => { paint(); inner.classList.remove('swap'); }, 160);
+  }
+  setInterval(() => {
+    const a = document.getElementById('ntHM'); if (!a) return;
+    const p = tf.formatToParts(new Date());
+    a.textContent = part(p, 'hour') + ':' + part(p, 'minute');
+    document.getElementById('ntS').textContent = part(p, 'second');
+    document.getElementById('ntAP').textContent = part(p, 'dayPeriod');
+  }, 1000);
+
+  /* --- idle <-> awake --- */
+  let idleT, leaveT = null, morphT;
+  function collapse() {
+    if (idle()) return;
+    if (document.getElementById('anBtn').getAttribute('aria-expanded') === 'true' || tabs.contains(document.activeElement)) return;
+    measureFull();
+    tabs.style.width = fullW + 'px'; void tabs.offsetWidth;   // pin the start so the width can transition
+    clearTimeout(morphT);
+    tabs.classList.add('idle'); idx = 0; render(false);
+    tabs.style.width = notchW + 'px';
+    clearInterval(slideT);
+    slideT = setInterval(() => { if (!document.hidden) { idx++; render(true); } }, SLIDE_MS);
+  }
+  function wake(instant) {
+    if (!idle()) return;
+    clearInterval(slideT);
+    if (instant) { tabs.classList.add('snap'); setTimeout(() => tabs.classList.remove('snap'), 60); }
+    tabs.classList.add('morph'); tabs.classList.remove('idle');
+    tabs.style.width = fullW + 'px';
+    clearTimeout(morphT);
+    morphT = setTimeout(() => { tabs.classList.remove('morph'); tabs.style.width = ''; }, 760);   // unfold + the last tab's fade
+  }
+  const near = (x, y) => {
+    const r = tabs.getBoundingClientRect();
+    return Math.hypot(Math.max(r.left - x, 0, x - r.right), Math.max(r.top - y, 0, y - r.bottom)) <= NEAR_PX;
+  };
+  const arm = ms => { clearTimeout(idleT); idleT = setTimeout(collapse, ms); };
+
+  document.addEventListener('pointermove', e => {
+    if (e.pointerType === 'touch') return;
+    if (near(e.clientX, e.clientY)) { clearTimeout(leaveT); leaveT = null; clearTimeout(idleT); wake(); }
+    else if (!idle() && !leaveT) leaveT = setTimeout(() => { leaveT = null; collapse(); }, LEAVE_MS);
+  });
+  tabs.addEventListener('pointerdown', () => { wake(); if (!idle()) arm(IDLE_MS + 3000); });
+  tabs.addEventListener('focusin', () => { clearTimeout(idleT); wake(true); });
+  tabs.addEventListener('focusout', () => arm(LEAVE_MS));
+  window.addEventListener('resize', measureFull);
+
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => { measureFull(); arm(IDLE_MS); });
+})();
+</script>
+
+<!-- ===== FOOTER. The real footer from js/app.js (config, styles, markup, station box, provider lookup), built here so it can be reviewed on its own.
+     In the app it is injected at the bottom of every page; here it simply sits under the nav. Demo stand-ins are marked. ===== -->
+<script>
+(function(){
+  /* demo stand-ins for what the app provides: a loaded register, the Excel reader, and the page-switching helpers */
+  let ROWS = { length: 22589 }; const XLSX = {};
+// ── Site footer ──
+// Edit this block to change what the footer says. Rows left empty ('') are simply not shown.
+const FOOTER_CONFIG = {
+  org:      'Office of the Head of Service, Oyo State Government Secretariat',
+  tagline:  'The Pacesetter State',
+  about:    'An IT support tool from the Office of the Head of Service for colleagues on site during the 2026 Compulsory Examination. Look up a candidate by name, payment reference or exam number, check payment, print their slip, and analyse the registration data.',
+  helpPhone:'08139493098',          // shown as a tap-to-call number (works without internet)
+  whatsapp: '2348139493098',        // international format, no +
+  email:    '',                     // e.g. 'helpdesk@yourdomain.gov.ng'
+  hours:    '',                     // e.g. 'Mon – Fri, 8:00am – 4:00pm'
+  address:  '',                     // e.g. 'Secretariat, Ibadan, Oyo State'
+  year:     2026,
+  version:  'v1.1',
+  // Social icons under the about text. Paste each full profile link into url; leave url '' to fall back to the site's home page, delete a line to remove the icon.
+  // email: uses the email above (mailto) when set; whatsapp: uses the number above.
+  social: [
+    { k: 'email',     label: 'Email',     url: '' },
+    { k: 'whatsapp',  label: 'WhatsApp',  url: '' },
+    { k: 'x',         label: 'X',         url: '' },
+    { k: 'github',    label: 'GitHub',    url: '' },
+    { k: 'linkedin',  label: 'LinkedIn',  url: '' }
+  ]
+};
+const SOCIAL_ICONS = {
+  email: ['0 0 24 24', 'M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457'],
+  whatsapp: ['0 0 24 24', 'M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52s.198-.298.298-.497c.099-.198.05-.371-.025-.52s-.669-1.612-.916-2.207c-.242-.579-.487-.5-.669-.51a13 13 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074s2.096 3.2 5.077 4.487c.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413s.248-1.289.173-1.413c-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.82 9.82 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.82 11.82 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.9 11.9 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.82 11.82 0 0 0-3.48-8.413'],
+  x: ['0 0 24 24', 'M14.234 10.162 22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299-.929-1.329L3.076 1.56h3.182l5.965 8.532.929 1.329 7.754 11.09h-3.182z'],
+  github: ['0 0 24 24', 'M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12'],
+  linkedin: ['0 0 448 512', 'M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z'],
+};
+let NET = { isp: '', ip: '', city: '', domain: '', full: '' };       // provider and place of this station's connection, looked up online
+let REG_BUSY = '';                  // name of the file being read right now (drives the footer box)
+let upFrom = false;                 // true while a load started from the footer's upload area (so a bad file is reported there)
+let LOADED_AT = null;               // set when the register (spreadsheet) is loaded
+
+const FOOTER_CSS = `
+#slipFooter{position:static;display:block;margin:0;color:rgba(255,255,255,.82);font-family:"DM Sans","Segoe UI",Arial,sans-serif;font-size:13px;line-height:1.6;
+  background:linear-gradient(180deg,#4a1220 0%,#350d18 100%);border-top:4px solid #c4962a}
+#slipFooter *{box-sizing:border-box}
+#slipFooter .ft-main{max-width:1280px;margin:0 auto;padding:40px 20px 28px;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) minmax(0,1.2fr) minmax(0,1fr);gap:36px}
+#slipFooter .ft-main>div{min-width:0}
+#slipFooter h4{font-family:"Crimson Pro",Georgia,serif;font-size:15px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#e2b84d;margin:0 0 14px;padding-bottom:8px;position:relative}
+#slipFooter h4::after{content:"";position:absolute;left:0;bottom:0;width:30px;height:2px;background:#c4962a;border-radius:2px}
+#slipFooter .brandrow{display:flex;align-items:center;gap:13px;margin-bottom:14px}
+#slipFooter .crest{display:flex;align-items:center;justify-content:center;background:#fff;border-radius:12px;padding:4px 6px;flex-shrink:0;box-shadow:0 0 0 2px rgba(196,150,42,.7),0 2px 8px rgba(0,0,0,.3)}
+#slipFooter .crest img{display:block;height:40px;width:auto}
+#slipFooter .brand{display:flex;flex-direction:row;align-items:center;gap:14px;line-height:1.15}
+#slipFooter .brand b{font-family:"Crimson Pro",Georgia,serif;font-size:22px;font-weight:700;letter-spacing:.01em;color:#fff;white-space:nowrap}
+#slipFooter .brand .sep{width:2px;align-self:stretch;min-height:34px;background:#e2b84d;border-radius:1px;opacity:.85}
+#slipFooter .brand .tag{display:flex;flex-direction:column;gap:3px;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#e2b84d;font-weight:600;white-space:nowrap}
+@media(max-width:420px){#slipFooter .brand .sep,#slipFooter .brand .tag{display:none}}
+#slipFooter p{margin:0 0 10px;color:rgba(255,255,255,.75)}
+#slipFooter ul{list-style:none;margin:0;padding:0}
+#slipFooter li{margin:0}
+#slipFooter .lk-pair{display:flex;align-items:center;gap:10px}
+#slipFooter .lk-sep{color:rgba(226,184,77,.6)}
+#slipFooter a,#slipFooter button.lnk{color:rgba(255,255,255,.88);text-decoration:none;display:inline-block;padding:5px 0;background:none;border:0;font:inherit;cursor:pointer;text-align:left}
+#slipFooter a:hover,#slipFooter button.lnk:hover{color:#e2b84d;text-decoration:underline;text-underline-offset:3px}
+#slipFooter a:focus-visible,#slipFooter button:focus-visible{outline:2px solid #e2b84d;outline-offset:2px;border-radius:4px}
+#slipFooter .row{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px}
+#slipFooter .row .ic{width:18px;flex-shrink:0;text-align:center}
+#slipFooter .phone{font-size:17px;font-weight:700;color:#fff}
+#slipFooter .small{font-size:12px;color:rgba(255,255,255,.62)}
+#slipFooter .status{background:rgba(0,0,0,.22);border:1px solid rgba(226,184,77,.28);border-radius:12px;padding:12px 14px}
+#slipFooter .status .row{margin-bottom:6px;align-items:center}
+#slipFooter .status .row:last-child{margin-bottom:0}
+
+#slipFooter .status{overflow:hidden;max-width:100%}
+#slipFooter .st-net{display:flex;align-items:center;gap:10px;min-width:0}
+#slipFooter .st-logo{position:relative;width:26px;height:26px;flex-shrink:0;border-radius:7px;background:#fff;display:flex;align-items:center;justify-content:center;overflow:visible;box-shadow:0 1px 4px rgba(0,0,0,.35)}
+#slipFooter .st-logo img{width:18px;height:18px;object-fit:contain;border-radius:3px}
+#slipFooter .st-logo img.full{width:100%;height:100%;border-radius:7px;object-fit:cover}
+#slipFooter .st-logo em{font-style:normal;font-size:10.5px;font-weight:800;letter-spacing:.02em;color:#fff;width:100%;height:100%;border-radius:7px;display:flex;align-items:center;justify-content:center;background:#6d1f2e}
+#slipFooter .st-logo em[hidden],#slipFooter .st-logo img[hidden]{display:none}
+#slipFooter .st-logo .dot{position:absolute;right:-3px;bottom:-3px;margin:0;width:10px;height:10px;border:2px solid #2a0a12;box-sizing:content-box}
+#slipFooter .st-div{height:1px;margin:0 -14px;background:linear-gradient(90deg,transparent,rgba(226,184,77,.38) 18%,rgba(226,184,77,.38) 82%,transparent)}
+#slipFooter .st-recs{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;width:100%;cursor:pointer;border-radius:8px;margin:-4px 0;padding:4px 0}
+#slipFooter .st-recs:focus-visible{outline:2px solid #e2b84d;outline-offset:3px}
+#slipFooter .st-recs .ic{width:18px;flex-shrink:0;text-align:center}
+#slipFooter .st-t{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.35}
+#slipFooter .st-t b{font-weight:700;color:#fff;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#slipFooter .st-t small{font-size:11.5px;color:rgba(255,255,255,.58);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#slipFooter .st-act{flex-shrink:0;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;line-height:1;border-radius:50%;border:1px solid rgba(226,184,77,.7);color:#e2b84d;transition:background .15s,color .15s}
+#slipFooter .st-recs:hover .st-act{background:#e2b84d;color:#350d18}
+#slipFooter .st-recs.empty .st-act{background:rgba(226,184,77,.18)}
+#slipFooter .st-recs.busy{cursor:progress}
+#slipFooter .st-recs.busy .st-act,#slipFooter .st-recs.off .st-act{opacity:.45;border-color:rgba(255,255,255,.3);color:#fff;background:none}
+#slipFooter .st-recs.busy .ic{animation:ftSpin 1s linear infinite}
+#slipFooter .st-recs.off{cursor:not-allowed}
+#slipFooter .status{display:flex;flex-direction:column;justify-content:space-around;transition:border-color .15s,background .15s}
+#slipFooter .status{position:relative}
+#slipFooter .st-main{flex:1;display:flex;flex-direction:column;justify-content:space-around;transition:opacity .2s ease,transform .3s cubic-bezier(.2,.7,.2,1),filter .2s ease}
+#slipFooter .status.asking .st-main,#slipFooter .status.done .st-main,#slipFooter .status.picking .st-main{opacity:0;transform:translateY(-8px) scale(.98);filter:blur(2px);pointer-events:none}
+#slipFooter .status.asking{border-color:rgba(236,120,110,.75);background:rgba(72,10,20,.55);box-shadow:0 0 0 3px rgba(236,120,110,.12)}
+#slipFooter .status.done{border-color:rgba(123,216,143,.65);background:rgba(10,40,24,.35);box-shadow:0 0 0 3px rgba(123,216,143,.1)}
+#slipFooter .st-confirm{position:absolute;inset:0;padding:12px 14px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .22s ease,visibility 0s .3s}
+#slipFooter .status.asking .st-confirm,#slipFooter .status.done .st-confirm{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .22s ease .1s,visibility 0s}
+#slipFooter .cf-ask{position:absolute;inset:0;padding:12px 14px;display:flex;flex-direction:column;justify-content:center;gap:3px;transform:translateY(12px);transition:transform .34s cubic-bezier(.2,.8,.25,1) .08s,opacity .2s}
+#slipFooter .status.asking .cf-ask{transform:none}
+#slipFooter .status.done .cf-ask{opacity:0;transform:translateY(-8px);pointer-events:none}
+#slipFooter .cf-ask b{font-size:14.5px;color:#fff;display:flex;align-items:center;gap:8px}
+#slipFooter .cf-ask b i{font-style:normal;display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:rgba(236,120,110,.2);color:#f19a91;font-size:12px}
+#slipFooter .cf-ask .small{line-height:1.4}
+#slipFooter .cf-btns{display:flex;gap:8px;margin-top:8px}
+#slipFooter .cf-btns button{all:unset;box-sizing:border-box;flex:1;text-align:center;height:30px;line-height:28px;border-radius:999px;font-size:12.5px;font-weight:700;cursor:pointer;border:1px solid transparent;transition:background .15s,color .15s,border-color .15s}
+#slipFooter .cf-btns button:focus-visible{outline:2px solid #e2b84d;outline-offset:2px}
+#slipFooter .cf-btns .cf-no{border-color:rgba(255,255,255,.3)!important;color:rgba(255,255,255,.9)}
+#slipFooter .cf-btns .cf-no:hover{background:rgba(255,255,255,.1)}
+#slipFooter .cf-btns .cf-yes{background:#d9534f;color:#fff}
+#slipFooter .cf-btns .cf-yes:hover{background:#ec6a65}
+#slipFooter .cf-done{position:absolute;inset:0;pointer-events:none;display:flex;align-items:center;justify-content:center;gap:12px;opacity:0;transform:scale(.94);transition:opacity .2s,transform .34s cubic-bezier(.2,.9,.3,1.2)}
+#slipFooter .status.done .cf-done{opacity:1;transform:none;transition-delay:.12s}
+#slipFooter .cf-done b{font-size:14.5px;color:#fff}
+#slipFooter .cf-done svg{width:30px;height:30px;flex-shrink:0}
+#slipFooter .cf-done circle{fill:none;stroke:#7bd88f;stroke-width:2}
+#slipFooter .cf-done path{fill:none;stroke:#7bd88f;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:24;stroke-dashoffset:24}
+#slipFooter .status.done .cf-done path{animation:cfTick .45s ease .3s forwards}
+@keyframes cfTick{to{stroke-dashoffset:0}}
+@media(prefers-reduced-motion:reduce){#slipFooter .st-main,#slipFooter .st-confirm,#slipFooter .cf-ask,#slipFooter .cf-done{transition:none}#slipFooter .status.done .cf-done path{animation:none;stroke-dashoffset:0}}
+#slipFooter .st-rw{position:relative;margin:-4px 0}
+#slipFooter .st-rw .st-recs{margin:0;gap:7px}
+#slipFooter .st-rw .st-recs .ic{width:16px}
+#slipFooter .st-rw .st-act{width:22px;height:22px;font-size:12px}
+#slipFooter .st-rw.has .st-t{margin-right:23px}
+#slipFooter .st-clr{all:unset;box-sizing:border-box;position:absolute;z-index:1;right:27px;top:calc(50% - 11px);width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;line-height:1;border-radius:50%;border:1px solid rgba(226,184,77,.7);color:#e2b84d;cursor:pointer;transition:background .15s,color .15s}
+#slipFooter .st-clr:hover{background:#e2b84d;color:#350d18}
+#slipFooter .st-clr:focus-visible{outline:2px solid #e2b84d;outline-offset:3px}
+#slipFooter .st-clr[hidden]{display:none}
+#slipFooter .bin{width:100%;height:100%;display:block;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;overflow:visible}
+#slipFooter .st-clr .bin{width:13px;height:13px}
+#slipFooter .cf-ask b i .bin{width:12px;height:12px}
+#slipFooter .bin .lid{transform-box:fill-box;transform-origin:15% 100%;transition:transform .18s ease}
+#slipFooter .st-clr:hover .lid,#slipFooter .st-clr:focus-visible .lid{transform:translateY(-1.5px) rotate(-14deg)}
+@media(prefers-reduced-motion:reduce){#slipFooter .bin .lid{transition:none}}
+/* Upload area: the same swap as Disconnect, but gold. Opens when the register row is clicked or a file is dragged over the box. Only the zone opens the explorer. */
+#slipFooter .status.picking{border-color:rgba(226,184,77,.6);background:rgba(226,184,77,.05);box-shadow:0 0 0 3px rgba(226,184,77,.1)}
+#slipFooter .st-up{position:absolute;inset:0;padding:8px;display:flex;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .22s ease,visibility 0s .3s}
+#slipFooter .status.picking .st-up{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .22s ease .1s,visibility 0s}
+#slipFooter .up-z{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 22px;text-align:center;cursor:pointer;outline:none;
+  border:1.5px dashed rgba(226,184,77,.6);border-radius:10px;background:rgba(226,184,77,.06);
+  transform:translateY(10px);transition:transform .34s cubic-bezier(.2,.8,.25,1) .08s,background .15s,border-color .15s}
+#slipFooter .status.picking .up-z{transform:none}
+#slipFooter .up-z:hover{background:rgba(226,184,77,.12);border-color:#e2b84d}
+#slipFooter .up-z:focus-visible{border-color:#e2b84d;box-shadow:0 0 0 2px rgba(226,184,77,.5)}
+#slipFooter .up-z svg{width:26px;height:26px;margin-bottom:2px;fill:none;stroke:#e2b84d;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:transform .25s cubic-bezier(.2,.8,.25,1)}
+#slipFooter .up-z:hover svg{transform:translateY(-2px)}
+#slipFooter .up-z b{font-size:14px;line-height:1.25;color:#fff}
+#slipFooter .up-z small{font-size:11.5px;line-height:1.35;color:rgba(255,255,255,.62);white-space:pre-line}
+#slipFooter .status.drag .up-z{border-style:solid;border-color:#f6dc8c;background:rgba(226,184,77,.2)}
+#slipFooter .status.drag .up-z svg{transform:translateY(-4px)}
+#slipFooter .up-z.is-err{border-color:#ef8a80;background:rgba(236,120,110,.1);animation:ftShake .4s}
+#slipFooter .up-z.is-err svg{display:none}
+#slipFooter .up-z.is-err small{color:#f19a91}
+@keyframes ftShake{20%{transform:translateX(-6px)}40%{transform:translateX(5px)}60%{transform:translateX(-4px)}80%{transform:translateX(2px)}}
+#slipFooter .up-x{all:unset;box-sizing:border-box;position:absolute;z-index:1;right:15px;top:15px;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;color:rgba(255,255,255,.7);cursor:pointer;font-size:15px;line-height:1;transition:background .15s,color .15s}
+#slipFooter .up-x:hover{background:rgba(255,255,255,.14);color:#fff}
+#slipFooter .up-x:focus-visible{outline:2px solid #e2b84d;outline-offset:2px}
+#slipFooter .up-ask{display:none;position:absolute;inset:0;padding:12px 14px;flex-direction:column;justify-content:center;gap:3px}
+#slipFooter .status.replacing .up-z{display:none}
+#slipFooter .status.replacing .up-ask{display:flex}
+#slipFooter .status.replacing .up-x{display:none}
+#slipFooter .up-ask b{font-size:14.5px;color:#fff}
+#slipFooter .up-ask .small{line-height:1.4}
+#slipFooter .cf-btns .up-go{background:#e2b84d;color:#350d18}
+#slipFooter .cf-btns .up-go:hover{background:#f6dc8c}
+@media(prefers-reduced-motion:reduce){#slipFooter .st-up,#slipFooter .up-z,#slipFooter .up-z svg{transition:none}#slipFooter .up-z.is-err{animation:none}}
+#slipFooter .status.drag{border-color:#e2b84d;background:rgba(226,184,77,.14)}
+@keyframes ftSpin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){#slipFooter .st-recs.busy .ic{animation:none}}
+#slipFooter .dot{width:9px;height:9px;border-radius:50%;background:#7bd88f;display:inline-block;margin:0 4.5px}
+#slipFooter .dot.off{background:#f0a04b}
+#slipFooter .social{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 0;padding:0;list-style:none}
+#slipFooter .social a{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;padding:0;border-radius:50%;border:1px solid rgba(226,184,77,.55);background:rgba(0,0,0,.18);color:#e2b84d;text-decoration:none;transition:background .15s,color .15s,border-color .15s,transform .15s}
+#slipFooter .social a:hover{background:#e2b84d;border-color:#e2b84d;color:#350d18;text-decoration:none;transform:translateY(-2px)}
+#slipFooter .social svg{width:17px;height:17px;display:block;fill:currentColor}
+@media(prefers-reduced-motion:reduce){#slipFooter .social a{transition:none}#slipFooter .social a:hover{transform:none}}
+#slipFooter .ft-legal{border-top:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.2)}
+#slipFooter .ft-bar{max-width:1280px;margin:0 auto;padding:12px 20px 22px;display:flex;align-items:center;gap:10px 24px;font-size:12px;color:rgba(255,255,255,.6)}
+#slipFooter .ft-ver{flex:1 1 auto;text-align:center}
+#slipFooter .ft-top{flex:none}
+@media(max-width:900px){#slipFooter .ft-bar{flex-direction:column;align-items:flex-start}#slipFooter .ft-ver{flex:none;text-align:left}}
+@media(max-width:980px){#slipFooter .ft-main{grid-template-columns:1fr 1fr;gap:30px}}
+@media(max-width:560px){#slipFooter .ft-main{grid-template-columns:1fr;padding:30px 18px 20px}#slipFooter .ft-bar{padding-left:18px;padding-right:18px}}
+@media print{#slipFooter{display:none !important}}`;
+
+function footerHTML(crest) {
+  const c = FOOTER_CONFIG;
+  const pretty = c.helpPhone.replace(/^(\d{4})(\d{3})(\d{4})$/, '$1 $2 $3');
+  const intl = '+' + c.whatsapp;
+  const rows = [
+    '<div class="row"><span class="ic">📞</span><div><a class="phone" href="tel:' + intl + '">' + pretty + '</a><div class="small">Call or SMS: works without internet</div></div></div>',
+    '<div class="row"><span class="ic">💬</span><div><a href="https://wa.me/' + c.whatsapp + '" target="_blank" rel="noopener">Chat on WhatsApp</a><div class="small">Needs an internet connection</div></div></div>'
+  ];
+  if (c.email)   rows.push('<div class="row"><span class="ic">✉️</span><a href="mailto:' + c.email + '">' + c.email + '</a></div>');
+  if (c.hours)   rows.push('<div class="row"><span class="ic">🕘</span><span>' + c.hours + '</span></div>');
+  if (c.address) rows.push('<div class="row"><span class="ic">📍</span><span>' + c.address + '</span></div>');
+  const SOC_HOME = { email: 'https://mail.google.com/', whatsapp: 'https://wa.me/' + c.whatsapp, x: 'https://x.com/', github: 'https://github.com/', linkedin: 'https://linkedin.com/', };
+  const social = (c.social || []).filter(s => SOCIAL_ICONS[s.k]).map(s => {
+    const url = s.url || (s.k === 'email' && c.email ? 'mailto:' + c.email : SOC_HOME[s.k]);
+    const ic = SOCIAL_ICONS[s.k];
+    return '<li><a href="' + url + '" target="_blank" rel="noopener" aria-label="' + s.label + '" title="' + s.label + '"><svg viewBox="' + ic[0] + '" aria-hidden="true" focusable="false"><path d="' + ic[1] + '"/></svg></a></li>';
+  }).join('');
+  return `
+<div class="ft-main">
+  <div>
+    <div class="brandrow"><span class="crest"><img src="${crest}" alt="Oyo State crest"></span>
+      <div class="brand"><b>Slip Desk</b><i class="sep" aria-hidden="true"></i><span class="tag"><span>Oyo State</span><span>2026 Compulsory Exam</span></span></div></div>
+    <p>${c.about}</p>
+    ${social ? '<ul class="social" aria-label="Social links">' + social + '</ul>' : ''}
+  </div>
+  <div role="navigation" aria-label="Quick links">
+    <h4>Quick links</h4>
+    <ul>
+      <li class="lk-pair"><button class="lnk" data-go="registration">Registration</button><span class="lk-sep" aria-hidden="true">|</span><button class="lnk" data-go="exam">Examination</button></li>
+      <li class="lk-pair"><button class="lnk" data-go="analysis" data-an="breakdown">Report</button><span class="lk-sep" aria-hidden="true">|</span><button class="lnk" data-go="analysis" data-an="analysis">Analysis</button></li>
+      <li class="lk-pair"><button class="lnk" data-go="analysis" data-an="revenue">Revenue</button><span class="lk-sep" aria-hidden="true">|</span><button class="lnk" data-go="analysis" data-an="attendance">Attendances</button></li>
+      <li class="lk-pair"><button class="lnk" data-go="analysis" data-an="others">Others</button><span class="lk-sep" aria-hidden="true">|</span><button class="lnk" data-go="log">Activity</button></li>
+      <li class="lk-pair"><button class="lnk" data-legal="disclaimer">Disclaimer</button><span class="lk-sep" aria-hidden="true">|</span><button class="lnk" data-legal="terms">Terms</button><span class="lk-sep" aria-hidden="true">|</span><button class="lnk" data-legal="privacy">Privacy</button></li>
+    </ul>
+  </div>
+  <div>
+    <h4>Help desk</h4>
+    ${rows.join('')}
+    <p class="small" id="ftNoteH" style="margin-top:10px">Have your <b>full name</b>, <b>phone number</b> and <b>payment reference</b> ready when you contact us.</p>
+  </div>
+  <div>
+    <h4>This station</h4>
+    <div class="status" id="ftStatus">
+      <div class="st-main" id="ftMain">
+      <div class="st-net">
+        <span class="st-logo" id="ftLogo" aria-hidden="true"><em id="ftMono">·</em><img id="ftImg" alt="" hidden><i class="dot" id="ftDot"></i></span>
+        <span class="st-t"><b id="ftConn">Checking connection…</b><small id="ftIp"></small></span>
+      </div>
+      <div class="st-div" aria-hidden="true"></div>
+      <div class="st-rw" id="ftRow">
+      <button type="button" class="st-recs empty" id="ftBtn" title="Click to upload or replace the register, or drop a file here">
+        <span class="ic" id="ftIc">🗂️</span>
+        <span class="st-t"><b id="ftRecs">No register loaded</b><small id="ftMeta">Click or drop a file to upload</small></span>
+        <span class="st-act" id="ftAct">Upload</span>
+      </button>
+        <button type="button" class="st-clr" id="ftOff" data-unload="1" hidden title="Disconnect register" aria-label="Disconnect register"><svg class="bin" viewBox="0 0 24 24" aria-hidden="true"><g class="lid"><path d="M4 7h16"/><path d="M9.5 7V5a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v2"/></g><path d="M6 7l1 12.2a1 1 0 0 0 1 .8h8a1 1 0 0 0 1-.8L18 7"/><path d="M10 11v5M14 11v5"/></svg></button>
+      </div>
+      </div>
+      <div class="st-confirm" id="ftConfirm" role="alertdialog" aria-labelledby="ftCT" aria-describedby="ftCD" inert>
+        <div class="cf-ask">
+          <b id="ftCT"><i aria-hidden="true"><svg class="bin" viewBox="0 0 24 24" aria-hidden="true"><g class="lid"><path d="M4 7h16"/><path d="M9.5 7V5a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v2"/></g><path d="M6 7l1 12.2a1 1 0 0 0 1 .8h8a1 1 0 0 0 1-.8L18 7"/><path d="M10 11v5M14 11v5"/></svg></i>Disconnect register?</b>
+          <span class="small" id="ftCD">Clears <span id="ftCN">0</span> applications from this desk. Your file is not deleted.</span>
+          <div class="cf-btns"><button type="button" class="cf-no" id="ftNo" data-cancel="1">Cancel</button><button type="button" class="cf-yes" data-confirm="1">Disconnect</button></div>
+        </div>
+        <div class="cf-done" role="status"><svg viewBox="0 0 30 30" aria-hidden="true"><circle cx="15" cy="15" r="13"/><path d="M9 15.5l4 4 8-9"/></svg><b>Register disconnected</b></div>
+      </div>
+      <div class="st-up" id="ftUp" role="dialog" aria-label="Upload register" inert>
+        <div class="up-z" id="ftZone" role="button" tabindex="0" aria-label="Choose a register file, or drop one here">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+          <b id="ftUpT">Drop the register here</b><small id="ftUpS">or click to browse</small>
+        </div>
+        <button type="button" class="up-x" id="ftUpX" aria-label="Cancel upload" title="Cancel">✕</button>
+        <div class="up-ask" role="alertdialog" aria-label="Replace the loaded register?">
+          <b>Replace register?</b><span class="small" id="ftUpAskP"></span>
+          <div class="cf-btns"><button type="button" class="cf-no" id="ftUpNo">Cancel</button><button type="button" class="cf-yes up-go" id="ftUpYes">Replace</button></div>
+        </div>
+      </div>
+    </div>
+    <p class="small" id="ftNoteS" style="margin-top:10px">Slips are issued only after payment has been confirmed against the register.</p>
+  </div>
+</div>
+<div class="ft-legal">
+<div class="ft-bar">
+  <span>© ${c.year} ${c.org}.</span>
+  <span class="ft-ver">Slip Desk · IT support tool · ${c.version}</span>
+  <span class="ft-top"><button class="lnk" data-top="1"><span class="arw arw-u" aria-hidden="true">↑</span> Back to top</button></span>
+</div></div>`;
+}
+
+// Make the "Slips are issued…" note sit level with the "Have your full name…" note by letting the station box grow
+function alignNotes(d) {
+  try {
+    const st = d.getElementById('ftStatus'), a = d.getElementById('ftNoteS'), h = d.getElementById('ftNoteH'), main = d.querySelector('#slipFooter .ft-main');
+    if (!st || !a || !h || !main) return;
+    st.style.minHeight = ''; h.style.marginTop = '10px';
+    if (d.defaultView.getComputedStyle(main).gridTemplateColumns.split(' ').length < 4) return;   // stacked on narrow screens
+    const diff = Math.round(h.getBoundingClientRect().top - a.getBoundingClientRect().top);   // >0: help desk note is lower, so the box grows; <0: the box is already taller, so the help note moves down
+    if (diff > 0) st.style.minHeight = (st.offsetHeight + diff) + 'px';
+    else if (diff < 0) h.style.marginTop = (10 - diff) + 'px';
+  } catch (e) {}
+}
+function setFooterStatus(d) {
+  try {
+    const conn = d.getElementById('ftConn'); if (!conn) return;
+    const on = d.defaultView.navigator.onLine, canRead = typeof XLSX !== 'undefined';
+    d.getElementById('ftDot').className = 'dot' + (on ? '' : ' off');
+    conn.textContent = on ? (NET.isp || 'Online') : 'Offline';
+    d.getElementById('ftIp').textContent = on ? (NET.ip ? NET.ip + (NET.city ? ' · ' + NET.city : '') : 'Locating…') : 'No internet connection';
+    conn.title = on ? (NET.full || 'Looking up the provider and location of this connection') : 'No internet connection';
+    const mono = d.getElementById('ftMono'), img = d.getElementById('ftImg');
+    mono.textContent = on && NET.isp ? NET.isp.split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase() : '–';
+    const doms = on ? logoDomains() : [], key = doms.join('|'), loc = on ? localLogo() : '';
+    if (loc) {
+      // MTN, Airtel and Glo: the built-in image shows straight away; the icon from the provider's own website is looked up in the background and replaces it as soon as one is found
+      const dk = 'L:' + loc + ':' + (LOGO_FOUND[loc] || '');
+      if (img.dataset.d !== dk) {
+        img.dataset.d = dk; img.onload = img.onerror = null;
+        if (LOGO_FOUND[loc]) img.classList.remove('full'), img.src = LOGO_FOUND[loc];
+        else img.classList.add('full'), img.src = ISP_LOGOS[loc];
+      }
+      img.hidden = false; mono.hidden = true;
+      const site = logoDomains()[0];
+      if (site && LOGO_FOUND[loc] === undefined && !LOGO_BUSY[loc]) {
+        LOGO_BUSY[loc] = 1;
+        const urls = []; ['', 'www.'].forEach(w => LOGO_PATHS.forEach(x => urls.push('https://' + w + site + '/' + x)));
+        let n = 0; const probe = new Image(), nextUrl = () => { clearTimeout(probe._t); if (n >= urls.length) { LOGO_FOUND[loc] = ''; LOGO_BUSY[loc] = 0; return; } probe.src = urls[n++]; probe._t = setTimeout(nextUrl, 5000); };
+        probe.onload = () => { if (probe.naturalWidth >= 16) { clearTimeout(probe._t); probe.onload = probe.onerror = null; LOGO_FOUND[loc] = probe.src; LOGO_BUSY[loc] = 0; updateFooterStatus(); } else nextUrl(); };
+        probe.onerror = nextUrl; nextUrl();
+      }
+    } else if (doms.length && img.dataset.d !== key) {
+      img.classList.remove('full'); img.dataset.d = key; img.hidden = true; mono.hidden = false;
+      const urls = []; doms.forEach(dm => { urls.push('https://' + dm + '/favicon.ico', 'https://icons.duckduckgo.com/ip3/' + dm + '.ico'); });
+      let n = 0; const next = () => { if (n >= urls.length) { img.hidden = true; mono.hidden = false; return; } img.src = urls[n++]; };
+      img.onload = () => { if (img.naturalWidth >= 16) { img.hidden = false; mono.hidden = true; } else next(); }; img.onerror = next; next();
+    }
+    if (!loc && (!on || !doms.length)) { img.hidden = true; mono.hidden = false; img.dataset.d = ''; }
+    const btn = d.getElementById('ftBtn'), recs = d.getElementById('ftRecs'), meta = d.getElementById('ftMeta'), act = d.getElementById('ftAct');
+    const has = !!(ROWS && ROWS.length), busy = !!REG_BUSY, off = !busy && !canRead;
+    btn.className = 'st-recs' + (busy ? ' busy' : off ? ' off' : has ? '' : ' empty');
+    btn.disabled = busy || off;
+    if (busy) { recs.textContent = 'Reading register…'; meta.textContent = 'Please wait'; act.textContent = '…'; }
+    else if (off) { recs.textContent = has ? ROWS.length.toLocaleString() + ' applications' : 'No register loaded'; meta.textContent = 'Reconnect to upload'; act.textContent = has ? '⟳' : '↑'; }
+    else if (has) { recs.textContent = ROWS.length.toLocaleString() + ' applications'; meta.textContent = 'Loaded ' + (LOADED_AT || ''); act.textContent = '⟳'; }
+    else { recs.textContent = 'No register loaded'; meta.textContent = 'Click or drop a file to upload'; act.textContent = '↑'; }
+    const off2 = d.getElementById('ftOff'), rw = d.getElementById('ftRow'); if (off2) off2.hidden = !has || busy; if (rw) rw.classList.toggle('has', has && !busy);
+    act.setAttribute('aria-label', has ? 'Replace register' : 'Upload register');
+    btn.title = busy ? 'Reading the register, please wait' : has ? 'Click to replace the register, or drop a new file here' : 'Click to upload the register, or drop a file here';
+    alignNotes(d);
+  } catch (e) {}
+}
+// Where to look on a provider's own website for its icon (same list as the logo-check scratch page), and what was found for each of MTN / Airtel / Glo this session ('' = nothing found, keep the built-in image)
+const LOGO_PATHS = ["apple-touch-icon.png", "apple-touch-icon-precomposed.png", "android-chrome-192x192.png", "favicon-196x196.png", "favicon-96x96.png", "favicon-32x32.png", "favicon.png", "favicon.svg", "favicon.ico", "logo.png", "logo.svg", "images/logo.png", "img/logo.png", "assets/images/logo.png", "assets/img/logo.png", "wp-content/uploads/logo.png"];
+let LOGO_FOUND = {}, LOGO_BUSY = {};
+// Real logos of the three main Nigerian providers, kept built in only as the fallback when the provider's own website gives no icon
+const ISP_LOGOS = {"mtn": "data:image/png;base64,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", "glo": "data:image/png;base64,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", "airtel": "data:image/png;base64,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"};
+function localLogo() { const n = NET.isp || ''; return /\bmtn\b/i.test(n) ? 'mtn' : /airtel/i.test(n) ? 'airtel' : /\bglo\b|globacom/i.test(n) ? 'glo' : ''; }
+// Websites of the usual Nigerian providers, so a real logo can be found even when the lookup gives no domain
+const ISP_SITES = [[/\bmtn\b/i, 'mtnonline.com'], [/airtel/i, 'airtel.com.ng'], [/\bglo\b|globacom/i, 'gloworld.com'], [/9mobile|etisalat/i, '9mobile.com.ng'], [/spectranet/i, 'spectranet.com.ng'], [/smile/i, 'smile.com.ng'], [/fibreone/i, 'fibreone.ng'], [/ipnx/i, 'ipnx.ng'], [/starlink|spacex/i, 'starlink.com'], [/swift/i, 'swiftnetworks.com.ng'], [/tizeti|wifi\.com\.ng/i, 'wifi.com.ng'], [/mainone/i, 'mainone.net'], [/ntel/i, 'ntel.ng'], [/cobranet/i, 'cobranet.ng'], [/vodafone/i, 'vodafone.com'], [/\bmtn\b/i, 'mtn.com']];
+function logoDomains() {
+  const out = []; ISP_SITES.forEach(x => { if (x[0].test(NET.isp || '') && out.indexOf(x[1]) < 0) out.push(x[1]); });
+  const dm = String(NET.domain || '').toLowerCase().replace(/^www\./, ''); if (dm && out.indexOf(dm) < 0) out.push(dm);
+  return out;
+}
+function lookupNet() {   // who provides this station's internet and where it is (one small request to a public IP-lookup service)
+  if (!navigator.onLine) { NET = { isp: '', ip: '', city: '', domain: '', full: '' }; return updateFooterStatus(); }
+  const get = (url, pick) => { const ac = new AbortController(), t = setTimeout(() => ac.abort(), 7000);
+    return fetch(url, { signal: ac.signal }).then(r => r.json()).then(j => { clearTimeout(t); return pick(j); }).catch(() => { clearTimeout(t); return null; }); };
+  const clean = v => String(v || '').replace(/^AS\d+\s+/i, '').replace(/\b(communications?|telecommunications?|limited|ltd\.?|plc|inc\.?|llc|nigeria ltd)\b/gi, '').replace(/[\s,.-]+$/g, '').replace(/\s+/g, ' ').trim();
+  const fin = r => { if (!r || !r.isp) return null; return { isp: clean(r.isp) || r.isp, ip: r.ip || '', city: r.city || r.country || '', domain: r.domain || '', both: [r.city, r.country].filter(Boolean).join(', ') }; };
+  get('https://ipwho.is/', j => j && j.success !== false ? fin({ isp: (j.connection && (j.connection.isp || j.connection.org)), domain: j.connection && j.connection.domain, ip: j.ip, city: j.city, country: j.country }) : null)
+    .then(r => r || get('https://ipapi.co/json/', j => j && !j.error ? fin({ isp: j.org, ip: j.ip, city: j.city, country: j.country_name }) : null))
+    .then(r => { NET = r ? { isp: r.isp, ip: r.ip, city: r.city, domain: r.domain, full: 'Provider: ' + r.isp + (r.ip ? '\nIP address: ' + r.ip : '') + (r.both ? '\nLocation: ' + r.both : '') } : { isp: '', ip: '', city: '', domain: '', full: 'Could not look up the provider and location' }; updateFooterStatus(); });
+}
+window.addEventListener('online', () => { NET = { isp: '', ip: '', city: '', domain: '', full: '' }; LOGO_FOUND = {}; LOGO_BUSY = {}; updateFooterStatus(); lookupNet(); });
+window.addEventListener('offline', updateFooterStatus);
+setTimeout(lookupNet, 800);
+
+
+  function updateFooterStatus() { try { setFooterStatus(document); } catch (e) {} }
+  LOADED_AT = '10:15 AM';
+  // lets the navbar upload panel and the footer share one register (in the project: ROWS, LOADED_AT and REG_BUSY already live in one place)
+  window.slipRegister = {
+    count: () => (ROWS && ROWS.length) || 0,
+    busy: name => { REG_BUSY = name || ''; if (name) closeUp(false, true); setFooterStatus(document); },
+    set: n => { upFrom = false; ROWS = { length: n }; LOADED_AT = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); REG_BUSY = ''; setFooterStatus(document); }
+  };
+
+  const f = document.createElement('footer'); f.id = 'slipFooter';
+  const st = document.createElement('style'); st.textContent = FOOTER_CSS; document.head.appendChild(st);
+  f.innerHTML = footerHTML(document.querySelector('.brandwrap img').src);
+  document.body.appendChild(f);
+  const stBox = f.querySelector('#ftStatus'), mnEl = f.querySelector('#ftMain'), cfEl = f.querySelector('#ftConfirm'), upEl = f.querySelector('#ftUp'),
+        zone = f.querySelector('#ftZone'), upT = f.querySelector('#ftUpT'), upS = f.querySelector('#ftUpS'), upAskP = f.querySelector('#ftUpAskP'),
+        upNo = f.querySelector('#ftUpNo'), upYes = f.querySelector('#ftUpYes');
+  const OKF = /\.(xlsx|xls|csv)$/i, cnt = () => (ROWS && ROWS.length) || 0, shortName = n => n.length > 28 ? n.slice(0, 25) + '…' : n;
+  const hasF = e => !!(e.dataTransfer && Array.prototype.indexOf.call(e.dataTransfer.types || [], 'Files') >= 0);
+  let upByDrag = false, upPending = null, upErrT = 0, dn = 0;
+
+  const clearUpErr = () => { clearTimeout(upErrT); zone.classList.remove('is-err'); };
+  function paintUp() {
+    const n = cnt(), over = stBox.classList.contains('drag');
+    upT.textContent = over ? 'Release to load' : n ? 'Drop a new register here' : 'Drop the register here';
+    if (zone.classList.contains('is-err')) return;
+    upS.textContent = n ? 'Replaces ' + n.toLocaleString() + ' applications\nor click to browse' : 'or click to browse\n.xlsx, .xls or .csv';
+  }
+  function upErr(text) {
+    clearTimeout(upErrT); zone.classList.remove('is-err'); void zone.offsetWidth; zone.classList.add('is-err'); upS.textContent = text;
+    upErrT = setTimeout(() => { clearUpErr(); paintUp(); }, 4500);
+  }
+  function openUp(byDrag) {                       // swap the box to the upload area (nothing opens the explorer yet)
+    if (stBox.classList.contains('picking')) return;
+    stBox.classList.remove('asking', 'done'); cfEl.inert = true;
+    upByDrag = !!byDrag; clearUpErr(); paintUp();
+    stBox.classList.add('picking'); mnEl.inert = true; upEl.inert = false;
+    if (!byDrag) setTimeout(() => { if (stBox.classList.contains('picking')) zone.focus({ preventScroll: true }); }, 60);
+  }
+  function closeUp(restoreFocus, keepFrom) {
+    if (!stBox.classList.contains('picking')) return;
+    stBox.classList.remove('picking', 'drag', 'replacing'); upPending = null; upByDrag = false; dn = 0; clearUpErr();
+    if (!keepFrom) upFrom = false;
+    upEl.inert = true; mnEl.inert = false;
+    if (restoreFocus) { const b = f.querySelector('#ftBtn'); if (b && !b.disabled) b.focus({ preventScroll: true }); }
+  }
+  function resetBox() { stBox.classList.remove('asking', 'done'); mnEl.inert = false; cfEl.inert = true; closeUp(false); }
+  const pickFile = () => { if (REG_BUSY) return; upFrom = true; if (window.sdUpload && window.sdUpload.pick) window.sdUpload.pick(); else document.getElementById('xlsxFile').click(); };
+  function takeFile(file) {                       // a file dropped on the box
+    if (REG_BUSY) return;
+    if (!OKF.test(file.name)) { upErr('“' + shortName(file.name) + '” is not a register file. Use .xlsx, .xls or .csv.'); return; }
+    if (cnt()) {                                  // something is already loaded: ask before replacing it
+      upPending = file; upAskP.textContent = 'Loading “' + shortName(file.name) + '” clears the ' + cnt().toLocaleString() + ' applications already on this desk.';
+      stBox.classList.add('replacing'); setTimeout(() => upNo.focus({ preventScroll: true }), 60); return;
+    }
+    upFrom = true; window.sdUpload.load(file);
+  }
+  // the navbar panel reports a bad or unreadable file here, so the person who started from the footer sees it in the footer
+  window.slipRegister.error = text => { if (!upFrom) return; openUp(false); upErr(text); };
+
+  zone.addEventListener('click', pickFile);
+  zone.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pickFile(); } });
+  f.querySelector('#ftUpX').addEventListener('click', () => closeUp(true));
+  upNo.addEventListener('click', () => { upPending = null; stBox.classList.remove('replacing'); zone.focus({ preventScroll: true }); });
+  upYes.addEventListener('click', () => { const file = upPending; upPending = null; stBox.classList.remove('replacing'); if (file) { upFrom = true; window.sdUpload.load(file); } });
+
+  // drag a file over the box: it opens the upload area and takes the drop (the navbar panel steps aside because we call preventDefault)
+  stBox.addEventListener('dragenter', e => { if (hasF(e)) dn++; });
+  stBox.addEventListener('dragover', e => {
+    if (!hasF(e)) return;
+    e.preventDefault(); e.dataTransfer.dropEffect = REG_BUSY ? 'none' : 'copy';
+    if (REG_BUSY) return;
+    if (!stBox.classList.contains('picking')) openUp(true);
+    if (!stBox.classList.contains('drag')) { clearUpErr(); stBox.classList.add('drag'); paintUp(); }
+  });
+  stBox.addEventListener('dragleave', e => {
+    if (!hasF(e)) return; dn = Math.max(0, dn - 1); if (dn) return;
+    stBox.classList.remove('drag'); paintUp(); if (upByDrag) closeUp(false);
+  });
+  stBox.addEventListener('drop', e => {
+    if (!hasF(e)) return; e.preventDefault(); dn = 0; stBox.classList.remove('drag');
+    const file = e.dataTransfer.files && e.dataTransfer.files[0]; paintUp();
+    if (!file || REG_BUSY) { if (upByDrag) closeUp(false); return; }
+    upByDrag = false;                             // they chose a file: keep the box open for the question or the error
+    takeFile(file);
+  });
+
+  f.addEventListener('click', e => {
+    const t = e.target.closest('[data-top]'); if (t) window.scrollTo({ top: 0, behavior: 'smooth' });
+    const closeBox = () => { stBox.classList.remove('asking', 'done'); mnEl.inert = false; cfEl.inert = true; };
+    if (e.target.closest('[data-unload]')) {
+      if (!ROWS) return;
+      f.querySelector('#ftCN').textContent = ROWS.length.toLocaleString();
+      stBox.classList.add('asking'); mnEl.inert = true; cfEl.inert = false;
+      setTimeout(() => f.querySelector('#ftNo').focus(), 60);
+    } else if (e.target.closest('[data-cancel]')) {
+      closeBox(); setTimeout(() => { const b = f.querySelector('#ftOff'); if (b && !b.hidden) b.focus(); }, 60);
+    } else if (e.target.closest('[data-confirm]')) {
+      ROWS = null; LOADED_AT = null; setFooterStatus(document); window.slipRegisterChanged && window.slipRegisterChanged();     // real app: unloadRegister() runs here
+      stBox.classList.remove('asking'); stBox.classList.add('done');
+      setTimeout(() => { closeBox(); f.querySelector('#ftBtn').focus(); }, 1500);
+    } else if (e.target.closest('#ftBtn')) {      // register row: show the upload area. The explorer only opens when the zone is clicked
+      const b = f.querySelector('#ftBtn'); if (b.disabled || REG_BUSY) return;
+      openUp(false);
+    }
+  });
+  f.addEventListener('keydown', e => { if (e.key === 'Escape' && (stBox.classList.contains('asking') || stBox.classList.contains('picking'))) { const up = stBox.classList.contains('picking'); resetBox(); if (up) { const b = f.querySelector('#ftBtn'); if (b && !b.disabled) b.focus({ preventScroll: true }); } } });
+  window.addEventListener('online', () => setFooterStatus(document)); window.addEventListener('offline', () => setFooterStatus(document));
+  window.ClickAway.register({
+    els: () => [stBox],
+    isOpen: () => stBox.classList.contains('asking') || stBox.classList.contains('picking'),
+    close: () => resetBox()
+  });
+  setFooterStatus(document);
+  const mainEl = f.querySelector('.ft-main');
+  if (window.ResizeObserver) { let q = 0; new ResizeObserver(() => { if (q) return; q = requestAnimationFrame(() => { q = 0; alignNotes(document); }); }).observe(mainEl); }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => alignNotes(document));
+})();
+
+/* ================= UPLOAD PANEL =================
+   The Load register button opens this panel instead of going straight to the file picker. */
+(function () {
+  const lb = document.getElementById('loadBtn'), inp = document.getElementById('xlsxFile');
+  if (!lb || !inp || !window.slipRegister) return;
+  const dim = document.createElement('div'); dim.className = 'navdim'; dim.setAttribute('aria-hidden', 'true'); document.body.appendChild(dim);   // same page dim as the other navbar dropdowns (css/01-base.css; the project's sync.js does this)
+  const OK = /\.(xlsx|xls|csv)$/i, DEMO_N = 22589;       // scratch only: no Excel reader here, so .xlsx/.xls show the demo figure
+  const lbIco = lb.querySelector('.lb-ico'), lbMain = lb.querySelector('.lb-main'), lbProg = lb.querySelector('.lb-prog');
+  const SHEET = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>';
+  const p = document.createElement('div');
+  p.id = 'upPanel'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-label', 'Load register'); p.inert = true;
+  p.innerHTML =
+    '<div class="up-head"><b>Load register</b><small>.xlsx, .xls or .csv</small></div>' +
+    '<div class="up-zone" role="button" tabindex="0" aria-label="Choose a register file, or drop one here">' +
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>' +
+      '<b class="up-t"></b><span class="up-s"></span></div>' +
+    '<div class="up-file"><span class="up-fi">' + SHEET + '</span><div class="up-fm">' +
+      '<div class="up-fn"><span class="up-name"></span><em class="up-pct">0%</em></div>' +
+      '<div class="up-fs" aria-live="polite"></div><div class="up-bar"><i></i></div></div></div>' +
+    '<div class="up-ask" role="alertdialog" aria-label="Replace the loaded register?"><b>Replace the loaded register?</b><p class="up-askp"></p>' +
+      '<div class="up-btns"><button type="button" class="up-no">Cancel</button><button type="button" class="up-yes">Replace</button></div></div>' +
+    '<p class="up-msg" role="alert"></p>';
+  document.body.appendChild(p);
+  const $ = s => p.querySelector(s);
+  const zone = $('.up-zone'), zt = $('.up-t'), zs = $('.up-s'), msg = $('.up-msg'), nameEl = $('.up-name'), pctEl = $('.up-pct'),
+        fs = $('.up-fs'), bar = $('.up-bar i'), askP = $('.up-askp'), noBtn = $('.up-no'), yesBtn = $('.up-yes');
+
+  let isOpen = false, byDrag = false, busy = false, pending = null, errT = 0, runId = 0, prev = null;
+  const count = () => window.slipRegister.count();
+  const fmtSize = b => b < 1024 ? b + ' B' : b < 1048576 ? (b / 1024).toFixed(0) + ' KB' : (b / 1048576).toFixed(1) + ' MB';
+
+  /* keyboard access to the button (the file input behind it stays out of the tab order) */
+  lb.tabIndex = 0; lb.setAttribute('role', 'button'); inp.tabIndex = -1;
+  lb.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+
+  function paintIdle() {
+    const n = count();
+    zt.textContent = p.classList.contains('is-drag') ? 'Release to load' : p.classList.contains('is-hint') ? 'Drop the file here' : n ? 'Drop a new register here' : 'Drop the register here';
+    zs.textContent = n ? n.toLocaleString() + ' records loaded · or click to browse' : 'or click to browse';
+  }
+  function place() {
+    const r = lb.getBoundingClientRect(), w = p.offsetWidth;
+    const left = Math.max(12, Math.min(r.right - w, innerWidth - w - 12));
+    p.style.left = left + 'px'; p.style.top = (r.bottom + 12) + 'px';
+    p.style.setProperty('--ax', Math.max(22, Math.min(r.left + r.width / 2 - left, w - 22)) + 'px');
+  }
+  function open(viaDrag) {
+    if (isOpen) return;
+    isOpen = true; byDrag = !!viaDrag; place(); paintIdle();
+    p.inert = false; p.classList.add('open'); lb.setAttribute('aria-expanded', 'true'); document.body.classList.add('nav-dd-open');
+    if (!viaDrag && !busy) setTimeout(() => { if (isOpen && !p.classList.contains('is-ask')) zone.focus({ preventScroll: true }); }, 60);
+  }
+  function close(restoreFocus) {
+    if (!isOpen) return;
+    isOpen = false; byDrag = false; pending = null;
+    p.classList.remove('open', 'is-drag', 'is-hint', 'is-ask'); clearErr(); p.inert = true; lb.setAttribute('aria-expanded', 'false'); document.body.classList.remove('nav-dd-open');
+    if (restoreFocus) lb.focus({ preventScroll: true });
+  }
+  const toggle = () => isOpen ? close() : open();
+
+  /* the button opens the panel; only the zone opens the picker */
+  lb.addEventListener('click', e => { if (e.target === inp) return; e.preventDefault(); toggle(); });
+  const browse = () => { if (busy) return; inp.value = ''; inp.click(); };
+  zone.addEventListener('click', browse);
+  zone.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); browse(); } });
+  inp.addEventListener('change', () => { const f = inp.files && inp.files[0]; inp.value = ''; if (f) accept(f, false); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && isOpen) close(true); });
+  addEventListener('resize', () => { if (isOpen) place(); });
+  addEventListener('scroll', () => { if (isOpen) place(); }, { passive: true });
+  window.ClickAway.register({ els: () => [p, lb], isOpen: () => isOpen, close: () => close() });
+
+  function showErr(text) {
+    if (window.slipRegister.error) window.slipRegister.error(text);   // footer-started loads show the problem in the footer
+    clearTimeout(errT); p.classList.remove('is-err'); void p.offsetWidth; p.classList.add('is-err'); msg.textContent = text;
+    errT = setTimeout(clearErr, 4500);
+  }
+  window.sdUpload = { pick: browse, load: f => accept(f, false) };   // the footer's upload area uses the same picker and reader (real app: SD.pick / loadRegisterFile)
+  function clearErr() { clearTimeout(errT); p.classList.remove('is-err'); msg.textContent = ''; }
+
+  function accept(file, dropped) {
+    if (busy) { showErr('A register is still loading. Please wait.'); return; }
+    if (!OK.test(file.name)) { showErr('“' + file.name + '” is not a register file. Use .xlsx, .xls or .csv.'); return; }
+    if (dropped && count()) {                                     // replacing something that is already loaded: ask first
+      pending = file; clearErr();
+      askP.textContent = 'Loading “' + file.name + '” clears the ' + count().toLocaleString() + ' applications already on this desk.';
+      p.classList.add('is-ask'); setTimeout(() => noBtn.focus({ preventScroll: true }), 60);
+      return;
+    }
+    start(file);
+  }
+  noBtn.addEventListener('click', () => { pending = null; p.classList.remove('is-ask'); zone.focus({ preventScroll: true }); });
+  yesBtn.addEventListener('click', () => { const f = pending; pending = null; p.classList.remove('is-ask'); if (f) start(f); });
+
+  function setProg(pr, label) {
+    const pc = Math.round(pr * 100);
+    bar.style.setProperty('--p', pr); pctEl.textContent = pc + '%'; fs.textContent = label;
+    lb.style.setProperty('--lbp', pr); lbMain.textContent = 'Reading… ' + pc + '%';
+  }
+  function start(file) {
+    busy = true; const id = ++runId; clearErr(); byDrag = false;
+    prev = { state: lb.dataset.state, ico: lbIco.textContent, html: lbMain.innerHTML };
+    nameEl.textContent = file.name; nameEl.title = file.name;
+    p.classList.add('is-load');
+    lb.dataset.state = 'loading'; lbIco.textContent = '⏳';
+    window.slipRegister.busy(file.name);
+    setProg(0, fmtSize(file.size) + ' · reading…');
+    let n = null, failed = false;
+    if (/\.csv$/i.test(file.name)) {
+      file.text().then(t => { n = Math.max(0, t.split(/\r?\n/).filter(l => l.trim()).length - 1); }).catch(() => { failed = true; });
+    } else n = DEMO_N;
+    const dur = Math.max(1400, Math.min(3200, file.size / 1e6 * 600)), t0 = performance.now();
+    const tm = setInterval(() => {
+      if (id !== runId) { clearInterval(tm); return; }
+      if (failed) { clearInterval(tm); return fail('Could not read that file.'); }
+      let pr = Math.min(1, (performance.now() - t0) / dur); pr = 1 - Math.pow(1 - pr, 1.6);
+      if (n === null) pr = Math.min(pr, .92);
+      setProg(pr, fmtSize(file.size) + ' · reading…');
+      if (pr >= 1 && n !== null) { clearInterval(tm); finish(n, file); }
+    }, 50);
+  }
+  function finish(n, file) {
+    if (!n) return fail('No records found in “' + file.name + '”.');
+    busy = false; window.slipRegister.set(n);
+    setProg(1, fmtSize(file.size) + ' · ' + n.toLocaleString() + ' records');
+    syncNav();
+    const id = runId;
+    setTimeout(() => { if (id === runId) { close(); p.classList.remove('is-load'); } }, 900);
+  }
+  function fail(text) {
+    busy = false; p.classList.remove('is-load'); lb.style.removeProperty('--lbp');
+    window.slipRegister.busy('');                                  // footer back to what it was
+    if (prev) { lb.dataset.state = prev.state; lbIco.textContent = prev.ico; lbMain.innerHTML = prev.html; }
+    paintIdle(); showErr(text);
+  }
+  function syncNav() {                                             // navbar button follows the register (also after Disconnect in the footer)
+    if (busy) return;
+    const n = count();
+    lb.style.removeProperty('--lbp');
+    lb.dataset.state = n ? 'loaded' : 'empty';
+    lbIco.textContent = n ? '✓' : '📂';
+    lbMain.innerHTML = n ? '<span class="lb-num">' + n.toLocaleString() + '</span> <span class="lb-word">Records</span>' : 'Load register';
+    if (!p.classList.contains('is-load')) paintIdle();
+  }
+  window.slipRegisterChanged = syncNav;
+
+  /* dragging a file over the page opens the panel; dropping anywhere but the panel or the button does nothing */
+  let dc = 0;
+  const hasFiles = e => !!(e.dataTransfer && Array.prototype.indexOf.call(e.dataTransfer.types || [], 'Files') >= 0);
+  const overTarget = e => p.contains(e.target) || lb.contains(e.target);
+  function endDrag() { dc = 0; document.body.classList.remove('up-drag'); p.classList.remove('is-drag', 'is-hint'); paintIdle(); }
+  addEventListener('dragenter', e => { if (!hasFiles(e)) return; dc++; if (e.target.closest && e.target.closest('#ftStatus')) return; if (!isOpen) open(true); if (!p.classList.contains('is-load')) { p.classList.add('is-hint'); paintIdle(); } });
+  addEventListener('dragover', e => {
+    if (!hasFiles(e)) return;
+    document.body.classList.add('up-drag');          // the dim lets the drag through, so the footer drop box under it still works
+    if (e.defaultPrevented) { if (byDrag && isOpen) close(); return; }   // over the footer's own drop box: it takes the file
+    e.preventDefault();
+    const over = overTarget(e); e.dataTransfer.dropEffect = over ? 'copy' : 'none';
+    if (p.classList.contains('is-drag') !== over) { p.classList.toggle('is-drag', over); paintIdle(); }
+  });
+  addEventListener('dragleave', e => { if (!hasFiles(e)) return; dc = Math.max(0, dc - 1); if (!dc) { const was = byDrag; endDrag(); if (was) close(); } });
+  addEventListener('drop', e => {
+    if (!hasFiles(e)) return;
+    if (e.defaultPrevented) { const was = byDrag; endDrag(); if (was) close(); return; }   // the footer box handled it
+    e.preventDefault();
+    const over = overTarget(e), f = e.dataTransfer.files && e.dataTransfer.files[0], was = byDrag;
+    endDrag();
+    if (over && f) { if (!isOpen) open(true); byDrag = false; accept(f, true); }
+    else if (was) close();
+  });
+})();
+</script>
+</body>
+</html>

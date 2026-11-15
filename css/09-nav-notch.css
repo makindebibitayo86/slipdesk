@@ -1,0 +1,100 @@
+/* NAV NOTCH. When the mouse is still, the tab bar folds into a dark gold-edged notch (countdown, clock, exam-day weather). Logic: js/nav-notch.js */
+:root{
+  --ease-in-out:cubic-bezier(0.77,0,0.175,1);        /* --ease-out already exists in 02-portal.css */
+  --ease-island:cubic-bezier(.32,.72,0,1);           /* long, soft landing: the fold and every resize */
+  --ease-spring:cubic-bezier(.34,1.32,.5,1);         /* a small overshoot that settles: the unfold */
+  --nt-gold:#e2b84d;--nt-gold-hi:#f6dc8c;--nt-gold-lo:#b48620;
+}
+.tabs{
+  --nt-dur:560ms;--nt-ease:var(--ease-spring);
+  transition:width var(--nt-dur) var(--nt-ease),background-color 400ms ease-out,border-color 400ms ease-out,box-shadow 400ms ease-out;
+}
+
+/* ===== The notch: lacquered oxblood-black, a hairline of gold, a faint light from above ===== */
+.tabs.idle{
+  --nt-dur:520ms;--nt-ease:var(--ease-island);
+  background-color:rgba(18,5,9,.96);border-color:rgba(226,184,77,.55);
+  box-shadow:
+    inset 0 1px 0 rgba(255,238,190,.22),
+    inset 0 -1px 0 rgba(0,0,0,.5),
+    0 0 0 1px rgba(0,0,0,.4),
+    0 14px 30px -10px rgba(0,0,0,.75),
+    0 0 22px -6px rgba(226,184,77,.28);
+}
+.tabs.idle,.tabs.morph{overflow:hidden}
+
+.nt-sheen{position:absolute;inset:0;border-radius:inherit;overflow:hidden;pointer-events:none;z-index:0;opacity:0;transition:opacity 420ms ease-out}
+.nt-sheen::before{content:"";position:absolute;inset:0;
+  background:radial-gradient(90% 160% at 50% -55%,rgba(226,184,77,.26),transparent 62%),linear-gradient(180deg,rgba(255,255,255,.07),transparent 46%)}
+.nt-sheen::after{content:"";position:absolute;top:0;bottom:0;left:0;width:46%;transform:translateX(-140%);
+  background:linear-gradient(105deg,transparent 28%,rgba(255,238,190,.2) 50%,transparent 72%)}
+.tabs.idle .nt-sheen{opacity:1}
+.tabs.idle .nt-sheen::after{animation:ntSheen 8s var(--ease-in-out) 1.4s infinite}
+@keyframes ntSheen{0%{transform:translateX(-140%)}38%,100%{transform:translateX(330%)}}
+
+/* Choreography. Folding: the tabs blur out fast while the bar narrows, then the notch text arrives once the pill is nearly its size.
+   Unfolding: the notch text leaves at once, the bar opens, then the tabs arrive one after another (--i is set per tab in the script). */
+.tabs .tab{transition:transform 140ms var(--ease-out),color 260ms ease-out,
+  opacity 280ms ease-out calc(170ms + var(--i,0)*40ms),filter 280ms ease-out calc(170ms + var(--i,0)*40ms)}
+.tabs.idle .tab{flex:none;opacity:0;filter:blur(3px);pointer-events:none;
+  transition-duration:140ms,260ms,150ms,150ms;transition-delay:0s,0s,0s,0s}
+.tabs.idle .tab-drop{opacity:0!important}
+
+.nt-inner{
+  position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;
+  opacity:0;filter:blur(4px);transform:scale(.9);pointer-events:none;
+  transition:opacity 140ms ease-out,filter 140ms ease-out,transform 200ms ease-out;
+}
+.tabs.idle .nt-inner{
+  opacity:1;filter:none;transform:none;
+  transition:opacity 240ms ease-out 220ms,filter 240ms ease-out 220ms,transform 420ms var(--ease-island) 220ms;
+}
+/* slide change inside the notch: the old slide blurs away quickly, the pill resizes, the new slide settles in */
+.tabs.idle .nt-inner.swap{
+  opacity:0;filter:blur(4px);transform:scale(.94);
+  transition:opacity 150ms ease-out,filter 150ms ease-out,transform 150ms ease-out;
+}
+
+/* ===== Type. Numerals are the hero: Crimson Pro, lining + tabular figures, gold leaf gradient.
+         Labels are small, upper-case and widely tracked. Everything else is quiet DM Sans. ===== */
+.nt-row{display:flex;align-items:center;gap:15px;white-space:nowrap;color:#fff;font-family:'DM Sans',system-ui,sans-serif;font-variant-numeric:lining-nums tabular-nums}
+.nt-num{
+  display:inline-flex;align-items:baseline;font-family:'Crimson Pro',Georgia,serif;font-weight:700;font-size:28px;line-height:1;letter-spacing:-.012em;
+  font-feature-settings:'lnum' 1,'tnum' 1;
+  background:linear-gradient(180deg,#fff6d4 0%,var(--nt-gold-hi) 28%,var(--nt-gold) 62%,var(--nt-gold-lo) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 1px 0 rgba(0,0,0,.45));
+}
+.nt-num small{font-size:15px;font-weight:600;letter-spacing:0;margin-left:2px;opacity:.78}
+.nt-num.word{font-size:25px;letter-spacing:.005em;font-style:italic}
+.nt-clock{display:inline-flex;align-items:center;gap:6px}
+.nt-ss{display:flex;flex-direction:column;align-items:flex-start;gap:0;line-height:1}
+.nt-ampm{font-family:'DM Sans',system-ui,sans-serif;font-size:9.5px;font-weight:700;letter-spacing:.2em;color:var(--nt-gold)}
+.nt-sec{font-family:'Crimson Pro',Georgia,serif;font-size:16px;font-weight:700;line-height:.8;margin-top:-1px;color:var(--nt-gold-hi);opacity:.85;font-feature-settings:'lnum' 1,'tnum' 1}
+.nt-rule{display:block;width:1px;height:24px;background:linear-gradient(180deg,transparent,rgba(226,184,77,.75) 50%,transparent)}
+.nt-stack{display:flex;flex-direction:column;gap:3px;line-height:1;text-align:left}
+.nt-cap{display:flex;align-items:center;gap:6px;font-size:9.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--nt-gold)}
+.nt-line{font-size:12.5px;font-weight:500;letter-spacing:.01em;color:rgba(255,255,255,.92)}
+.nt-live{display:block;width:5px;height:5px;border-radius:50%;background:var(--nt-gold-hi);box-shadow:0 0 0 0 rgba(246,220,140,.7);animation:ntLive 2s ease-out infinite}
+@keyframes ntLive{0%{box-shadow:0 0 0 0 rgba(246,220,140,.7)}70%,100%{box-shadow:0 0 0 6px rgba(246,220,140,0)}}
+.nt-done{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;border:1px solid rgba(226,184,77,.7);color:var(--nt-gold-hi);box-shadow:inset 0 0 8px rgba(226,184,77,.25)}
+
+/* weather */
+.nt-day{display:flex;align-items:center;gap:9px}
+.nt-wi{display:grid;place-items:center;color:var(--nt-gold-hi);filter:drop-shadow(0 0 6px rgba(226,184,77,.35))}
+.nt-day .nt-line{display:flex;align-items:baseline;gap:6px}
+.nt-deg{font-family:'Crimson Pro',Georgia,serif;font-size:18px;font-weight:700;line-height:1;color:#fff;font-feature-settings:'lnum' 1,'tnum' 1}
+.nt-lo{font-family:'Crimson Pro',Georgia,serif;font-size:15px;font-weight:600;line-height:1;color:rgba(255,255,255,.5);font-feature-settings:'lnum' 1,'tnum' 1}
+.nt-rain{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--nt-gold);margin-left:2px}
+
+/* keyboard wake is instant: a Tab press should never wait on an animation */
+.tabs.snap,.tabs.snap .tab,.tabs.snap .nt-inner{transition-duration:0s!important;transition-delay:0s!important}
+/* reduced motion: no width morph, keep the gentle fades */
+@media (prefers-reduced-motion:reduce){
+  .tabs{transition-property:background-color,border-color,box-shadow}
+  .tabs .tab,.nt-inner{transition-delay:0s!important;filter:none!important;transform:none!important}
+  .nt-sheen::after,.nt-live{animation:none!important}
+}
+
+/* phones / narrow windows: the bar is full width there, so the notch is switched off */
+@media(max-width:860px){.tabs.idle{width:auto!important}}

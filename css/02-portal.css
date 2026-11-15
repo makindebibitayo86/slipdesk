@@ -1,0 +1,350 @@
+/* ── Password gate ── */
+.signoutbtn{flex-shrink:0;display:inline-flex;align-items:center;gap:10px;height:46px;padding:0 18px 0 7px;border-radius:999px;border:1.5px solid rgba(255,255,255,.45);background:rgba(255,255,255,.06);color:#fff;font-family:inherit;cursor:pointer;white-space:nowrap;transition:background .2s,border-color .2s}
+.signoutbtn:hover{background:rgba(255,255,255,.18);border-color:#fff}
+.signoutbtn:focus-visible{outline:2px solid #e2b84d;outline-offset:2px}
+.so-av{display:inline-flex}
+.so-t{display:flex;flex-direction:column;align-items:flex-start;line-height:1.15;text-align:left}
+.so-who{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#e2b84d;font-weight:700;max-width:130px;overflow:hidden;text-overflow:ellipsis}
+.so-word{font-size:13px;font-weight:600}
+@media(max-width:700px){.so-t{display:none}.signoutbtn{padding:0 7px}}
+.signoutbtn{gap:11px;padding:0 15px 0 7px}
+.so-t{gap:2px}
+.so-name{font-size:14px;font-weight:700;color:#fff;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1}
+.so-who{color:#e2b84d;font-size:10px;line-height:1.1}
+.so-div{width:1px;align-self:stretch;margin:9px 0;background:rgba(255,255,255,.4)}
+.so-ico{flex-shrink:0;color:#fff;transition:color .2s,transform .2s}
+.signoutbtn{position:relative;overflow:hidden}
+.signoutbtn>*{position:relative;z-index:1}
+@keyframes soArrow{0%,100%{transform:translateX(0)}50%{transform:translateX(3.5px)}}
+.signoutbtn:hover .so-arrow{animation:soArrow .7s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){.signoutbtn:hover .so-arrow{animation:none}}
+/* Arrow buttons: on hover the arrow travels in its own direction and back, endlessly */
+.arw{display:inline-block}
+@keyframes arwR{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
+@keyframes arwL{0%,100%{transform:translateX(0)}50%{transform:translateX(-5px)}}
+@keyframes arwD{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+@keyframes arwU{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+button:not(:disabled):hover .arw-r{animation:arwR .7s ease-in-out infinite}
+button:not(:disabled):hover .arw-l{animation:arwL .7s ease-in-out infinite}
+button:not(:disabled):hover .arw-d{animation:arwD .7s ease-in-out infinite}
+button:not(:disabled):hover .arw-u{animation:arwU .7s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){button:hover .arw,button:hover .arw-r{animation:none !important}}
+@media(max-width:700px){.so-div{display:none}.signoutbtn{padding:0 12px 0 7px}}
+#gate{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;padding:20px;background:linear-gradient(160deg,#4a1220 0%,#6d1f2e 55%,#350d18 100%);font-family:'DM Sans','Segoe UI',sans-serif}
+#gate.on{display:flex}
+/* Sign-in background: two Head of Service hero images, embedded, crossfading forever, with a light maroon tint */
+#gate{--gate-img1:url('../assets/gate-1.jpg');--gate-img2:url('../assets/gate-2.jpg')}
+.gate-bg{position:absolute;inset:0;overflow:hidden;z-index:0;pointer-events:none}
+.gate-bg i{position:absolute;left:0;right:0;top:0;bottom:0;background-size:100% 100%;background-position:center;background-repeat:no-repeat}
+.gate-bg .gb1{background-image:var(--gate-img1)}
+.gate-bg .gb2{background-image:var(--gate-img2);opacity:0;animation:gbFade 18s ease-in-out infinite}
+.gate-bg b{position:absolute;inset:0;background:linear-gradient(160deg,rgba(74,18,32,.28) 0%,rgba(109,31,46,.2) 55%,rgba(53,13,24,.36) 100%)}
+@media (max-aspect-ratio:1/1){.gate-bg i{top:0;bottom:0;background-size:cover}}
+@keyframes gbFade{0%,40%{opacity:0}50%,90%{opacity:1}100%{opacity:0}}
+#gate .gate-box{position:relative;z-index:1}
+@media (prefers-reduced-motion:reduce){.gate-bg .gb2{animation:none}}
+.gate-box{width:100%;max-width:380px;background:#fff;border:2px solid #c4962a;border-radius:22px;padding:30px 28px 24px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+.gate-box.shake{animation:gshake .4s}
+@keyframes gshake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-9px)}40%,80%{transform:translateX(9px)}}
+.gate-ico{font-size:34px;line-height:1;margin-bottom:10px}
+.gate-crest{display:flex;justify-content:center}
+.gate-crest img{display:block;height:64px;width:auto}
+.gate-emblem{display:flex;align-items:center;justify-content:center;gap:18px;margin-bottom:12px}
+.gate-div{position:relative;width:1px;height:58px;background:linear-gradient(180deg,transparent,#c4962a 20%,#c4962a 80%,transparent)}
+.gate-div i{position:absolute;left:50%;top:50%;width:7px;height:7px;background:#c4962a;transform:translate(-50%,-50%) rotate(45deg);box-shadow:0 0 0 3px #fff}
+.gate-lock{display:flex;justify-content:center;filter:drop-shadow(0 3px 5px rgba(74,18,32,.25))}
+.gate-lock .gl-shackle{transform-box:fill-box;transform-origin:100% 100%;animation:glShackle 4.5s ease-in-out infinite}
+.gate-lock svg{animation:glFloat 4.5s ease-in-out infinite}
+@keyframes glShackle{0%,50%{transform:translateY(0) rotate(0)}60%,82%{transform:translateY(-6px) rotate(-14deg)}92%,100%{transform:translateY(0) rotate(0)}}
+@keyframes glFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+@media (prefers-reduced-motion:reduce){.gate-lock .gl-shackle,.gate-lock svg{animation:none}}
+.gate-box h2{font-family:'Crimson Pro',Georgia,serif;font-size:23px;color:#350d18;margin-bottom:4px}
+.gate-box p{font-size:12.5px;color:#5c4a4e;line-height:1.6;margin-bottom:16px}
+.gate-row{position:relative;margin-bottom:10px}
+.gate-row input{width:100%;padding:11px 44px 11px 14px;border:1.5px solid #ddd4d6;border-radius:8px;font-family:inherit;font-size:15px;outline:none;transition:border-color .2s,box-shadow .2s}
+.gate-row input:focus{border-color:#6d1f2e;box-shadow:0 0 0 3px rgba(109,31,46,.12)}
+.gate-eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;padding:6px 8px;opacity:.7}
+.gate-eye:hover{opacity:1}
+.gate-skip{display:block;width:100%;margin-top:8px;padding:9px;background:none;border:none;color:#6d1f2e;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.gate-skip:hover{color:#350d18}
+.gate-go{width:100%;height:44px;border:none;border-radius:24px;background:linear-gradient(135deg,#6d1f2e,#8b2d40);color:#fff;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 3px 10px rgba(109,31,46,.3)}
+.gate-go:disabled{opacity:.55;cursor:not-allowed}
+#gateMsg{min-height:19px;margin-top:10px;font-size:12.5px;color:#c0392b;font-weight:500}
+#gateMsg.info{color:#7a5000}
+.gate-foot{margin-top:6px;font-size:11px;color:#9c8a8e}
+@media(min-width:761px){.gate-form .gate-foot{position:absolute;left:34px;right:34px;bottom:28px;margin:0}}   /* pinned to the bottom, level with the bottom of the dark panel's note, on both pages */
+.gate-ghost{position:absolute;left:-9999px;top:0;width:1px;height:1px;opacity:0;pointer-events:none}
+.gate-box.welcoming>:not(.gate-hello){display:none}
+.gate-hello{display:none;padding:10px 0 6px;animation:ghIn .45s ease-out}
+.gate-box.welcoming .gate-hello{display:block}
+.gate-hello .av{margin:0 auto 14px;box-shadow:0 0 0 3px #c4962a}
+.gh-g{display:flex;flex-direction:column;align-items:center;gap:4px;line-height:1.1}
+.gh-hi{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:#a07a14;font-weight:700}
+.gh-name{font-family:'Crimson Pro',Georgia,serif;font-size:clamp(28px,4.4vw,38px);line-height:1.15;text-align:center;max-width:100%;font-weight:800;color:#350d18;padding-bottom:8px;background:linear-gradient(#c4962a,#c4962a) center bottom/64px 3px no-repeat}
+.gh-n{display:inline-block;font-size:12.5px;font-weight:700;color:#6d1f2e;background:#f7ecee;border:1px solid #e8d2d6;padding:5px 14px;border-radius:999px;margin-top:14px}
+.gh-s{font-size:14px;color:#6b5a5e;margin-top:14px}
+.gh-bar{height:3px;border-radius:2px;background:#f0e4e7;margin:18px auto 0;width:120px;overflow:hidden}
+.gh-bar i{display:block;height:100%;background:#c4962a;transform-origin:left;animation:ghBar 2s linear forwards}
+@keyframes ghIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes ghBar{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@media(prefers-reduced-motion:reduce){.gate-hello,.gh-bar i{animation:none}}
+@media(max-width:860px){.navright{flex-wrap:wrap;gap:8px}}
+.lp-open{background:#c4962a;color:#350d18;border-color:#c4962a !important}
+.logbtn.on{background:rgba(255,255,255,.16);border-color:rgba(226,184,77,.85)}
+#logPage{position:absolute;inset:0;overflow:auto;display:none;background:#ede8e9}
+#logPage.active{display:flex;flex-direction:column}
+.lg-wrap{flex:1 0 auto;width:100%;max-width:1280px;margin:0 auto;padding:22px 20px 0}
+/* TEMPORARY vertical dividers in the log table: delete these two lines to remove them */
+.lg-table th,.lg-table td{border-right:1px solid #e8d0d5}
+.lg-table th:last-child,.lg-table td:last-child{border-right:none}
+.lg-cand{display:flex;gap:12px;align-items:flex-start}.lg-cand .av{flex-shrink:0}.lg-cand>div{min-width:0}
+.lg-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.lg-head h1{font-family:'Crimson Pro',Georgia,serif;font-size:30px;color:#350d18;line-height:1.1}
+.lg-head p{font-size:12.5px;color:#5c4a4e;margin-top:6px;max-width:640px;line-height:1.55}
+.lg-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px}  /* button bottoms sit on the subtitle's last text line (4px = its descender + line spacing) */
+.lg-btn{height:40px;padding:0 18px;border-radius:999px;border:1.5px solid #6d1f2e;background:linear-gradient(135deg,#6d1f2e,#8b2d40);color:#fff;font:600 13px 'DM Sans','Segoe UI',sans-serif;cursor:pointer;white-space:nowrap}
+.lg-btn.ghost{background:#fff;color:#6d1f2e}
+.lg-btn.danger{background:#fff;color:#842029;border-color:#c0392b}
+.lg-btn:disabled{opacity:.45;cursor:not-allowed}
+.lg-btn:focus-visible,.lg-tools :is(select,input):focus-visible{outline:2px solid #c4962a;outline-offset:2px}
+.lg-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.lg-stat{background:#fff;border:1px solid #e8d0d5;border-left:4px solid #c4962a;border-radius:12px;padding:10px 14px}
+.lg-stat b{display:block;font-family:'Crimson Pro',Georgia,serif;font-size:26px;color:#350d18;line-height:1.1;font-variant-numeric:tabular-nums}
+.lg-stat span{font-size:11px;color:#5c4a4e;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.lg-stat.warn{border-left-color:#c0392b}
+.lg-tools{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;background:#fff;border:1px solid #e8d0d5;border-radius:14px;padding:10px 12px;margin-bottom:14px}
+.lg-f{display:flex;flex-direction:column;gap:3px;font-size:10.5px;font-weight:700;color:#6d1f2e;text-transform:uppercase;letter-spacing:.05em}
+.lg-f.grow{flex:1 1 220px;min-width:180px}
+.lg-tools select,.lg-tools input{height:36px;padding:0 10px;border:1.5px solid #ddd4d6;border-radius:8px;font:13px 'DM Sans','Segoe UI',sans-serif;color:#1c1216;background:#fff;text-transform:none;letter-spacing:0;font-weight:400}
+.lg-card{background:#fff;border:1px solid #e8d0d5;border-radius:14px;overflow:auto}
+.lg-table{width:100%;border-collapse:collapse;font-size:12.5px;min-width:1020px;table-layout:fixed}
+/* fixed column widths: the same look for every filter; user and activity stay on one line, Details takes the rest */
+.lg-table th:nth-child(1){width:56px}.lg-table th:nth-child(2){width:160px}.lg-table th:nth-child(3){width:240px}.lg-table th:nth-child(4){width:220px}.lg-table th:nth-child(6){width:140px}
+.lg-table td:nth-child(3),.lg-table td:nth-child(4){white-space:nowrap}
+.lg-table td:nth-child(3) .lp-user{white-space:nowrap}
+.lg-table th{position:sticky;top:0;z-index:1;background:#f9f0f2;color:#6d1f2e;text-align:left;font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:10px 12px;border-bottom:1px solid #e8d0d5;white-space:nowrap}
+.lg-table td{padding:9px 12px;border-bottom:1px solid #f0e4e7;vertical-align:top}
+.lg-table tbody tr:nth-child(even) td{background:#fdf7f8}
+.lg-table tbody tr:last-child td{border-bottom:none}
+.lg-table tbody tr.lg-loaded td{background:#eaf5ec}
+.lg-table tbody tr.lg-loaded td{border-bottom-color:#cfe6d4}
+.lg-clamp .lg-sub{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.lg-num,.lg-time{white-space:nowrap;color:#5c4a4e;font-variant-numeric:tabular-nums}
+.lg-q{font-weight:700;color:#350d18;word-break:break-word}
+.lg-q:has(.lg-vtick){display:flex;align-items:center;gap:6px}
+.lg-role{font-weight:600;color:#350d18}
+.lg-ids{white-space:nowrap;font-variant-numeric:tabular-nums}
+.lg-sub{color:#5c4a4e;margin-top:2px;line-height:1.45;word-break:break-word}
+.lg-empty{padding:44px 16px;text-align:center;color:#9c8a8e;font-size:13px}
+.lg-pager{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px;font-size:12.5px;color:#5c4a4e}
+.lg-pager .pg{display:flex;align-items:center;gap:8px}
+.lg-pager select{height:32px;border:1.5px solid #ddd4d6;border-radius:8px;padding:0 6px;font:inherit;background:#fff}
+@media print{#logPage{display:none !important}}
+#gate{overflow:auto}
+.gate-box.two{max-width:940px;width:100%;margin:auto;padding:0;overflow:hidden;text-align:center}
+.gate-grid{display:grid;grid-template-columns:1.2fr 1fr;grid-template-rows:minmax(0,1fr);height:660px}
+@media(min-width:761px) and (max-width:959px){.gate-grid{height:820px}}
+.gate-info{text-align:left;color:rgba(255,255,255,.88);padding:34px 28px 28px 32px;background:linear-gradient(170deg,#6d1f2e 0%,#4a1220 60%,#350d18 100%);border-right:3px solid #c4962a;display:flex;flex-direction:column}
+.gi-kick{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#e2b84d;font-weight:700}
+.gate-info h3{font-family:'Crimson Pro',Georgia,serif;font-size:26px;color:#fff;margin:6px 0 16px}
+.gi-steps{list-style:none;counter-reset:gi;margin:0;padding:0}
+.gi-steps li{counter-increment:gi;position:relative;padding:0 0 13px 38px;font-size:12.5px;line-height:1.55}
+.gi-steps li::before{content:counter(gi);position:absolute;left:0;top:0;width:26px;height:26px;border-radius:50%;background:#e2b84d;color:#4a1220;font-weight:800;font-size:12.5px;display:flex;align-items:center;justify-content:center}
+.gi-steps b{color:#fff}
+.gi-note{margin-top:auto;padding-top:12px;border-top:1px solid rgba(226,184,77,.35);font-size:11px;line-height:1.55;color:rgba(255,255,255,.65)}
+.gate-form{padding:44px 34px 28px;display:flex;flex-direction:column;justify-content:center}
+.gate-box.two.welcoming .gate-hello{padding:110px 24px}
+.gate-info .gi-lead{font-size:13px;line-height:1.55;color:rgba(255,255,255,.78);margin:-6px 0 16px}
+.gate-info .gi-steps li{padding:10px 14px 10px 56px;margin-bottom:8px;background:rgba(255,255,255,.06);border:1px solid rgba(226,184,77,.22);border-radius:12px;font-size:13px;line-height:1.5;transition:background .2s,border-color .2s}
+.gate-info .gi-steps li:hover{background:rgba(255,255,255,.1);border-color:rgba(226,184,77,.45)}
+.gate-info .gi-steps li::before{left:15px;top:10px;width:28px;height:28px;box-shadow:0 0 0 4px rgba(226,184,77,.18)}
+.gate-info .gi-note{border-top:0;border-left:3px solid #e2b84d;background:rgba(226,184,77,.1);border-radius:0 10px 10px 0;padding:11px 14px;font-size:12px;color:rgba(255,255,255,.85)}
+.gate-name{color:#350d18;font-weight:800;font-size:1.12em;border-bottom:2px solid #c4962a}
+.gate-info.gi-pw{display:none}
+.gate-box.changing .gate-info:not(.gi-pw){display:none}
+.gate-box.changing .gate-info.gi-pw{display:flex;order:2;border-right:0;border-left:3px solid #c4962a}
+.gate-box.changing .gate-grid{grid-template-columns:1fr 1.2fr}
+@media(min-width:761px){.gate-info .gi-steps{flex:1;display:flex;flex-direction:column;justify-content:space-between;gap:8px;margin-bottom:8px}.gate-info .gi-steps li{margin-bottom:0}}
+.gate-box.changing .gate-form{order:1}
+/* Panel swap: the dark panel is one moving "drop" (same stretch-then-settle as the navbar selector); the white form slides across the other way */
+.gate-grid{position:relative}
+.gate-info{position:relative;z-index:1;transition:border-color .28s ease-out}
+.gate-drop{position:absolute;top:0;bottom:0;left:0;width:0;z-index:0;pointer-events:none;will-change:transform,width;background:linear-gradient(170deg,#6d1f2e 0%,#4a1220 60%,#350d18 100%)}
+.gate-box.swapping .gate-info{background:transparent;border-color:transparent}
+.gate-box.swapping .gate-form{position:relative;z-index:2;background:#fff;will-change:transform}
+.gate-form{position:relative}
+.gate-back{display:none;position:absolute;top:22px;left:22px;align-items:center;gap:6px;padding:7px 14px 7px 11px;border:1.5px solid #e8d0d5;border-radius:999px;background:#fff;color:#6d1f2e;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:background .18s,border-color .18s,transform .14s}
+.gate-back:hover{background:#f9f0f2;border-color:#c4962a}
+.gate-back:active{transform:scale(.96)}
+.gate-back:focus-visible{outline:2px solid #c4962a;outline-offset:2px}
+.gate-box.changing .gate-back{display:inline-flex}
+.gate-info.gi-ghost{position:absolute;top:0;bottom:0;margin:0;pointer-events:none}
+.gate-box.changing .gate-info.gi-ghost{display:flex}
+@media(max-width:760px){.gate-box.two{max-width:430px}.gate-grid{grid-template-columns:1fr;grid-template-rows:none;min-height:0;height:auto}.gate-form{order:-1;padding:28px 22px 20px}.gate-info{border-right:0;border-top:3px solid #c4962a;padding:24px 22px}.gate-box.changing .gate-form{order:-1}.gate-box.changing .gate-info.gi-pw{border-left:0}.gate-box.changing .gate-grid{grid-template-columns:1fr}.gate-box.two.welcoming .gate-hello{padding:60px 20px}}
+/* accounts */
+.gate-box{max-width:430px}
+.gate-users{display:flex;flex-direction:column;gap:6px;max-height:min(300px,36vh);overflow:auto;margin:0 0 14px;text-align:left;padding:2px}
+.gate-user{display:flex;align-items:center;gap:11px;width:100%;padding:7px 10px;background:#fff;border:1.5px solid #ddd4d6;border-radius:12px;cursor:pointer;font-family:inherit;text-align:left;transition:border-color .15s,background .15s}
+.gate-user:hover:not(:disabled){border-color:#8b2d40;background:#fdf7f8}
+.gate-user.sel{border-color:#6d1f2e;background:#f9f0f2;box-shadow:0 0 0 2px rgba(109,31,46,.14)}
+.gate-user:disabled{opacity:.5;cursor:not-allowed}
+.gate-user:focus-visible{outline:2px solid #c4962a;outline-offset:1px}
+.gu-t{display:flex;flex-direction:column;min-width:0}
+.gu-n{font-size:13.5px;font-weight:700;color:#350d18;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gu-s{font-size:11px;color:#9c8a8e}
+.av{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;border-radius:50%;overflow:hidden;color:#fff;font-weight:700;letter-spacing:.02em;box-shadow:0 0 0 2px rgba(196,150,42,.75);user-select:none}
+.av img{width:100%;height:100%;object-fit:cover;display:block}
+/* log: user + filters */
+.lp-filter{display:flex;gap:8px;padding:8px 16px;background:#fdf7f8;border-bottom:1px solid #e8d0d5}
+.lp-filter select{flex:1;min-width:0;font-family:inherit;font-size:12px;padding:5px 8px;border:1.5px solid #ddd4d6;border-radius:8px;background:#fff;color:#1c1216}
+.lp-user{display:inline-flex;align-items:center;gap:7px;font-weight:700;color:#350d18;min-width:0}
+.lp-user .av{box-shadow:0 0 0 1.5px rgba(196,150,42,.75)}
+.lp-user.none{color:#9c8a8e;font-weight:600}
+.lp-badge.ev-in{background:#d4edda;color:#155724}.lp-badge.ev-out{background:#e2e3e5;color:#41464b}
+.lp-badge.ev-lock{background:#f7ecd4;color:#7a5000}.lp-badge.ev-fail{background:#f8d7da;color:#842029}
+.lp-badge.ev-print{background:#dbeafe;color:#1e3a8a}
+.lp-badge.ev-sess{background:#e2e3e5;color:#41464b}.lp-badge.ev-clear{background:#f8d7da;color:#842029}
+.lp-q2{font-weight:700;color:#350d18;word-break:break-word;margin-top:3px}
+.lp-cand{display:flex;align-items:center;gap:8px;min-width:0}.lp-cand .lp-q2{margin-top:0}.lp-cand .av{flex-shrink:0}
+@media print{#gate.on{display:flex!important}nav,main{display:none!important}}
+
+/* ══ Liquid-glass buttons ══
+   Frosted translucent surface (backdrop blur) + a lit top edge and soft gloss (inset shadows) + a grounded drop shadow.
+   Light and depth live in box-shadow, so the existing per-state colours (loaded / error / pending) keep working on top of the glass.
+   Motion is transform + shadow only: lift on hover (mouse only), press-in on :active. Nothing here uses transition: all. */
+:root{
+  --ease-out:cubic-bezier(0.23,1,0.32,1);
+  --gl-blur:blur(14px) saturate(170%);
+}
+/* 1 · Glass on the wine navbar: loader, log button, sign-out */
+.loadbtn,.logbtn,.signoutbtn{
+  -webkit-backdrop-filter:var(--gl-blur);backdrop-filter:var(--gl-blur);
+  border-color:rgba(255,255,255,.3);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.5),
+    inset 0 14px 16px -12px rgba(255,255,255,.34),
+    inset 0 -1px 0 rgba(0,0,0,.14),
+    0 6px 16px -6px rgba(0,0,0,.4),
+    0 1px 2px rgba(0,0,0,.22);
+  transition:transform 140ms var(--ease-out),box-shadow 220ms var(--ease-out),background-color 220ms,border-color 220ms,color 220ms;
+}
+.loadbtn,.logbtn,.signoutbtn{background-color:rgba(255,255,255,.12)}
+.loadbtn[data-state=loaded]{border-color:rgba(168,240,186,.85)}
+.loadbtn[data-state=empty],.loadbtn[data-state=error]{border-color:rgba(226,184,77,.8)}
+.loadbtn[data-state=error]{border-color:rgba(240,138,122,.85)}
+.logbtn:hover,.logbtn[aria-expanded=true],.loadbtn:hover,.signoutbtn:hover{border-color:rgba(255,255,255,.55)}
+
+/* 2 · The tab switch: a glass track with a frosted white pill */
+.tabs{
+  -webkit-backdrop-filter:var(--gl-blur);backdrop-filter:var(--gl-blur);
+  background:rgba(0,0,0,.22);border-color:rgba(255,255,255,.16);
+  box-shadow:inset 0 2px 5px rgba(0,0,0,.28),inset 0 -1px 0 rgba(255,255,255,.1),0 1px 0 rgba(255,255,255,.08);
+}
+.tab{transition:transform 140ms var(--ease-out),background-color 200ms,color 200ms,box-shadow 220ms var(--ease-out)}
+.tab:active{transform:scale(.97)}
+.tab.active{
+  background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(255,255,255,.84));
+  box-shadow:inset 0 1px 0 #fff,inset 0 -1px 0 rgba(109,31,46,.12),0 4px 10px -2px rgba(0,0,0,.35),0 1px 2px rgba(0,0,0,.2);
+}
+
+/* 3 · Primary wine buttons: tinted glass with a light-catching top edge */
+.lg-btn,.lp-dl,.gate-go{
+  position:relative;
+  background:linear-gradient(180deg,rgba(150,52,72,.96),rgba(109,31,46,.96));
+  border:1px solid rgba(53,13,24,.55);
+  -webkit-backdrop-filter:var(--gl-blur);backdrop-filter:var(--gl-blur);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.42),
+    inset 0 14px 14px -10px rgba(255,255,255,.26),
+    inset 0 -2px 5px rgba(0,0,0,.2),
+    0 8px 18px -6px rgba(109,31,46,.55),
+    0 1px 2px rgba(53,13,24,.35);
+  transition:transform 140ms var(--ease-out),box-shadow 220ms var(--ease-out),background-color 200ms,border-color 200ms,color 200ms,opacity 160ms;
+}
+.gate-go{box-shadow:inset 0 1px 0 rgba(255,255,255,.42),inset 0 16px 16px -10px rgba(255,255,255,.26),inset 0 -2px 5px rgba(0,0,0,.2),0 10px 22px -8px rgba(109,31,46,.6),0 1px 2px rgba(53,13,24,.35)}
+
+/* 4 · Frosted white buttons (ghost, clear log, danger) */
+.lg-btn.ghost,.lp-clr,.lg-btn.danger{
+  background:linear-gradient(180deg,rgba(255,255,255,.92),rgba(255,255,255,.7));
+  border:1px solid rgba(109,31,46,.24);
+  box-shadow:
+    inset 0 1px 0 #fff,
+    inset 0 -1px 0 rgba(109,31,46,.08),
+    0 4px 12px -4px rgba(53,13,24,.2),
+    0 1px 2px rgba(53,13,24,.1);
+}
+.lg-btn.danger{border-color:rgba(192,57,43,.35);background:linear-gradient(180deg,rgba(255,255,255,.92),rgba(255,236,233,.78))}
+.lp-clr{transition:transform 140ms var(--ease-out),box-shadow 220ms var(--ease-out),background-color 200ms,border-color 200ms}
+
+/* 5 · Gold glass: Open full log */
+.lp-open{
+  background:linear-gradient(180deg,#e7c25a,#c4962a);
+  border-color:rgba(122,80,0,.45) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 12px 12px -10px rgba(255,255,255,.4),inset 0 -2px 4px rgba(122,80,0,.25),0 6px 14px -5px rgba(122,80,0,.5),0 1px 2px rgba(53,13,24,.25);
+  transition:transform 140ms var(--ease-out),box-shadow 220ms var(--ease-out),background-color 200ms;
+}
+
+/* the dropdown footer rule outranks plain classes, so restate the glass borders there */
+.lp-foot .lp-dl{border:1px solid rgba(53,13,24,.55)}
+.lp-foot .lp-clr{border:1px solid rgba(109,31,46,.24)}
+/* Press: sink in. Works on touch too, and it is the feedback that replaces the removed tap highlight */
+.loadbtn:not([data-state=loading]):active,.logbtn:active,.signoutbtn:active,.lg-btn:not(:disabled):active,.lp-foot button:not(:disabled):active,.gate-go:not(:disabled):active{
+  transform:scale(.97);
+  transition-duration:90ms,120ms,200ms,200ms,200ms;
+}
+.lg-btn:not(:disabled):active,.lp-dl:not(:disabled):active,.gate-go:not(:disabled):active{
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.28),inset 0 -1px 3px rgba(0,0,0,.25),0 2px 6px -2px rgba(109,31,46,.5);
+}
+.lg-btn.ghost:not(:disabled):active,.lp-clr:not(:disabled):active,.lg-btn.danger:not(:disabled):active{
+  box-shadow:inset 0 1px 3px rgba(109,31,46,.18),0 1px 2px rgba(53,13,24,.1);
+}
+
+/* Hover: rise a little and glow. Mouse only, so a tap never leaves a stuck hover */
+@media (hover:hover) and (pointer:fine){
+  .loadbtn:not([data-state=loading]):hover,.logbtn:hover,.signoutbtn:hover,.lg-btn:not(:disabled):hover,.lp-foot button:not(:disabled):hover,.gate-go:not(:disabled):hover{transform:translateY(-1px)}
+  .loadbtn:not([data-state=loading]):hover,.logbtn:hover,.signoutbtn:hover{
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 14px 16px -12px rgba(255,255,255,.42),inset 0 -1px 0 rgba(0,0,0,.14),0 10px 20px -6px rgba(0,0,0,.45),0 1px 2px rgba(0,0,0,.22);
+  }
+  .lg-btn:not(.ghost):not(.danger):not(:disabled):hover,.lp-dl:not(:disabled):hover,.gate-go:not(:disabled):hover{
+    background:linear-gradient(180deg,rgba(165,60,82,.97),rgba(122,36,53,.97));
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 14px 14px -10px rgba(255,255,255,.32),inset 0 -2px 5px rgba(0,0,0,.2),0 12px 24px -8px rgba(109,31,46,.6),0 1px 2px rgba(53,13,24,.35);
+  }
+  .lg-btn.ghost:not(:disabled):hover,.lp-clr:not(:disabled):hover{
+    background:linear-gradient(180deg,#fff,rgba(255,255,255,.82));border-color:rgba(109,31,46,.42);
+    box-shadow:inset 0 1px 0 #fff,inset 0 -1px 0 rgba(109,31,46,.08),0 8px 18px -6px rgba(53,13,24,.28),0 1px 2px rgba(53,13,24,.1);
+  }
+  .lg-btn.danger:not(:disabled):hover{
+    background:linear-gradient(180deg,#fff,rgba(255,226,222,.9));border-color:rgba(192,57,43,.6);
+    box-shadow:inset 0 1px 0 #fff,0 8px 18px -6px rgba(192,57,43,.35),0 1px 2px rgba(53,13,24,.1);
+  }
+  .lp-open:hover{transform:translateY(-1px);box-shadow:inset 0 1px 0 rgba(255,255,255,.7),inset 0 12px 12px -10px rgba(255,255,255,.5),inset 0 -2px 4px rgba(122,80,0,.25),0 10px 20px -6px rgba(122,80,0,.55),0 1px 2px rgba(53,13,24,.25)}
+  .tab:not(.active):hover{background:rgba(255,255,255,.14)}
+}
+.lp-open:active{transform:scale(.97)}
+.lg-btn:disabled,.lp-dl:disabled,.lp-clr:disabled,.gate-go:disabled{box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 1px 2px rgba(53,13,24,.15)}
+
+/* Accessibility: reduced motion keeps colour/shadow changes, drops movement; reduced transparency turns glass into solid surfaces */
+@media (prefers-reduced-motion:reduce){
+  .loadbtn,.logbtn,.signoutbtn,.tab,.lg-btn,.lp-dl,.lp-clr,.lp-open,.gate-go{transform:none !important}
+}
+@media (prefers-reduced-transparency:reduce){
+  .loadbtn,.logbtn,.signoutbtn,.tabs,.lg-btn,.lp-dl,.gate-go{-webkit-backdrop-filter:none;backdrop-filter:none}
+  .lg-btn.ghost,.lp-clr{background:#fff}
+  .lg-btn.danger{background:#fff}
+  .lg-btn:not(.ghost):not(.danger),.lp-dl,.gate-go{background:#6d1f2e}
+}
+
+/* Sign-out pill: solid maroon all the way across (no red end cap); hover only deepens/lightens the maroon */
+.signoutbtn{
+  background-color:#4a1220;
+  background-image:linear-gradient(180deg,#6b1d2d 0%,#4a1220 100%);
+  border-color:rgba(226,184,77,.6);
+}
+.signoutbtn:hover,.signoutbtn:focus-visible{
+  background-color:#5a1626;
+  background-image:linear-gradient(180deg,#7d2539 0%,#5a1626 100%);
+  border-color:#e2b84d;
+}
+
+/* Analysis page: the records pill has no dropdown there */
+body.on-analysis .loadbtn[data-state=loaded]{cursor:default}

@@ -1,0 +1,111 @@
+/* ══ Press-in feel for every button, and hover behaviour for every panel and card ══
+   (Part 1: buttons. Part 2, at the bottom: panels and cards.)
+
+   Press-in feel:
+   One rule set, loaded in the main page and inside every page frame (see js/app.js).
+   On press a button sinks: it shrinks a little, drops 1px, goes slightly darker and
+   gets a soft inner shadow, so a tap never feels like hitting a wall.
+   Release springs back. Disabled and loading buttons stay still. */
+
+/* Base: fast, springy movement for any button that has no transition of its own
+   (:where keeps this at zero specificity, so existing button transitions still win) */
+:where(button, [role="button"], input[type="button"], input[type="submit"], .loadbtn, .tab) {
+  transition: transform 160ms cubic-bezier(0.34, 1.4, 0.64, 1), box-shadow 160ms ease-out;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* The press itself */
+button:not(:disabled):active,
+input[type="button"]:not(:disabled):active,
+input[type="submit"]:not(:disabled):active,
+[role="button"]:not([aria-disabled="true"]):not(tr):active,
+.loadbtn:not([data-state="loading"]):active,
+.tab:active {
+  transform: translateY(1px) scale(0.955) !important;
+  transition-duration: 70ms !important;
+  box-shadow:
+    inset 0 3px 7px rgba(0, 0, 0, 0.30),
+    inset 0 0 0 100px rgba(0, 0, 0, 0.08) !important;   /* the darkening overlay */
+}
+
+/* Small round / icon buttons: press a little deeper, since there is less surface to show it */
+.an-dd-btn:active, .an-cnt:active, .an-open:active, .sig-clr:active {
+  transform: translateY(1px) scale(0.92) !important;
+}
+/* The login eye is centred with translateY(-50%); the press must keep that, or the button jumps down and the click misses it */
+button.gate-eye:not(:disabled):active {
+  transform: translateY(calc(-50% + 1px)) scale(0.92) !important;
+}
+
+/* Big, row-like or wide targets: barely move, so the page does not lurch. The inner shadow carries the feel. */
+.rp-tr[role="button"]:active, .rv-gv:active, .gate-go:active, .rbar button:active, .an-dd-btn:active {
+  transform: translateY(1px) scale(0.985) !important;
+}
+.tab-log:active, .tab.active:active { transform: translateY(1px) scale(0.975) !important; }
+
+/* Plain text links that are really buttons (footer links): just sink, no dark overlay */
+.lnk:active, .gate-skip:active, .gate-back:active {
+  box-shadow: none !important;
+  transform: translateY(1px) scale(0.96) !important;
+  opacity: 0.8;
+}
+
+/* Reduced motion: keep the darker inner shadow, drop the movement */
+@media (prefers-reduced-motion: reduce) {
+  button:active, input[type="button"]:active, input[type="submit"]:active,
+  [role="button"]:active, .loadbtn:active, .tab:active { transform: none !important; }
+  button.gate-eye:not(:disabled):active { transform: translateY(-50%) !important; }
+}
+
+
+/* ══ Part 2 · Panels and cards: hover behaviour ══
+   Mouse only (so a tap never leaves a stuck hover).
+   Small cards lift 2px and gain a deeper, wine-tinted shadow.
+   Big panels (anything holding tables or the slip) do not move, because moving a large
+   box makes its text blurry and shifts the layout; they deepen their shadow and light
+   up the gold border instead. Nothing here touches the printed slip itself. */
+:where(.an-iss, .lg-stat, .card, #loader, .sk-info,
+       .an-card, .an-card2, .lg-card, .lg-tools, .lgl-card, .lgl-toc, .gate-box,
+       .app > .right, .app > .rightwrap) {
+  transition: transform 240ms cubic-bezier(0.23, 1, 0.32, 1),
+              box-shadow 260ms cubic-bezier(0.23, 1, 0.32, 1),
+              border-color 200ms ease-out, opacity 200ms ease-out;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  /* small cards: lift */
+  #anPage .an-iss:hover,
+  .lg-stat:hover,
+  .card:hover,
+  #loader:hover,
+  .sk-info:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.9),
+      0 14px 32px -10px rgba(109, 31, 46, 0.34),
+      0 2px 6px rgba(53, 13, 24, 0.12) !important;
+  }
+  #anPage .an-iss.zero:hover { opacity: 0.92; }
+  .card:hover, #loader:hover, .sk-info:hover { border-color: #d6a93a !important; }
+
+  /* big panels: glow, no movement */
+  .an-card:hover,
+  .an-card2:hover,
+  .lg-card:hover,
+  .lg-tools:hover,
+  .lgl-card:hover,
+  .lgl-toc:hover,
+  .gate-box:hover,
+  .app > .right:hover,
+  .app > .rightwrap:hover {
+    border-color: #d6a93a !important;
+    box-shadow:
+      0 16px 54px rgba(109, 31, 46, 0.30),
+      0 0 0 1px rgba(214, 169, 58, 0.45) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #anPage .an-iss:hover, .lg-stat:hover, .card:hover, #loader:hover, .sk-info:hover { transform: none; }
+}

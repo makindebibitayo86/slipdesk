@@ -1,0 +1,50 @@
+/* password-setup card: calmer hierarchy, real labels, live checks */
+/* welcome block: two single lines that scale to fit the card (never wrap) */
+.gate-form{container-type:inline-size}
+#gate .gate-greet{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'Crimson Pro',Georgia,serif;font-size:clamp(15px,6cqw,21px);line-height:1.4;padding-bottom:2px;letter-spacing:-.005em;color:#6b5a5e}
+#gate .gate-sep{position:relative;height:9px;margin:12px 0 14px}
+#gate .gate-sep::before{content:"";position:absolute;left:0;right:0;top:4px;height:1px;background:linear-gradient(90deg,transparent,#c4962a 22%,#c4962a 78%,transparent)}
+#gate .gate-sep i{position:absolute;left:50%;top:50%;width:7px;height:7px;background:#c4962a;transform:translate(-50%,-50%) rotate(45deg);box-shadow:0 0 0 4px #fff}
+#gateSub .gate-hi{font-weight:500}
+#gateSub .gate-name{border:0;font-weight:700;font-size:1em;color:#350d18}
+#gateSub .gate-ask{white-space:nowrap;margin:7px -10px 0;font-size:clamp(10px,3.25cqw,12.5px);line-height:1.4;color:#6b5a5e}
+.gate-box.changing #gateSub{margin-bottom:20px}
+.gate-lab{display:none;text-align:left;font-size:12px;font-weight:600;color:#5c4a4e;margin:0 2px 5px}
+.gate-box.changing .gate-lab{display:block}
+.gate-box.changing .gate-row{margin-bottom:14px}
+.gate-row input{font-size:16px}
+.gate-eye{display:flex;align-items:center;justify-content:center;width:34px;height:34px;padding:0;right:5px;font-size:0;opacity:1;color:#8b6f75;border-radius:8px;transition:color .15s ease-out,background .15s ease-out}
+.gate-eye svg{width:18px;height:18px}
+.gate-eye .eo{display:none}
+.gate-eye[aria-pressed="true"]{color:#6d1f2e}
+.gate-eye[aria-pressed="true"] .eo{display:block}
+.gate-eye[aria-pressed="true"] .ee{display:none}
+.gate-eye:focus-visible{outline:2px solid #c4962a;outline-offset:1px}
+@media (hover:hover) and (pointer:fine){.gate-eye:hover{color:#6d1f2e;background:#f9f0f2}}
+.gate-hints{display:none;list-style:none;margin:-2px 2px 16px;padding:0;gap:6px 16px;flex-wrap:wrap;text-align:left}
+.gate-box.changing .gate-hints{display:flex}
+.gate-hints li{display:flex;align-items:center;gap:6px;font-size:12px;color:#9c8a8e;transition:color .15s ease-out}
+.gate-hints i{position:relative;width:14px;height:14px;flex-shrink:0}
+.gate-hints i::after{content:"";position:absolute;left:4px;top:1px;width:4px;height:8px;border:solid #cfc4c7;border-width:0 2px 2px 0;transform:rotate(45deg);transition:border-color .15s ease-out}
+.gate-hints li.ok{color:#1a6b3a}
+.gate-hints li.ok i::after{border-color:#1a6b3a}
+.gate-go{transition:transform .16s cubic-bezier(.23,1,.32,1),box-shadow .2s ease-out}
+.gate-go:active:not(:disabled){transform:scale(.97)}
+.gate-skip{margin-top:10px;text-decoration:none;font-weight:600;color:#7a4a54;border-radius:10px;transition:color .15s ease-out,background .15s ease-out}
+.gate-skip:focus-visible{outline:2px solid #c4962a;outline-offset:1px}
+@media (hover:hover) and (pointer:fine){.gate-skip:hover{color:#350d18;background:#f9f0f2;text-decoration:none}}
+@media (prefers-reduced-motion:reduce){.gate-go,.gate-eye,.gate-hints li,.gate-hints i,.gate-hints i::after,.gate-skip{transition:none}}
+/* emblem: plain centred divider, crest and lock equally far from it */
+.gate-emblem{display:grid;grid-template-columns:1fr 1px 1fr;column-gap:20px;align-items:center}
+.gate-emblem .gate-crest{justify-self:end}
+.gate-emblem .gate-lock{justify-self:start}
+.gate-div i{display:none}
+/* sign-in view: same structure as the change-password view */
+.gate-box.changing .gs-in{display:none}
+.gate-greet.gs-in{color:#350d18;font-weight:700}
+#gateSub{text-wrap:balance;color:#6b5a5e;margin:4px 0 20px}
+.gate-box.changing #gateSub{margin-top:0}
+#gateLab1{display:block}
+.gate-row{margin-bottom:14px}
+.gate-help{margin-top:16px;font-size:12.5px;line-height:1.5;color:#7a6a6e;text-wrap:balance}
+.gate-help b{font-weight:600;color:#5c4a4e}
