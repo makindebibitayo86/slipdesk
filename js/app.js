@@ -372,7 +372,7 @@ const FOOTER_CONFIG = {
     { k: 'email',     label: 'Email',     url: '' },
     { k: 'whatsapp',  label: 'WhatsApp',  url: '' },
     { k: 'x',         label: 'X',         url: '' },
-    { k: 'github',    label: 'GitHub',    url: '' },
+    { k: 'github',    label: 'GitHub',    url: 'https://github.com/makindebibitayo86/slipdesk' },
     { k: 'linkedin',  label: 'LinkedIn',  url: '' }
   ]
 };
