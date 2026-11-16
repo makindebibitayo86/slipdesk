@@ -118,8 +118,8 @@
   const gateOn = () => { const g = document.getElementById('gate'); return !!(g && g.classList.contains('on')); };
   const busy = () => {
     const a = document.activeElement;
-    // a dropdown is open (Analytics, Activity log, register breakdown), the desk is locked, or the bar has keyboard focus
-    return ['anBtn', 'logBtn', 'loadBtn'].some(id => { const e = document.getElementById(id); return e && e.getAttribute('aria-expanded') === 'true'; })
+    // a dropdown is open (Analytics, Activity log, register breakdown, account menu), the desk is locked, or the bar has keyboard focus
+    return ['anBtn', 'logBtn', 'loadBtn', 'signOutBtn'].some(id => { const e = document.getElementById(id); return e && e.getAttribute('aria-expanded') === 'true'; })
       || gateOn() || (a && tabs.contains(a) && a.matches(':focus-visible'));
   };
   function collapse() {

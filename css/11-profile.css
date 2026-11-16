@@ -1,0 +1,170 @@
+/* PROFILE PAGE + ACCOUNT MENU. The navbar account pill opens the menu (Profile / Sign out); Profile shows #profilePage in place of the iframes. Logic: js/profile.js */
+/* while the Profile page is open the iframes step aside and <main> grows with the page (the browser window scrolls, as on the other pages) */
+body.on-profile main{display:flex;flex:1 0 auto;min-height:auto}
+body.on-profile main iframe{display:none!important}
+#signOutBtn[aria-expanded=true] .so-chev{transform:rotate(180deg)}
+#signOutBtn[aria-expanded=true]{background:rgba(255,255,255,.18);border-color:#fff}
+/* account menu: same dropdown pattern as Load register / Activity log (gold border, pointer, click-away), Apple finish inside */
+.acctmenu{--ax:50%;position:fixed;z-index:60;width:268px;max-width:calc(100vw - 24px);padding:6px;background:rgba(255,255,255,.95);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);color:#1c1216;border:2px solid #c4962a;border-radius:16px;box-shadow:0 14px 44px rgba(53,13,24,.4);text-align:left;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','DM Sans','Segoe UI',system-ui,sans-serif;-webkit-font-smoothing:antialiased;transform-origin:var(--ax) 0}
+.acctmenu[hidden]{display:none}
+.acctmenu:not([hidden]){animation:amIn .24s cubic-bezier(.34,1.32,.5,1)}
+.acctmenu::before{content:"";position:absolute;top:-9px;left:var(--ax);width:14px;height:14px;margin-left:-7px;background:#fff;border-left:2px solid #c4962a;border-top:2px solid #c4962a;border-top-left-radius:3px;transform:rotate(45deg)}
+@keyframes amIn{from{opacity:0;transform:translateY(-8px) scale(.97)}}
+.acctmenu .am-item{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;padding:6px 10px;border:0;border-radius:11px;background:none;font:inherit;text-align:left;color:inherit;cursor:pointer;transition:background .12s}
+.acctmenu .am-item:hover,.acctmenu .am-item:focus-visible{background:rgba(109,31,46,.08);outline:none}
+.acctmenu .am-item:focus-visible{box-shadow:inset 0 0 0 2px #c4962a}
+.acctmenu .am-item.out:hover,.acctmenu .am-item.out:focus-visible{background:rgba(192,57,43,.09)}
+.acctmenu .am-ic{flex:none;width:32px;height:32px;display:grid;place-items:center;border-radius:9px;color:#fff;background:linear-gradient(145deg,#8b2d40,#6d1f2e)}
+.acctmenu .out .am-ic{background:linear-gradient(145deg,#d9503f,#b83227)}
+.acctmenu .am-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.acctmenu .am-tx b{font-size:15px;font-weight:600;letter-spacing:-.01em}
+.acctmenu .out .am-tx b{color:#b83227}
+.acctmenu .am-tx small{font-size:12px;color:#7a6a6e}
+.acctmenu .am-ck{flex:none;color:#6d1f2e;opacity:0}
+.acctmenu .am-item.cur .am-ck{opacity:1}
+@media(prefers-reduced-motion:reduce){.acctmenu:not([hidden]){animation:none}}
+#profilePage{--pf-font:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','DM Sans','Segoe UI',system-ui,sans-serif;--tint:#6d1f2e;--gold:#c4962a;flex:1;min-width:0;font-family:var(--pf-font);color:#1c1216;-webkit-font-smoothing:antialiased}
+#profilePage *{box-sizing:border-box}
+#profilePage button,#profilePage input{font-family:inherit}
+/* same skeleton as .app on the Registration and Exam pages */
+#profilePage .pf-wrap{font-size:14px;max-width:1500px;margin:0 auto;padding:1.5em 1em 5.5em}
+#profilePage .pf-grid{display:grid;grid-template-columns:minmax(340px,460px) minmax(0,1fr);gap:1.25em;align-items:start}
+#profilePage .pf-left,#profilePage .pf-right{min-width:0}
+#profilePage .pf-card{background:#fff;border:2px solid var(--gold);border-radius:22px;box-shadow:0 10px 44px rgba(109,31,46,.18);padding:1.5em 1.5em 1.25em}
+/* top row */
+#profilePage .pf-top{display:flex;align-items:center;justify-content:space-between;margin:-4px 0 6px}
+#profilePage .pf-back{display:inline-flex;align-items:center;gap:2px;margin-left:-8px;padding:6px 8px 6px 4px;border:0;border-radius:10px;background:none;color:var(--tint);font-size:15px;font-weight:500;cursor:pointer}
+#profilePage .pf-back:hover{background:#f9f0f2}
+/* identity header */
+#profilePage .pf-head{display:flex;flex-direction:column;align-items:center;text-align:center;padding:4px 0 18px}
+#profilePage .pf-avwrap{position:relative;margin-bottom:14px}
+#profilePage .pf-photo .av{width:112px;height:112px;font-size:38px;box-shadow:0 0 0 3px #fff,0 0 0 5px var(--gold),0 10px 26px rgba(53,13,24,.28)}
+#profilePage .pf-cam{position:absolute;right:-2px;bottom:-2px;width:34px;height:34px;display:grid;place-items:center;border:3px solid #fff;border-radius:50%;background:var(--tint);color:#fff;cursor:pointer;box-shadow:0 2px 8px rgba(53,13,24,.3);transition:transform .15s,background .15s}
+#profilePage .pf-cam:hover{background:#8b2d40;transform:scale(1.06)}
+#profilePage h1{max-width:100%;font-size:24px;font-weight:700;letter-spacing:-.022em;line-height:1.15;color:#1c1216;overflow-wrap:anywhere;outline:none}
+#profilePage .pf-sub{margin-top:4px;font-size:14px;color:#5c4a4e;overflow-wrap:anywhere}
+#profilePage .pf-links{display:flex;gap:18px;margin-top:10px}
+#profilePage .pf-t{border:0;background:none;padding:2px 0;font-size:14px;font-weight:500;color:var(--tint);cursor:pointer}
+#profilePage .pf-t.red{color:#c0392b}
+#profilePage .pf-t:disabled{opacity:.4;cursor:not-allowed}
+#profilePage .pf-t:not(:disabled):hover{text-decoration:underline}
+/* grouped lists (iOS Settings style) */
+#profilePage .pf-gh{margin:18px 14px 6px;font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#7a6a6e}
+#profilePage .pf-group{background:#f6f4f4;border-radius:14px;overflow:hidden}
+#profilePage .pf-row{display:flex;align-items:center;gap:12px;width:100%;min-height:46px;padding:0 14px;border:0;background:none;text-align:left;font-size:15px;color:#1c1216;position:relative;transition:background .15s}
+#profilePage .pf-row+.pf-row::before{content:"";position:absolute;left:14px;right:0;top:0;height:1px;background:rgba(53,13,24,.1)}
+#profilePage .pf-k{flex:0 0 88px;font-weight:500}
+#profilePage .pf-row input[type=text],#profilePage .pf-row input[type=email],#profilePage .pf-row input[type=tel],#profilePage .pf-row input[type=password]{flex:1;min-width:0;height:44px;border:0;background:transparent;outline:none;text-align:right;font-size:15px;color:#5c4a4e;transition:color .15s}
+#profilePage .pf-row input::placeholder{color:#b0a0a3}
+#profilePage label.pf-row{cursor:text}
+#profilePage label.pf-row:focus-within{background:#fff;box-shadow:inset 0 0 0 1.5px var(--gold)}
+#profilePage label.pf-row:focus-within input{color:#1c1216}
+#profilePage .pf-row.bad .pf-k{color:#c0392b}
+#profilePage .pf-row.bad{background:#fdecea}
+#profilePage .pf-v{flex:1;text-align:right;color:#5c4a4e;overflow-wrap:anywhere}
+#profilePage .pf-row svg{flex:none;color:#b0a0a3}
+#profilePage button.pf-row{cursor:pointer}
+#profilePage button.pf-row:hover{background:#efe9ea}
+#profilePage button.pf-row:active{background:#e8dfe1}
+#profilePage .pf-row:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+#profilePage .pf-row.act{color:var(--tint);font-weight:500}
+#profilePage .pf-row.act svg{color:var(--tint)}
+#profilePage .pf-row.center{justify-content:center;color:#c0392b;font-weight:500}
+#profilePage .pf-gf{margin:7px 14px 0;font-size:12px;line-height:1.45;color:#7a6a6e}
+#profilePage .pf-gf.err{color:#c0392b;font-weight:500}
+/* right panel: framed well, same as .rightwrap / .right */
+#profilePage .pf-well{background:#ede8e9;border:2px solid var(--gold);border-radius:16px;box-shadow:0 10px 44px rgba(109,31,46,.18);overflow:hidden}
+#profilePage .pf-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:46px;padding:0 16px;background:rgba(255,255,255,.72);border-bottom:1px solid #ddd4d6;backdrop-filter:saturate(180%) blur(14px);-webkit-backdrop-filter:saturate(180%) blur(14px)}
+#profilePage .pf-bar b{font-size:14px;font-weight:600;letter-spacing:-.01em}
+#profilePage .pf-state{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;color:#2f6b3f}
+#profilePage .pf-state i{width:8px;height:8px;border-radius:50%;background:#34a853}
+#profilePage .pf-state.dirty{color:#9a6b13}#profilePage .pf-state.dirty i{background:#e0a21a}
+#profilePage .pf-stage{padding:12px;background:#d9d2d4;display:flex;flex-direction:column;gap:6px;min-height:420px}
+#profilePage .pf-lab{margin:12px 6px 2px;font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#5c4a4e}
+#profilePage .pf-lab:first-child{margin-top:4px}
+/* staff pass */
+#profilePage .pf-pass{position:relative;width:100%;max-width:430px;margin:4px auto 0;border-radius:20px;padding:18px 20px 18px;color:#fff;display:flex;flex-direction:column;justify-content:space-between;gap:10px;background:linear-gradient(155deg,#8b2d40 0%,#5e1927 52%,#2f0b15 100%);box-shadow:0 18px 40px rgba(53,13,24,.38),inset 0 0 0 1px rgba(255,255,255,.08),inset 0 2px 0 rgba(226,184,77,.7)}
+/* light from the top-left, a touch of gold top-right, and a faint engraved ring pattern (no warm glow at the bottom, it read as mud) */
+#profilePage .pf-pass::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(110% 70% at 0% 0%,rgba(255,255,255,.2),transparent 55%),radial-gradient(60% 50% at 100% 0%,rgba(226,184,77,.2),transparent 65%),repeating-radial-gradient(circle at 112% 125%,rgba(255,255,255,.05) 0 1px,transparent 1px 9px)}
+#profilePage .pf-pass>*{position:relative;flex:none}   /* never squeezed: long names or emails make the card taller instead of being clipped */
+#profilePage .pf-ptop{display:flex;align-items:center;gap:10px}
+#profilePage .pf-pass .pf-ptop{padding-bottom:12px;border-bottom:1px solid;border-image:linear-gradient(90deg,rgba(226,184,77,.75),rgba(226,184,77,.1)) 1}
+#profilePage .pf-pcrest{display:grid;place-items:center;background:#fff;border-radius:9px;padding:3px 5px;box-shadow:0 0 0 1.5px rgba(196,150,42,.8)}
+#profilePage .pf-pcrest img{display:block;height:28px;width:auto}
+#profilePage .pf-pbrand{display:flex;flex-direction:column;line-height:1.15}
+#profilePage .pf-pbrand b{font-family:'Crimson Pro',Georgia,serif;font-size:18px;font-weight:700}
+#profilePage .pf-pbrand span{white-space:nowrap;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:#e2b84d;font-weight:600}
+#profilePage .pf-prole{margin-left:auto;padding:4px 11px;border-radius:999px;background:rgba(226,184,77,.14);border:1px solid rgba(226,184,77,.55);color:#f6dc8c;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+#profilePage .pf-pmain{display:flex;align-items:center;gap:17px;min-width:0;padding-left:4px}   /* 4px = the photo's gold ring, so its outer edge lines up with the rule and the panel */
+#profilePage .pf-pmain .av{flex:none;width:72px;height:72px;font-size:24px;box-shadow:0 0 0 2px rgba(255,255,255,.95),0 0 0 4px rgba(226,184,77,.85),0 8px 18px rgba(0,0,0,.4)}
+#profilePage .pf-pname{font-size:21px;font-weight:700;letter-spacing:-.02em;line-height:1.15;overflow-wrap:anywhere;text-shadow:0 1px 2px rgba(0,0,0,.3)}
+#profilePage .pf-ptitle{margin-top:4px;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#e2b84d;overflow-wrap:anywhere}
+/* contact details: one inset panel, cells divided by hairlines, so every value starts on a visible edge */
+#profilePage .pf-pfoot{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);border-radius:12px;background:rgba(20,4,9,.3);border:1px solid rgba(255,255,255,.1);box-shadow:inset 0 1px 0 rgba(255,255,255,.06);overflow:hidden}
+#profilePage .pf-f{min-width:0;padding:8px 12px 9px}
+#profilePage .pf-f+.pf-f{border-left:1px solid rgba(255,255,255,.1)}
+#profilePage .pf-f.wide{grid-column:1/-1;border-left:0;border-top:1px solid rgba(255,255,255,.1)}
+#profilePage .pf-pfoot small{display:flex;align-items:center;gap:5px;margin-bottom:3px;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:#f0d28a;font-weight:700}
+#profilePage .pf-pfoot small svg{flex:none;opacity:.9}
+#profilePage .pf-pfoot b{display:block;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#profilePage .pf-f.wide b{white-space:normal;overflow-wrap:anywhere}
+#profilePage .pf-pfoot b.nil{color:rgba(255,255,255,.4);font-weight:500}
+/* navbar + activity log previews */
+#profilePage .pf-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;border-radius:14px;background:linear-gradient(180deg,#7a2638 0%,#6d1f2e 55%,#5e1927 100%);border-bottom:3px solid var(--gold);box-shadow:0 4px 14px rgba(53,13,24,.3)}
+#profilePage .pf-nav .pf-pcrest{flex:none}
+#profilePage .pf-nav .pf-pbrand b{color:#fff}
+#profilePage .pf-nav .signoutbtn{pointer-events:none;cursor:default}
+#profilePage .pf-paper{background:#fff;border-radius:14px;box-shadow:0 1px 3px rgba(53,13,24,.12),0 6px 18px rgba(53,13,24,.08);overflow:hidden}
+#profilePage .pf-log{display:flex;align-items:center;gap:12px;padding:12px 16px;font-size:13.5px;position:relative;min-width:0}
+#profilePage .pf-log+.pf-log::before{content:"";position:absolute;left:16px;right:0;top:0;height:1px;background:rgba(53,13,24,.1)}
+#profilePage .pf-log time{flex:none;width:62px;font-size:12px;color:#9c8a8e;font-variant-numeric:tabular-nums}
+#profilePage .pf-log .av{width:28px;height:28px;font-size:10.5px;box-shadow:0 0 0 1.5px rgba(196,150,42,.75)}
+#profilePage .pf-log span.t{min-width:0;overflow-wrap:anywhere}
+#profilePage .pf-log b{font-weight:600}
+/* floating save bar */
+#profilePage .pf-dock{position:fixed;left:50%;bottom:22px;z-index:60;transform:translate(-50%,18px);display:flex;align-items:center;gap:6px;padding:7px 7px 7px 18px;border-radius:999px;background:rgba(255,255,255,.8);border:1px solid rgba(53,13,24,.12);backdrop-filter:saturate(180%) blur(22px);-webkit-backdrop-filter:saturate(180%) blur(22px);box-shadow:0 12px 40px rgba(53,13,24,.3);font-size:13.5px;font-weight:600;opacity:0;visibility:hidden;transition:opacity .22s,transform .22s,visibility .22s;white-space:nowrap}
+#profilePage .pf-dock.on{opacity:1;visibility:visible;transform:translate(-50%,0)}
+#profilePage .pf-dock .msg{margin-right:8px}
+#profilePage .pf-dock .msg.err{color:#c0392b}
+#profilePage .pf-pill{height:34px;padding:0 16px;border:0;border-radius:999px;font-size:13.5px;font-weight:600;cursor:pointer;transition:background .15s,opacity .15s}
+#profilePage .pf-pill.plain{background:none;color:var(--tint)}
+#profilePage .pf-pill.plain:hover{background:#f9f0f2}
+#profilePage .pf-pill.solid{background:var(--tint);color:#fff}
+#profilePage .pf-pill.solid:hover:not(:disabled){background:#8b2d40}
+#profilePage .pf-pill:disabled{opacity:.4;cursor:not-allowed}
+#profilePage button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+/* sheets (iOS alert + modal) */
+#profilePage .pf-overlay{position:fixed;inset:0;z-index:99990;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(28,18,22,.4);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);animation:pfFade .18s ease-out}
+#profilePage .pf-overlay[hidden]{display:none}
+#profilePage .pf-sheet{width:min(300px,100%);border-radius:16px;background:rgba(255,255,255,.94);backdrop-filter:saturate(180%) blur(30px);-webkit-backdrop-filter:saturate(180%) blur(30px);box-shadow:0 24px 70px rgba(0,0,0,.4);text-align:center;overflow:hidden;animation:pfPop .2s cubic-bezier(.2,.9,.3,1.2)}
+#profilePage .pf-sheet.wide{width:min(420px,100%);text-align:left;border-radius:22px}
+#profilePage .pf-sh-b{padding:20px 18px 16px}
+#profilePage .pf-sh-b h2{font-size:17px;font-weight:600;letter-spacing:-.01em}
+#profilePage .pf-sh-b p{margin-top:5px;font-size:13px;line-height:1.45;color:#5c4a4e}
+#profilePage .pf-acts button{display:block;width:100%;height:46px;border:0;border-top:1px solid rgba(53,13,24,.12);background:none;font-size:16px;color:var(--tint);cursor:pointer}
+#profilePage .pf-acts button:hover{background:rgba(109,31,46,.06)}
+#profilePage .pf-acts button.b{font-weight:600}
+#profilePage .pf-acts button.red{color:#c0392b}
+#profilePage .pf-mh{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid rgba(53,13,24,.1)}
+#profilePage .pf-mh h2{font-size:16px;font-weight:600;letter-spacing:-.01em}
+#profilePage .pf-mh button{border:0;background:none;font-size:15px;color:var(--tint);cursor:pointer;padding:4px 6px;border-radius:8px}
+#profilePage .pf-mh button.b{font-weight:600}
+#profilePage .pf-mh button:disabled{opacity:.4;cursor:not-allowed}
+#profilePage .pf-mb{padding:6px 16px 18px}
+#profilePage .pf-sw{position:relative;display:inline-block;width:51px;height:31px;flex:none}
+#profilePage .pf-sw input{position:absolute;inset:0;opacity:0;margin:0;cursor:pointer;z-index:1}
+#profilePage .pf-sw i{position:absolute;inset:0;border-radius:999px;background:#ddd4d6;transition:background .2s}
+#profilePage .pf-sw i::after{content:"";position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.3);transition:transform .2s}
+#profilePage .pf-sw input:checked+i{background:#34a853}
+#profilePage .pf-sw input:checked+i::after{transform:translateX(20px)}
+#profilePage .pf-sw input:focus-visible+i{outline:2px solid var(--gold);outline-offset:2px}
+.pf-toast{position:fixed;left:50%;top:80px;transform:translateX(-50%);z-index:99999;max-width:calc(100vw - 32px);background:rgba(28,18,22,.88);color:#fff;border-radius:999px;padding:10px 20px;font:600 13.5px -apple-system,BlinkMacSystemFont,'SF Pro Text','DM Sans','Segoe UI',sans-serif;box-shadow:0 10px 34px rgba(0,0,0,.35);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);animation:pfDrop .25s ease-out}
+.pf-toast.bad{background:rgba(160,38,24,.94)}
+@keyframes pfFade{from{opacity:0}to{opacity:1}}
+@keyframes pfPop{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+@keyframes pfDrop{from{opacity:0;transform:translate(-50%,-10px)}to{opacity:1;transform:translate(-50%,0)}}
+@media(max-width:900px){#profilePage .pf-grid{grid-template-columns:minmax(0,1fr)}#profilePage .pf-stage{min-height:0}}
+@media(max-width:480px){#profilePage .pf-wrap{font-size:13px}}
+@media(max-width:620px){#profilePage .pf-k{flex-basis:76px}#profilePage .pf-pass{padding:14px 14px 14px}#profilePage .pf-pmain .av{width:56px;height:56px;font-size:20px}#profilePage .pf-prole{padding:3px 8px;font-size:9px;letter-spacing:.08em}#profilePage .pf-pass .pf-ptop{gap:8px}
+@media(max-width:380px){#profilePage .pf-pass .pf-pbrand b{font-size:16px}#profilePage .pf-pass .pf-pbrand span{font-size:8.5px;letter-spacing:.05em}#profilePage .pf-pass .pf-pcrest img{height:24px}#profilePage .pf-pass .pf-ptop{gap:6px}#profilePage .pf-pass .pf-prole{padding:3px 7px;font-size:8.5px;letter-spacing:.05em}}#profilePage .pf-pname{font-size:17px}#profilePage .pf-log time{display:none}#profilePage .pf-dock .msg{display:none}#profilePage .pf-dock{padding-left:7px}}
+@media(prefers-reduced-motion:reduce){#profilePage .pf-overlay,#profilePage .pf-sheet,.pf-toast{animation:none}#profilePage .pf-dock{transition:none}}

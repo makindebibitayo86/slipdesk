@@ -23,6 +23,7 @@
 <link rel="stylesheet" href="css/08-press.css">
 <link rel="stylesheet" href="css/09-nav-notch.css?v=2">
 <link rel="stylesheet" href="css/10-upload-panel.css">
+<link rel="stylesheet" href="css/11-profile.css">
 <style>
 /* The Analysis page has its own Load register button, so the navbar one hides automatically while it is open */
 body.on-analysis #loadBtn,body:has(.tab[data-page="analysis"].active) #loadBtn{visibility:hidden!important;pointer-events:none!important}
@@ -169,11 +170,77 @@ body.on-analysis #recPop,body:has(.tab[data-page="analysis"].active) #recPop{dis
         <p class="up-msg" role="alert"></p>
       </div>
     </div>
-    <button type="button" class="signoutbtn" id="signOutBtn" aria-label="Sign out" title="Sign out and lock the desk"><span class="so-av" id="soAv"></span><span class="so-t"><span class="so-name" id="soName"></span><span class="so-who" id="soWho"></span></span><i class="so-div" aria-hidden="true"></i><svg class="so-ico" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><g class="so-arrow"><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></g></svg></button>
+    <button type="button" class="signoutbtn" id="signOutBtn" aria-label="Account menu" title="Account" aria-haspopup="menu" aria-expanded="false" aria-controls="acctMenu"><span class="so-av" id="soAv"></span><span class="so-t"><span class="so-name" id="soName"></span><span class="so-who" id="soWho"></span></span><i class="so-div" aria-hidden="true"></i><svg class="so-ico so-chev" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button>
 
   </div>
 </nav>
 <main>
+  <section id="profilePage" hidden aria-label="Profile"><div class="pf-wrap"><div class="pf-grid">
+
+  <section class="pf-left" aria-label="Edit your profile"><div class="pf-card">
+    <div class="pf-top"><button type="button" class="pf-back" id="pfClose"><svg width="10" height="17" viewBox="0 0 10 17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 1.5L2 8.5l6.5 7"/></svg> Back</button></div>
+    <div class="pf-head">
+      <div class="pf-avwrap"><div class="pf-photo" id="pfPhoto"></div><button type="button" class="pf-cam" id="pfPick" aria-label="Choose a photo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.6-2.4h6.8L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.6"/></svg></button></div>
+      <h1 id="pfShowName" tabindex="-1"></h1><div class="pf-sub" id="pfShowTitle"></div>
+      <div class="pf-links"><button type="button" class="pf-t" id="pfPick2">Choose photo</button><button type="button" class="pf-t red" id="pfDrop">Remove</button></div>
+      <input type="file" id="pfFile" accept="image/*" hidden>
+    </div>
+
+    <div class="pf-gh">Personal information</div>
+    <div class="pf-group">
+      <label class="pf-row" id="pfRn"><span class="pf-k">Name</span><input type="text" id="pfName" maxlength="60" autocomplete="name" placeholder="Full name" aria-describedby="pfF1"></label>
+      <label class="pf-row"><span class="pf-k">Job title</span><input type="text" id="pfJob" maxlength="40" placeholder="Optional" aria-describedby="pfF1"></label>
+      <label class="pf-row" id="pfRp"><span class="pf-k">Phone</span><input type="tel" id="pfPhone" maxlength="20" autocomplete="tel" placeholder="Optional" aria-describedby="pfF1"></label>
+      <label class="pf-row" id="pfRe"><span class="pf-k">Email</span><input type="email" id="pfMail" maxlength="80" autocomplete="email" placeholder="Optional" aria-describedby="pfF1"></label>
+    </div>
+    <div class="pf-gf" id="pfF1" aria-live="polite"></div>
+
+    <div class="pf-gh">Sign-in</div>
+    <div class="pf-group">
+      <div class="pf-row"><span class="pf-k">Login ID</span><span class="pf-v" id="pfLogin"></span><svg width="14" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div>
+      <div class="pf-row"><span class="pf-k">Role</span><span class="pf-v" id="pfRole"></span><svg width="14" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div>
+      <button type="button" class="pf-row" id="pfPw"><span class="pf-k">Password</span><span class="pf-v">••••••••</span><svg width="8" height="14" viewBox="0 0 8 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 1.5L6.5 7l-5 5.5"/></svg></button>
+    </div>
+    <div class="pf-gf">Your login ID and role are set by the administrator. A password you change here is kept only on this computer.</div>
+
+    <div class="pf-gh">Use on another computer</div>
+    <div class="pf-group">
+      <button type="button" class="pf-row act" id="pfExp"><span style="flex:1">Export profile</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7.5 7.5L12 3l4.5 4.5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg></button>
+      <button type="button" class="pf-row act" id="pfImp"><span style="flex:1">Import profile</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7.5 10.5L12 15l4.5-4.5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg></button>
+      <input type="file" id="pfImpFile" accept=".json,application/json" hidden>
+    </div>
+    <div class="pf-gf">Carries your name, title, contact details and photo to another computer. Your password does not travel with it.</div>
+
+    <div class="pf-group" style="margin-top:18px"><button type="button" class="pf-row center" id="pfReset">Reset to original</button></div>
+  </div></section>
+
+  <section class="pf-right" aria-label="Live preview"><div class="pf-well">
+    <div class="pf-bar"><b>Live preview</b><span class="pf-state" id="pfState"><i></i><span>Saved on this computer</span></span></div>
+    <div class="pf-stage">
+      <div class="pf-lab">Staff pass</div>
+      <div class="pf-pass">
+        <div class="pf-ptop"><span class="pf-pcrest"><img src="assets/crest.png" alt=""></span><div class="pf-pbrand"><b>Slip Desk</b><span>Oyo State · 2026</span></div><span class="pf-prole" id="pfPRole"></span></div>
+        <div class="pf-pmain"><div id="pfPAv"></div><div style="min-width:0"><div class="pf-pname" id="pfPName"></div><div class="pf-ptitle" id="pfPTitle"></div></div></div>
+        <div class="pf-pfoot"><div class="pf-f"><small><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0"/></svg>Login ID</small><b id="pfPLogin"></b></div><div class="pf-f"><small><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>Phone</small><b id="pfPPhone" class="nil">—</b></div><div class="pf-f wide"><small><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 7l8.5 6 8.5-6"/></svg>Email</small><b id="pfPMail" class="nil">—</b></div></div>
+      </div>
+      <div class="pf-lab">Navigation bar</div>
+      <div class="pf-nav">
+        <div class="pf-ptop"><span class="pf-pcrest"><img src="assets/crest.png" alt=""></span><div class="pf-pbrand"><b>Slip Desk</b></div></div>
+        <span class="signoutbtn" aria-hidden="true"><span class="so-av" id="pfNAv"></span><span class="so-t"><span class="so-name" id="pfNName"></span><span class="so-who" id="pfNWho"></span></span></span>
+      </div>
+      <div class="pf-lab">Activity log</div>
+      <div class="pf-paper">
+        <div class="pf-log"><time>10:42 AM</time><span id="pfL1a"></span><span class="t"><b class="pfLn"></b> searched “Adeyemi Bola”</span></div>
+        <div class="pf-log"><time>10:44 AM</time><span id="pfL2a"></span><span class="t"><b class="pfLn"></b> printed a Registration Slip</span></div>
+      </div>
+      <div class="pf-gf" style="margin:4px 6px 0">Entries already in the log keep the name they were recorded under.</div>
+    </div>
+  </div></section>
+
+  <div class="pf-dock" id="pfDock" role="status" aria-live="polite"><span class="msg" id="pfDockMsg">Unsaved changes</span><button type="button" class="pf-pill plain" id="pfUndo">Discard</button><button type="button" class="pf-pill solid" id="pfSave">Save</button></div>
+</div>
+<div class="pf-overlay" id="pfOverlay" hidden><div class="pf-sheet" id="pfSheet" role="dialog" aria-modal="true"></div></div>
+</div></section>
   <iframe id="f-registration" class="active" title="Registration Slip"></iframe>
   <iframe id="f-exam" title="Exam Slip"></iframe>
   <iframe id="f-log" title="Activity log"></iframe>
@@ -188,10 +255,11 @@ body.on-analysis #recPop,body:has(.tab[data-page="analysis"].active) #recPop{dis
 <script src="pages/analysis.js?v=26"></script>
 <script src="pages/legal.js"></script>
 <script src="pages/print.js?v=18"></script>
-<script src="js/app.js?v=14"></script>
+<script src="js/app.js?v=16"></script>
 <script src="js/upload-panel.js"></script>
 <script src="js/gate.js"></script>
+<script src="js/profile.js"></script>
 <script src="js/sync.js"></script>
-<script src="js/nav-notch.js?v=2"></script>
+<script src="js/nav-notch.js?v=3"></script>
 </body>
 </html>

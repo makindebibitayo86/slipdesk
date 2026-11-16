@@ -6,6 +6,7 @@ No server, build step, or install is needed. Everything runs in the browser.
 
 ## Features
 
+- **Account menu and Profile page**: the sign-in pill in the navbar opens a menu (Profile / Sign out). On the Profile page each officer can edit their own name, job title, phone, email and photo with a live preview, change their password, and export or import their profile for another computer. Everything is kept on that computer only
 - **Staff sign-in** with per-user accounts, forced password change on first use, lockout after repeated wrong attempts, and auto-lock after 5 minutes idle
 - **Load register** from an Excel file (browse or drag and drop, with progress and replace confirmation)
 - **Candidate search** by name, payment reference, exam number, or phone number
@@ -29,7 +30,8 @@ slip-desk.html        Main page (tabs, loader, layout)
 css/                  Stylesheets, loaded in numbered order
 js/
   app.js              Shell, log recording, Excel loader, footer
-  gate.js             Accounts, sign-in, idle auto-lock
+  gate.js             Accounts, sign-in, idle auto-lock, saved profiles, password change
+  profile.js          Account menu (Profile / Sign out) and the Profile page
   upload-panel.js     "Load register" panel (browse, drag and drop, progress)
   nav-notch.js        Idle notch (tab bar -> countdown / clock / weather)
   sync.js             Small helper (dims page when a navbar dropdown is open)
@@ -56,7 +58,9 @@ Passwords are stored as SHA-256 hashes of `id:password` (lower-cased). To create
 printf 'username:temporary-password' | sha256sum
 ```
 
-Paste the result into that user's `hash:` field. On first sign-in the user must choose their own password, which is stored only in that browser (`localStorage`, key `slipdesk.pw.v1`).
+Paste the result into that user's `hash:` field. On first sign-in the user must choose their own password, which is stored only in that browser (`localStorage`, key `slipdesk.pw.v1`). Officers can change it later from **Profile > Password**.
+
+Profile details an officer edits (name, title, phone, email, photo) are stored the same way, under `slipdesk.profile.v1`. **Reset to original** on the Profile page brings back the details set in `USERS`.
 
 ## Desktop shortcut icon (Windows)
 

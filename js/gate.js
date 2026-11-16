@@ -79,6 +79,37 @@
     return d;
   };
 
+  // ── Profiles: the name, job title, phone, email and photo each person has set on THIS computer (edited on the Profile page, js/profile.js) ──
+  // Kept in localStorage key slipdesk.profile.v1 as { userId: { name, title, phone, email, photo } }. The details in USERS above stay as the "original" and come back on Reset.
+  var PROFILE_KEY = 'slipdesk.profile.v1';
+  USERS.forEach(function (u) { u.orig = { name: u.name, title: u.title || '', avatar: u.avatar || '' }; });
+  function readProfiles() { try { var o = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}'); return o && typeof o === 'object' ? o : {}; } catch (e) { return {}; } }
+  function cleanProfile(u, p) {   // a tidy copy, or null when it is not a usable profile
+    if (!u || !p || typeof p !== 'object' || typeof p.name !== 'string') return null;
+    var name = p.name.trim().replace(/\s+/g, ' ').slice(0, 60); if (name.length < 2) return null;
+    var photo = typeof p.photo === 'string' ? p.photo : '';
+    if (!(photo === '' || photo === u.orig.avatar || (photo.length < 400000 && /^data:image\/(jpeg|png);base64,[A-Za-z0-9+\/=]+$/.test(photo)))) photo = '';
+    return { name: name, title: String(p.title || '').trim().slice(0, 40), phone: String(p.phone || '').trim().slice(0, 20), email: String(p.email || '').trim().slice(0, 80), photo: photo };
+  }
+  function applyProfile(u, p) {   // p = null puts the original details back
+    var o = u.orig, photo = p ? p.photo : o.avatar;
+    u.name = p ? p.name : o.name; u.title = p ? p.title : o.title; u.phone = p ? p.phone : ''; u.email = p ? p.email : '';
+    if (photo) u.avatar = photo; else delete u.avatar;
+    if (window.SD_USER === u) updateChip();
+  }
+  (function () { var all = readProfiles(); USERS.forEach(function (u) { var p = cleanProfile(u, all[u.id]); if (p) applyProfile(u, p); }); })();
+  window.sdProfile = {
+    clean: cleanProfile,
+    original: function (u) { return { name: u.orig.name, title: u.orig.title, phone: '', email: '', photo: u.orig.avatar }; },
+    current: function (u) { return { name: u.name, title: u.title || '', phone: u.phone || '', email: u.email || '', photo: u.avatar || '' }; },
+    save: function (u, p) {   // returns the saved profile, or null when it could not be saved
+      p = cleanProfile(u, p); if (!p) return null;
+      try { var all = readProfiles(); all[u.id] = p; localStorage.setItem(PROFILE_KEY, JSON.stringify(all)); } catch (e) { return null; }
+      applyProfile(u, p); return p;
+    },
+    reset: function (u) { try { var all = readProfiles(); delete all[u.id]; localStorage.setItem(PROFILE_KEY, JSON.stringify(all)); } catch (e) {} applyProfile(u, null); }
+  };
+
   // SHA-256 (WebCrypto, with a compact fallback for non-secure contexts)
   function sha256js(str) {
     var b = unescape(encodeURIComponent(str)), m = [], i, j, l = b.length;
@@ -137,12 +168,13 @@
     if (u) {
       soAv.appendChild(window.sdAvatar(u, 32));
       soName.textContent = words(u.name)[0]; soWho.textContent = u.title || (u.admin ? 'Administrator' : 'Staff');
-      soBtn.title = 'Signed in as ' + u.name + (u.title ? ', ' + u.title : '') + (u.admin ? ' (administrator)' : '') + '. Click to sign out.';
+      soBtn.title = 'Signed in as ' + u.name + (u.title ? ', ' + u.title : '') + (u.admin ? ' (administrator)' : '') + '. Click for your profile or to sign out.';
     }
   }
   function lock(reason) {
     clearTimeout(idleT); locked = true;
     var u = window.SD_USER;
+    try { if (window.sdOnLock) window.sdOnLock(); } catch (e) {}   // closes the account menu and the Profile page (js/profile.js)
     if (u) {
       if (typeof window.logEvent === 'function') window.logEvent(reason === 'idle' ? 'lock' : 'signout', reason === 'idle' ? 'Locked automatically after 5 minutes idle' : 'Signed out', u);
       try { localStorage.setItem(LASTUSER_KEY, u.id); } catch (e) {}
@@ -336,6 +368,25 @@
       });
     });
   }
+  // Profile page: check the current password, then keep the new one on this computer (same rules as the first-time change above)
+  window.sdChangePassword = function (u, cur, next) {
+    if (!u || !cur) return Promise.resolve({ ok: false, error: 'Enter your current password.', field: 'cur' });
+    var lp = localPw(), ci = ciMap();
+    return pwMatch(u, cur, lp, ci).then(function (r) {
+      if (!r.ok) return { ok: false, error: 'Your current password is not correct.', field: 'cur' };
+      if (String(next).length < MIN_PW) return { ok: false, error: 'Use at least ' + MIN_PW + ' characters.' };
+      return Promise.all(USERS.map(function (x) { return pwMatch(x, next, lp, ci).then(function (q) { return q.ok; }); })
+        .concat([pwMatch({ id: u.id, hash: u.hash }, next, {}, {}).then(function (q) { return q.ok; })])).then(function (clash) {
+        if (clash.some(Boolean)) return { ok: false, error: 'Use a different password. That one is already in use or is the temporary one.' };
+        return sha256(u.id + ':' + lc(next)).then(function (nh) {
+          lp[u.id] = nh; delete ci[u.id]; ciSave(ci);
+          try { localStorage.setItem(PW_KEY, JSON.stringify(lp)); } catch (e) { return { ok: false, error: 'This browser would not save the password, so it cannot be changed here.' }; }
+          window.logEvent && window.logEvent('pwchg', 'Changed password from the Profile page (kept on this computer)', u);
+          return { ok: true };
+        });
+      });
+    });
+  };
   skip.addEventListener('click', function () {
     var u = changing; if (!u || FORCE_PW_CHANGE || busy) return;
     leaveChange(); msg.textContent = ''; busy = true; go.disabled = true;
@@ -395,7 +446,8 @@
   ['mousemove', 'keydown', 'click', 'touchstart'].forEach(function (ev) { document.addEventListener(ev, function () { lastActive = Date.now(); }, true); });
   document.addEventListener('visibilitychange', function () { if (!document.hidden && !locked && Date.now() - lastActive > IDLE_MS) lock('idle'); });
 
-  document.getElementById('signOutBtn').addEventListener('click', function () { lock('signout'); });
+  // the navbar pill opens the account menu (js/profile.js); its Sign out item calls this
+  window.sdSignOut = function () { lock('signout'); };
 
   // ── start-up ──
   var prev = readSession(), res = readResume(), ru = res && byId(res.uid);

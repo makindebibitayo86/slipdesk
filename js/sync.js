@@ -1,7 +1,7 @@
 (function () {
   var dim = document.createElement('div'); dim.className = 'navdim'; dim.setAttribute('aria-hidden', 'true');
   document.body.appendChild(dim);
-  var ids = ['logPop', 'recPop', 'anPop', 'upPop'];   // every navbar dropdown dims the page: Activity log, Register breakdown, Analytics, Load register
+  var ids = ['logPop', 'recPop', 'anPop', 'upPop', 'acctMenu'];   // every navbar dropdown dims the page: Activity log, Register breakdown, Analytics, Load register, Account menu
   function sync() {
     var open = ids.some(function (id) { var el = document.getElementById(id); return el && !el.hidden; });
     document.body.classList.toggle('nav-dd-open', open);
