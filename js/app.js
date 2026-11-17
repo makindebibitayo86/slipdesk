@@ -7,7 +7,8 @@ const frames = {
   log: document.getElementById('f-log'),
   analysis: document.getElementById('f-analysis'),
   legal: document.getElementById('f-legal'),
-  print: document.getElementById('f-print')
+  print: document.getElementById('f-print'),
+  attendance: document.getElementById('f-attendance')
 };
 let ROWS = null, HDR = [];
 var LASTTAB = 'registration';
@@ -26,8 +27,9 @@ function show(page) {
   Object.keys(frames).forEach(k => frames[k].classList.toggle('active', k === page));
   document.body.classList.toggle('on-analysis', page === 'analysis');
   if (page === 'print') { if (window.closeRecPop) window.closeRecPop(); try { frames.print.contentWindow.renderPrint(); } catch (e) {} }   // the Print page reads the loaded register each time it opens
+  if (page === 'attendance') { if (window.closeRecPop) window.closeRecPop(); try { frames.attendance.contentWindow.renderAttendance(); frames.attendance.contentWindow.scrollTo(0, 0); } catch (e) {} }   // the Overall attendance page reads the loaded register each time it opens
   if (page === 'analysis') { if (window.closeRecPop) window.closeRecPop(); try { frames.analysis.contentWindow.renderAnalysis(); } catch (e) {} }   // the Analysis page replaces the breakdown dropdown
-  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.page === (page === 'print' ? 'analysis' : page)));   // the Print page belongs to Analysis, so that tab stays lit
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.page === ((page === 'print' || page === 'attendance') ? 'analysis' : page)));   // the Print page belongs to Analysis, so that tab stays lit
   if (location.hash !== '#' + page) history.replaceState(null, '', '#' + page);
   document.getElementById('logBtn').classList.toggle('on', page === 'log');
   if (page === 'log') document.getElementById('logBtn').setAttribute('aria-current', 'page'); else document.getElementById('logBtn').removeAttribute('aria-current');
@@ -166,6 +168,7 @@ function logPrint() {
   const act = document.querySelector('main iframe.active');
   if (act && act.id === 'f-legal') { logEvent('print', 'Legal notice'); return; }
   if (act && act.id === 'f-print') { logEvent('print', 'Attendance list page'); return; }
+  if (act && act.id === 'f-attendance') { logEvent('print', 'Overall attendance page'); return; }
   let d = (act && act.id === 'f-exam') ? 'Exam slip' : 'Registration slip';
   const c = window.SD_CURRENT;
   if (c && c.row) {
@@ -211,8 +214,11 @@ function renderLog(bump) {
   _fillUserFilter();
   renderLogPage();
   const n = SLOG.length, el = document.getElementById('logN');
+  const was = el.dataset.n;                                 // undefined on the first render, so loading the page does not pop
   el.textContent = n.toLocaleString(); el.hidden = !n;   // no entries: no badge, like a notifier
-  if (bump) { el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); }
+  el.dataset.n = n;
+  // pop whenever the number changes, whoever changed it (search, print, sign-in, a loaded register)
+  if (n && (bump || (was !== undefined && +was !== n))) { el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); }
   const fu = document.getElementById('lpUser').value, ft = document.getElementById('lpType').value;
   const shown = SLOG.filter(r => (!fu || r.uid === fu) && (!ft || _group(r) === ft));
   document.getElementById('lpCount').textContent = n ? (shown.length === n ? n.toLocaleString() + ' entr' + (n === 1 ? 'y' : 'ies') : shown.length.toLocaleString() + ' of ' + n.toLocaleString()) : '';
@@ -365,7 +371,7 @@ const FOOTER_CONFIG = {
   hours:    '',                     // e.g. 'Mon – Fri, 8:00am – 4:00pm'
   address:  '',                     // e.g. 'Secretariat, Ibadan, Oyo State'
   year:     2026,
-  version:  'v1.5',
+  version:  'v1.13',
   // Social icons under the about text. Paste each full profile link into url; leave url '' to fall back to the site's home page, delete a line to remove the icon.
   // email: uses the email above (mailto) when set; whatsapp: uses the number above.
   social: [
@@ -864,6 +870,7 @@ function addPress(name) {
     const d = frames[name].contentDocument;
     if (!d || !d.head || d.getElementById('sdPress')) return;
     const l = d.createElement('link'); l.id = 'sdPress'; l.rel = 'stylesheet'; l.href = 'css/08-press.css'; d.head.appendChild(l);
+    const b = d.createElement('link'); b.id = 'sdButtons'; b.rel = 'stylesheet'; b.href = 'css/12-buttons.css?v=1'; d.head.appendChild(b);   // counter-pill depth for every button, added last so it wins over the page's own styles
     d.addEventListener('touchstart', function () {}, { passive: true });   // lets :active show on iOS Safari
   } catch (e) {}
 }
@@ -1391,6 +1398,7 @@ window.sdAnalysis = {
   const tabOn = (page, id) => { try { const el = frames[page].contentDocument.getElementById(id); return !!(el && el.classList.contains('on')); } catch (e) { return false; } };
   function current() {   // which link matches the page that is open now
     if (frames.analysis.classList.contains('active')) return tabOn('analysis', 'tabRv') ? 'revenue' : 'analysis';
+    if (frames.attendance.classList.contains('active')) return 'attendance';
     if (frames.print.classList.contains('active')) return tabOn('print', 'tabP2') ? 'attendance' : tabOn('print', 'tabP3') ? 'others' : 'breakdown';
     return '';
   }
@@ -1418,6 +1426,7 @@ window.sdAnalysis = {
     pop.style.setProperty('--ax', Math.max(24, Math.min(pr.width - 24, b.left + b.width / 2 - pr.left)) + 'px');
     const first = pop.querySelector('.on') || pop.querySelector('[data-an]'); if (first) first.focus();
   });
+  window.sdOpenOverall = () => show('attendance');   // the last card on Attendances opens the Overall attendance page; the register stays loaded
   window.sdGoAn = go;   // the tab strip inside the Analysis and Print pages calls this to hop to a tab on the other page
   pop.addEventListener('click', e => { const b = e.target.closest('[data-an]'); if (!b) return; close(); go(b.dataset.an); });
   pop.addEventListener('keydown', e => {

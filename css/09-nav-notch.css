@@ -40,6 +40,12 @@
   transition-duration:140ms,260ms,150ms,150ms;transition-delay:0s,0s,0s,0s}
 .tabs.idle .tab-drop{opacity:0!important}
 
+/* Activity log count. Held back while the bar is folded and while the tabs arrive one after another,
+   then it pops in once everything has settled (nt-hold is lifted by js/nav-notch.js at the end of the unfold).
+   Folding hides it at once, so it never lingers on the pill. */
+.tabs .tab-log .lg-n{opacity:1;transform:scale(1);transition:opacity 140ms ease-out 40ms,transform 460ms var(--ease-spring) 40ms}
+.tabs.idle .tab-log .lg-n,.tabs.nt-hold .tab-log .lg-n{opacity:0;transform:scale(.2);transition:opacity 110ms ease-out,transform 110ms ease-out}
+
 .nt-inner{
   position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;
   opacity:0;filter:blur(4px);transform:scale(.9);pointer-events:none;
@@ -88,11 +94,12 @@
 .nt-rain{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--nt-gold);margin-left:2px}
 
 /* keyboard wake is instant: a Tab press should never wait on an animation */
-.tabs.snap,.tabs.snap .tab,.tabs.snap .nt-inner{transition-duration:0s!important;transition-delay:0s!important}
+.tabs.snap,.tabs.snap .tab,.tabs.snap .nt-inner,.tabs.snap .lg-n{transition-duration:0s!important;transition-delay:0s!important}
 /* reduced motion: no width morph, keep the gentle fades */
 @media (prefers-reduced-motion:reduce){
   .tabs{transition-property:background-color,border-color,box-shadow}
   .tabs .tab,.nt-inner{transition-delay:0s!important;filter:none!important;transform:none!important}
+  .tabs .tab-log .lg-n{transform:none!important}
   .nt-sheen::after,.nt-live{animation:none!important}
 }
 

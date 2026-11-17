@@ -49,7 +49,7 @@ nav{position:relative;z-index:20;background:linear-gradient(180deg,#7a2638 0%,#6
 .logbtn:hover,.logbtn[aria-expanded=true]{background:rgba(255,255,255,.16);border-color:rgba(226,184,77,.85)}
 .logbtn:focus-visible{outline:2px solid #e2b84d;outline-offset:2px}
 .tab .lg-n{min-width:22px;height:22px;padding:0 6px;border-radius:999px;background:#e2b84d;color:#4a1220;font-size:11.5px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums}
-.tab .lg-n.bump{animation:lgBump .45s ease-out}
+.tab .lg-n.bump{animation:lgBump .55s ease-out}
 /* Activity log count: a notifier badge that sits on the tab's top-right corner, like an app icon badge */
 .tab.tab-log{position:relative}
 .tab.tab-log .lg-n{position:absolute;top:-7px;right:-9px;min-width:19px;height:19px;padding:0 5px;font-size:10.5px;line-height:1;z-index:2;pointer-events:none;box-shadow:0 0 0 2px #6d1727,0 2px 6px rgba(0,0,0,.4)}
@@ -58,7 +58,7 @@ nav{position:relative;z-index:20;background:linear-gradient(180deg,#7a2638 0%,#6
 .tab.tab-log .lg-n.bump::after{animation:lgPing .9s ease-out}
 @keyframes lgPing{0%{opacity:1;box-shadow:0 0 0 0 rgba(226,184,77,.75)}100%{opacity:0;box-shadow:0 0 0 9px rgba(226,184,77,0)}}
 @media(prefers-reduced-motion:reduce){.tab.tab-log .lg-n.bump::after{animation:none}}
-@keyframes lgBump{0%{transform:scale(1)}40%{transform:scale(1.35)}100%{transform:scale(1)}}
+@keyframes lgBump{0%{transform:scale(1)}30%{transform:scale(1.5)}55%{transform:scale(.9)}78%{transform:scale(1.07)}100%{transform:scale(1)}}
 .logpop{position:absolute;left:50%;transform:translateX(-50%);top:calc(100% + 12px);width:min(540px,calc(100vw - 24px));background:#fff;color:#1c1216;border:2px solid #c4962a;border-radius:16px;box-shadow:0 14px 44px rgba(53,13,24,.4);z-index:50;text-align:left}
 /* little pointer: JS sets --ax so it lands on the centre of the Activity log pill */
 .logpop::before{content:"";position:absolute;top:-9px;left:var(--ax,50%);width:14px;height:14px;margin-left:-7px;background:#f9f0f2;border-left:2px solid #c4962a;border-top:2px solid #c4962a;border-top-left-radius:3px;transform:rotate(45deg)}

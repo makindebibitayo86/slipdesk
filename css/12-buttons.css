@@ -1,0 +1,140 @@
+/* ══ Depth for every button: the same look as the navbar records counter ══
+   The counter pill is the reference: a gradient that is lighter on top, a bright top edge,
+   a soft gloss over the upper half, a darker lower edge and a shadow underneath.
+   This file gives that look to every other button, so none of them feel flat.
+
+   Loaded in the main page and injected into every page frame (see addPress in js/app.js),
+   after each page's own styles, so it wins at equal strength.
+   Press-in (css/08-press.css) still sinks the button on click and overrides the shadow while pressed.
+
+   Three families:
+     1 · Wine   primary actions (Print, Download, Save, Replace)
+     2 · White  secondary actions (Clear, Back, Cancel, Previous)
+     3 · Glass  buttons that sit on a wine bar (preview bar, dialog Close)
+   Text-style controls (table sort headings, tab links, number links, list rows) stay flat on purpose. */
+
+:root{
+  --bt-ease:cubic-bezier(0.23,1,0.32,1);
+  --bt-wine-top:#963448;--bt-wine-bot:#6d1f2e;--bt-wine-edge:rgba(53,13,24,.55);
+  --bt-wine-top-h:#a53c52;--bt-wine-bot-h:#7a2435;
+  --bt-white-top:#ffffff;--bt-white-bot:#f6eaed;--bt-white-edge:rgba(109,31,46,.4);
+  --bt-wine-shadow:
+    inset 0 1px 0 rgba(255,255,255,.42),
+    inset 0 14px 14px -10px rgba(255,255,255,.26),
+    inset 0 -2px 5px rgba(0,0,0,.2),
+    0 8px 18px -6px rgba(109,31,46,.55),
+    0 1px 2px rgba(53,13,24,.35);
+  --bt-wine-shadow-h:
+    inset 0 1px 0 rgba(255,255,255,.5),
+    inset 0 14px 14px -10px rgba(255,255,255,.32),
+    inset 0 -2px 5px rgba(0,0,0,.2),
+    0 12px 24px -8px rgba(109,31,46,.6),
+    0 1px 2px rgba(53,13,24,.35);
+  --bt-white-shadow:
+    inset 0 1px 0 #fff,
+    inset 0 -1px 0 rgba(109,31,46,.1),
+    0 4px 12px -4px rgba(53,13,24,.22),
+    0 1px 2px rgba(53,13,24,.12);
+  --bt-white-shadow-h:
+    inset 0 1px 0 #fff,
+    inset 0 -1px 0 rgba(109,31,46,.1),
+    0 8px 18px -6px rgba(53,13,24,.3),
+    0 1px 2px rgba(53,13,24,.12);
+  --bt-glass-shadow:
+    inset 0 1px 0 rgba(255,255,255,.5),
+    inset 0 12px 14px -12px rgba(255,255,255,.34),
+    inset 0 -1px 0 rgba(0,0,0,.14),
+    0 6px 16px -6px rgba(0,0,0,.4),
+    0 1px 2px rgba(0,0,0,.22);
+}
+
+/* ── 1 · Wine ─────────────────────────────────────────────────────────────── */
+.rbar button:not(.ghost),
+.btn-wine,.btn-upload,.btn-print,
+.btn:not(.ghost):not(.btn-ghost),
+.uppop .up-btns .up-yes,
+#profilePage .pf-pill.solid{
+  background:linear-gradient(180deg,var(--bt-wine-top),var(--bt-wine-bot));
+  border:1px solid var(--bt-wine-edge);
+  color:#fff;
+  box-shadow:var(--bt-wine-shadow);
+  transition:transform 160ms cubic-bezier(0.34,1.4,0.64,1),box-shadow 220ms var(--bt-ease),filter 200ms,opacity 160ms;
+}
+
+/* ── 2 · White ────────────────────────────────────────────────────────────── */
+.rbar button.ghost,
+.btn.ghost,.btn-ghost,.btn-new,.btn-retake,
+.sig-clr,
+.gate-back,
+.uppop .up-btns button:not(.up-yes),
+#profilePage .pf-pill.plain{
+  background:linear-gradient(180deg,var(--bt-white-top),var(--bt-white-bot));
+  border-color:var(--bt-white-edge);
+  box-shadow:var(--bt-white-shadow);
+  transition:transform 160ms cubic-bezier(0.34,1.4,0.64,1),box-shadow 220ms var(--bt-ease),border-color 200ms,color 200ms,filter 200ms;
+}
+.uppop .up-btns button:not(.up-yes){border-color:rgba(196,150,42,.85)}
+.sig-clr{color:#6d1f2e}
+/* the profile "Discard" is a text pill: only gets the white lift once the dock is showing */
+#profilePage .pf-pill.plain{color:var(--tint,#6d1f2e);border:1px solid var(--bt-white-edge)}
+
+/* ── 3 · Glass on a wine bar ──────────────────────────────────────────────── */
+.pvbar .btn:not(.ghost){
+  background:linear-gradient(180deg,#ffffff,#f3e3e7);
+  border-color:rgba(255,255,255,.9);color:#6d1f2e;
+  box-shadow:inset 0 1px 0 #fff,inset 0 -2px 4px rgba(109,31,46,.14),0 6px 14px -5px rgba(0,0,0,.45),0 1px 2px rgba(0,0,0,.25);
+}
+.pvbar .btn.ghost,
+.dh button{
+  background:linear-gradient(180deg,rgba(255,255,255,.2),rgba(255,255,255,.07));
+  border:1px solid rgba(255,255,255,.4);color:#fff;
+  box-shadow:var(--bt-glass-shadow);
+  transition:transform 160ms cubic-bezier(0.34,1.4,0.64,1),box-shadow 220ms var(--bt-ease),filter 200ms;
+}
+
+/* ── Segmented control: the chosen segment is a raised wine pill ──────────── */
+.seg button.on{
+  background:linear-gradient(180deg,var(--bt-wine-top),var(--bt-wine-bot));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4),inset 0 -2px 4px rgba(0,0,0,.2),0 3px 8px -3px rgba(109,31,46,.55);
+}
+.seg{box-shadow:inset 0 1px 3px rgba(53,13,24,.12)}
+
+/* ── Hover: rise a little and glow. Mouse only, so a tap never leaves a stuck hover ── */
+@media (hover:hover) and (pointer:fine){
+  .rbar button:not(.ghost):not(:disabled):hover,
+  .btn-wine:not(:disabled):hover,.btn-upload:not(:disabled):hover,.btn-print:not(:disabled):hover,
+  .btn:not(.ghost):not(.btn-ghost):not(:disabled):hover,
+  .uppop .up-btns .up-yes:not(:disabled):hover,
+  #profilePage .pf-pill.solid:not(:disabled):hover{
+    background:linear-gradient(180deg,var(--bt-wine-top-h),var(--bt-wine-bot-h));
+    box-shadow:var(--bt-wine-shadow-h);
+    transform:translateY(-1px);
+  }
+  .rbar button.ghost:not(:disabled):hover,
+  .btn.ghost:not(:disabled):hover,.btn-ghost:not(:disabled):hover,.btn-new:not(:disabled):hover,.btn-retake:not(:disabled):hover,
+  .sig-clr:not(:disabled):hover,
+  .gate-back:hover,
+  .uppop .up-btns button:not(.up-yes):not(:disabled):hover,
+  #profilePage .pf-pill.plain:not(:disabled):hover{
+    background:linear-gradient(180deg,#fff,#fbf3f5);
+    box-shadow:var(--bt-white-shadow-h);
+    transform:translateY(-1px);
+  }
+  .pvbar .btn:not(.ghost):not(:disabled):hover{background:linear-gradient(180deg,#fff,#faeef1);transform:translateY(-1px)}
+  .pvbar .btn.ghost:not(:disabled):hover,.dh button:hover{
+    background:linear-gradient(180deg,rgba(255,255,255,.3),rgba(255,255,255,.12));
+    transform:translateY(-1px);
+  }
+}
+
+/* Disabled: sits flat and quiet, no lift */
+.rbar button:disabled,.btn:disabled,.btn-wine:disabled,.btn-upload:disabled,.btn-print:disabled,
+.sig-clr:disabled,#profilePage .pf-pill:disabled{
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 1px 2px rgba(53,13,24,.15);
+  transform:none;filter:none;
+}
+
+@media (prefers-reduced-motion:reduce){
+  .rbar button,.btn,.btn-wine,.btn-upload,.btn-print,.btn-new,.btn-retake,.sig-clr,.gate-back,
+  .uppop .up-btns button,#profilePage .pf-pill,.dh button{transition:box-shadow 220ms,filter 200ms;transform:none!important}
+}

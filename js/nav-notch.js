@@ -136,11 +136,12 @@
   function wake(instant) {
     if (!idle()) return;
     clearInterval(slideT);
-    if (instant) { tabs.classList.add('snap'); setTimeout(() => tabs.classList.remove('snap'), 60); }
+    if (instant) { tabs.classList.add('snap'); tabs.classList.remove('nt-hold'); setTimeout(() => tabs.classList.remove('snap'), 60); }
+    else tabs.classList.add('nt-hold');             // the Activity log count waits until the links are all in
     tabs.classList.add('morph'); tabs.classList.remove('idle');
     tabs.style.width = fullW + 'px';
     clearTimeout(morphT);
-    morphT = setTimeout(() => { tabs.classList.remove('morph'); tabs.style.width = ''; }, 760);   // unfold + the last tab's fade
+    morphT = setTimeout(() => { tabs.classList.remove('morph', 'nt-hold'); tabs.style.width = ''; }, 760);   // unfold + the last tab's fade
   }
   const near = (x, y) => {
     const r = tabs.getBoundingClientRect();
