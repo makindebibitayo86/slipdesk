@@ -371,7 +371,7 @@ const FOOTER_CONFIG = {
   hours:    '',                     // e.g. 'Mon – Fri, 8:00am – 4:00pm'
   address:  '',                     // e.g. 'Secretariat, Ibadan, Oyo State'
   year:     2026,
-  version:  'v1.13',
+  version:  'v1.20',
   // Social icons under the about text. Paste each full profile link into url; leave url '' to fall back to the site's home page, delete a line to remove the icon.
   // email: uses the email above (mailto) when set; whatsapp: uses the number above.
   social: [
@@ -1473,7 +1473,7 @@ show(location.hash.slice(1));
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => moveTabDrop(false));
 })();
 
-// ── Ctrl+Space: jump to the search box of the page you are on ──
+// ── / , Ctrl+K or Ctrl+Space: jump to the search box of the page you are on ──
 (function () {
   function target() {
     const gate = document.getElementById('gate');
@@ -1484,13 +1484,16 @@ show(location.hash.slice(1));
     try { return f.contentDocument.getElementById(LASTTAB === 'exam' ? 'slipQuery' : 'query'); } catch (e) { return null; }
   }
   function onKey(e) {
-    if (!(e.ctrlKey && !e.altKey && !e.metaKey && (e.code === 'Space' || e.key === ' '))) return;
+    const ctrl = e.ctrlKey && !e.altKey && !e.metaKey, tg = e.target, typing = tg && (/^(INPUT|TEXTAREA|SELECT)$/.test(tg.tagName) || tg.isContentEditable);
+    const hit = (ctrl && (e.code === 'Space' || e.key === ' ' || (e.key || '').toLowerCase() === 'k')) || (e.key === '/' && !e.ctrlKey && !e.altKey && !e.metaKey && !typing);   // Ctrl+Space, Ctrl+K, or / (when you are not already typing in a box)
+    if (!hit) return;
     const el = target();
     if (!el || el.disabled) return;
     e.preventDefault();
     try { el.ownerDocument.defaultView.focus(); } catch (x) {}
     el.focus({ preventScroll: false });
     try { el.select(); } catch (x) {}
+    try { const w = el.ownerDocument.defaultView; if (el.getBoundingClientRect().top < 0) w.scrollTo(0, 0); } catch (x) {}
   }
   document.addEventListener('keydown', onKey, true);
   function hook(fr) {
