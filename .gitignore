@@ -8,3 +8,7 @@
 Thumbs.db
 .vscode/
 .idea/
+
+# Scratch / experiment pages (never committed)
+*-scratch.html
+scratch/
