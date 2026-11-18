@@ -93,6 +93,24 @@ nav{position:relative;z-index:20;background:linear-gradient(180deg,#7a2638 0%,#6
 .lp-clr{background:#fff;color:#6d1f2e}
 .lp-clr:disabled{opacity:.45;cursor:not-allowed}
 .lp-note{flex-basis:100%;font-size:11px;color:#9c8a8e;line-height:1.5}
+/* Clear log confirmation: replaces the footer's buttons and note, same box, same width */
+.lp-ask{display:none;flex-basis:100%;text-align:center;padding:4px 6px 2px}
+.lp-foot.asking>:not(.lp-ask){display:none}
+.lp-foot.asking .lp-ask{display:block;animation:lpAsk .16s ease-out}
+.lp-ask b{display:block;font-family:'Crimson Pro',serif;font-size:19px;color:#6d1f2e}
+.lp-ask p{margin:4px 0 12px;font-size:12.5px;line-height:1.5;color:#5c4a4e}
+.lp-askbtns{display:flex;gap:8px;justify-content:center}
+.lp-foot .lp-no{background:linear-gradient(180deg,rgba(255,255,255,.92),rgba(255,255,255,.7));color:#6d1f2e;border:1px solid rgba(109,31,46,.24);box-shadow:inset 0 1px 0 #fff,inset 0 -1px 0 rgba(109,31,46,.08),0 4px 12px -4px rgba(53,13,24,.2),0 1px 2px rgba(53,13,24,.1)}
+.lp-foot .lp-yes{background:linear-gradient(180deg,#d4483c,#a82019);border:1px solid rgba(92,14,10,.6);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.42),inset 0 14px 14px -10px rgba(255,255,255,.26),inset 0 -2px 5px rgba(0,0,0,.2),0 8px 18px -6px rgba(179,38,30,.55),0 1px 2px rgba(53,13,24,.35)}
+@media (hover:hover) and (pointer:fine){
+  .lp-foot .lp-no:not(:disabled):hover{background:linear-gradient(180deg,#fff,rgba(255,255,255,.82));border-color:rgba(109,31,46,.42);box-shadow:inset 0 1px 0 #fff,inset 0 -1px 0 rgba(109,31,46,.08),0 8px 18px -6px rgba(53,13,24,.28),0 1px 2px rgba(53,13,24,.1)}
+  .lp-foot .lp-yes:not(:disabled):hover{background:linear-gradient(180deg,#de5246,#b3261e);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 14px 14px -10px rgba(255,255,255,.32),inset 0 -2px 5px rgba(0,0,0,.2),0 12px 24px -8px rgba(179,38,30,.6),0 1px 2px rgba(53,13,24,.35)}
+  .lp-foot .lp-okdone:not(:disabled):hover{background:linear-gradient(180deg,#42b865,#1f8a3d);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 14px 14px -10px rgba(255,255,255,.32),inset 0 -2px 5px rgba(0,0,0,.2),0 12px 24px -8px rgba(30,142,62,.6),0 1px 2px rgba(8,40,18,.35)}
+}
+.lp-foot .lp-no:not(:disabled):active{box-shadow:inset 0 1px 3px rgba(109,31,46,.18),0 1px 2px rgba(53,13,24,.1)}
+.lp-foot .lp-yes:not(:disabled):active,.lp-foot .lp-okdone:not(:disabled):active{box-shadow:inset 0 1px 0 rgba(255,255,255,.28),inset 0 -1px 3px rgba(0,0,0,.25),0 2px 6px -2px rgba(0,0,0,.4)}
+@keyframes lpAsk{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.lp-foot.asking .lp-ask{animation:none}}
 @media(max-width:1000px){.lb-word,.lg-word{display:none}}
 @media print{.logwrap{display:none}}
 @media(max-width:1280px){.brand .sep,.brand .tag{display:none}}
@@ -221,3 +239,27 @@ body.up-drag .navdim{pointer-events:none}
 .rp-sw{display:flex;flex-direction:column;padding:7px 12px;border-bottom:1px solid #f0e4e7}
 .rp-sw .dn{font-size:12.5px;font-weight:700;color:#350d18}
 .rp-sw .ds{font-size:11px;color:#7a6a6e;font-variant-numeric:tabular-nums}
+
+/* Clear log (navbar box): "Log cleared" confirmation. Lives inside the footer's own height (locked in JS), so the dropdown never changes size. */
+.lp-foot.asking,.lp-foot.cleared{overflow:hidden;align-content:center}
+.lp-done{display:none;flex-basis:100%;flex-direction:column;align-items:center;text-align:center;gap:4px;padding:0 6px}
+.lp-foot.cleared{position:relative}
+.lp-foot.cleared>:not(.lp-done){display:none}
+.lp-foot.cleared .lp-done{display:flex;animation:lpAsk .2s ease-out}
+.lp-okhead{display:flex;align-items:center;gap:10px}
+.lp-okico{width:34px;height:34px;flex:0 0 34px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#3aae5c,#1e8e3e 70%);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(30,142,62,.3),0 0 0 4px #e6f4ea;animation:lpOkPop .4s cubic-bezier(.2,1.4,.4,1)}
+.lp-tick{stroke-dasharray:24;stroke-dashoffset:24;animation:lpTick .3s ease-out .18s forwards}
+.lp-done b{font-family:'Crimson Pro',serif;font-size:22px;line-height:1.1;color:#1e6b34}
+.lp-done p{margin:0 0 6px;font-size:12.5px;line-height:1.4;color:#5c4a4e}
+.lp-foot .lp-okdone{background:linear-gradient(180deg,#38ad5b,#1a7a35);border:1px solid rgba(8,60,24,.6);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.42),inset 0 14px 14px -10px rgba(255,255,255,.26),inset 0 -2px 5px rgba(0,0,0,.2),0 8px 18px -6px rgba(30,142,62,.55),0 1px 2px rgba(8,40,18,.35);min-width:96px;height:34px}
+.lp-okbar{position:absolute;left:18px;right:18px;bottom:4px;height:3px;border-radius:3px;background:#e6f4ea;overflow:hidden}
+.lp-okbar i{display:block;height:100%;background:#1e8e3e;transform-origin:left;animation:lpBar 3s linear forwards}
+@keyframes lpOkPop{from{transform:scale(.4);opacity:0}to{transform:none;opacity:1}}
+@keyframes lpTick{to{stroke-dashoffset:0}}
+@keyframes lpBar{to{transform:scaleX(0)}}
+@media(prefers-reduced-motion:reduce){.lp-foot.cleared .lp-done,.lp-okico{animation:none}.lp-tick{animation:none;stroke-dashoffset:0}}
+
+/* Blank rows: the dropdown list is never shorter than 5 rows, so it keeps its size when entries are cleared or filtered */
+.lp-list{position:relative}
+.lp-list li.lp-fill{height:56px;box-sizing:border-box;padding:0;pointer-events:none}
+.lp-list li.lp-empty{position:absolute;left:0;right:0;top:0;bottom:0;display:flex;align-items:center;justify-content:center;padding:0 16px;border:0;pointer-events:none;font-weight:600}

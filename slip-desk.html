@@ -13,10 +13,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/01-base.css?v=5">
+<link rel="stylesheet" href="css/01-base.css?v=6">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link rel="stylesheet" href="css/02-portal.css">
-<link rel="stylesheet" href="css/03-activity-log.css">
+<link rel="stylesheet" href="css/03-activity-log.css?v=2">
 <link rel="stylesheet" href="css/04-tab-drop.css?v=2">
 <link rel="stylesheet" href="css/05-gate-polish.css">
 <link rel="stylesheet" href="css/07-legal.css">
@@ -129,6 +129,17 @@ body.on-analysis #recPop,body:has(.tab[data-page="analysis"].active) #recPop{dis
           <button type="button" class="lp-dl" id="lpDl"><span class="arw arw-d" aria-hidden="true">⬇</span> Download log (.xlsx)</button>
           <button type="button" class="lp-clr" id="lpClr">Clear log</button>
           <div class="lp-note">Records who signed in and out, every search each person ran, every register file loaded or changed, and every slip printed. Kept in this browser on this station. It contains candidate names and references: download it regularly and handle it under the same privacy rules as the register. Only an administrator can clear it.</div>
+          <div class="lp-ask" role="alertdialog" aria-labelledby="lpAskT" aria-describedby="lpAskD">
+            <b id="lpAskT">Clear all log entries?</b>
+            <p id="lpAskD">Download the log first if you still need it. This cannot be undone.</p>
+            <div class="lp-askbtns"><button type="button" class="lp-no" id="lpNo">Cancel</button><button type="button" class="lp-yes" id="lpYes">Yes, clear log</button></div>
+          </div>
+          <div class="lp-done" role="status" aria-live="polite">
+            <div class="lp-okhead"><div class="lp-okico" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20"><path class="lp-tick" d="M6.5 12.6l3.7 3.7 7.3-8" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><b>Log cleared</b></div>
+            <p id="lpOkD"></p>
+            <button type="button" class="lp-okdone" id="lpOkDone">Done</button>
+            <div class="lp-okbar" aria-hidden="true"><i></i></div>
+          </div>
         </div>
       </div>
     </div>
@@ -258,7 +269,7 @@ body.on-analysis #recPop,body:has(.tab[data-page="analysis"].active) #recPop{dis
 <script src="pages/legal.js"></script>
 <script src="pages/print.js?v=23"></script>
 <script src="pages/attendance.js?v=3"></script>
-<script src="js/app.js?v=27"></script>
+<script src="js/app.js?v=29"></script>
 <script src="js/upload-panel.js"></script>
 <script src="js/gate.js"></script>
 <script src="js/profile.js"></script>

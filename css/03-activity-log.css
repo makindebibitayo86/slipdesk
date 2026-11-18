@@ -173,3 +173,54 @@
 /* "No activity / nothing matches" message floats over the blank rows instead of sitting under them */
 #logPage .lg-empty{position:absolute;left:0;right:0;top:44px;bottom:0;display:flex;align-items:center;justify-content:center;padding:0 16px;pointer-events:none;font-weight:600}
 #logPage .lg-empty[hidden]{display:none}
+
+/* ── Clear log: the page morphs into a centred question (not a pop-up: no backdrop, the page itself softens) ── */
+#logPage .lg-dim{transition:opacity .3s ease,filter .3s ease,transform .3s ease;opacity:.32;filter:blur(2px) saturate(.75);transform:scale(.992);transform-origin:50% 30%;pointer-events:none;user-select:none}
+#logPage .lg-wrap,#logPage footer{transition:opacity .3s ease,filter .3s ease,transform .3s ease}
+.lg-askhost{position:sticky;top:0;height:0;z-index:40;flex:0 0 auto;overflow:visible}
+.lg-askhost[hidden]{display:none}
+.lg-askc{position:absolute;left:0;right:0;top:0;height:100vh;display:flex;align-items:center;justify-content:center;pointer-events:none;padding:16px}
+.lg-ask{pointer-events:auto;width:min(480px,100%);box-sizing:border-box;background:#fff;color:#1c1216;border:2px solid #c4962a;border-radius:20px;box-shadow:0 24px 70px rgba(53,13,24,.38);padding:28px 28px 22px;text-align:center}
+.lg-askico{width:44px;height:44px;margin:0 auto 12px;border-radius:50%;background:#fbe9e7;color:#b3261e;font:700 24px/44px 'Crimson Pro',serif;border:2px solid #f0c4bf}
+.lg-ask h2{margin:0;font-family:'Crimson Pro',serif;font-size:26px;font-weight:600;color:#6d1f2e;letter-spacing:-.01em}
+.lg-ask p{margin:8px 0 20px;font-size:13.5px;line-height:1.55;color:#5c4a4e}
+.lg-askbtns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+/* Yes / Done: same depth recipe as every other button (gradient, bright top edge, gloss, soft shadow), in red and green */
+.lg-ask .lg-btn.lg-yes{background:linear-gradient(180deg,#d4483c,#a82019);border:1px solid rgba(92,14,10,.6);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.42),inset 0 14px 14px -10px rgba(255,255,255,.26),inset 0 -2px 5px rgba(0,0,0,.2),0 8px 18px -6px rgba(179,38,30,.55),0 1px 2px rgba(53,13,24,.35)}
+.lg-ask .lg-btn.lg-okdone{background:linear-gradient(180deg,#38ad5b,#1a7a35);border:1px solid rgba(8,60,24,.6);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.42),inset 0 14px 14px -10px rgba(255,255,255,.26),inset 0 -2px 5px rgba(0,0,0,.2),0 8px 18px -6px rgba(30,142,62,.55),0 1px 2px rgba(8,40,18,.35)}
+.lg-ask .lg-btn.lg-yes:disabled,.lg-ask .lg-btn.lg-okdone:disabled{opacity:.7}
+@media (hover:hover) and (pointer:fine){
+  .lg-ask .lg-btn.lg-yes:not(:disabled):hover{background:linear-gradient(180deg,#de5246,#b3261e);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 14px 14px -10px rgba(255,255,255,.32),inset 0 -2px 5px rgba(0,0,0,.2),0 12px 24px -8px rgba(179,38,30,.6),0 1px 2px rgba(53,13,24,.35)}
+  .lg-ask .lg-btn.lg-okdone:not(:disabled):hover{background:linear-gradient(180deg,#42b865,#1f8a3d);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 14px 14px -10px rgba(255,255,255,.32),inset 0 -2px 5px rgba(0,0,0,.2),0 12px 24px -8px rgba(30,142,62,.6),0 1px 2px rgba(8,40,18,.35)}
+}
+.lg-ask .lg-btn.lg-yes:not(:disabled):active,.lg-ask .lg-btn.lg-okdone:not(:disabled):active{box-shadow:inset 0 1px 0 rgba(255,255,255,.28),inset 0 -1px 3px rgba(0,0,0,.25),0 2px 6px -2px rgba(0,0,0,.4)}
+@media(prefers-reduced-motion:reduce){#logPage .lg-dim{transition:none}}
+@media print{.lg-askhost{display:none!important}}
+
+/* ── Clear log: confirmation after "Yes, clear log". Same size as the question card (its height is locked in JS), content centred inside it ── */
+.lg-ask.done{border-color:#1e8e3e;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:center;padding:22px 28px 26px}
+.lg-ask p.lg-err{color:#b3261e;font-weight:600}
+.lg-askok{outline:none;display:flex;flex-direction:column;align-items:center;gap:14px;animation:lgOkIn .28s ease-out}
+.lg-askok[hidden],.lg-askq[hidden]{display:none}
+.lg-okhead{display:flex;align-items:center;gap:16px;text-align:left}
+.lg-okico{width:58px;height:58px;flex:0 0 58px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#3aae5c,#1e8e3e 70%);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(30,142,62,.32),0 0 0 6px #e6f4ea;position:relative;animation:lgOkPop .45s cubic-bezier(.2,1.4,.4,1)}
+.lg-okico::after{content:"";position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 0 rgba(30,142,62,.4);animation:lgOkPulse .9s ease-out .2s}
+.lg-oktx{min-width:0}
+.lg-askok h2{margin:0;color:#1e6b34;font-size:28px;line-height:1.1}
+.lg-askok .lg-okp{margin:4px 0 0;font-size:13.5px;line-height:1.45;color:#3d2f33}
+.lg-okfacts{display:grid;grid-template-columns:1fr 1.7fr 1fr;width:100%;background:#f2f8f4;border:1px solid #d4e8da;border-radius:14px;padding:10px 4px}
+.lg-okfacts div{display:flex;flex-direction:column;gap:2px;padding:0 8px;min-width:0;text-align:center}
+.lg-okfacts div+div{border-left:1px solid #d4e8da}
+.lg-okfacts span{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#6c8a75}
+.lg-okfacts b{font-size:13.5px;font-weight:700;color:#1c1216;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lg-okdone{min-width:120px}
+.lg-okbar{position:absolute;left:0;right:0;bottom:0;height:4px;background:#e6f4ea}
+.lg-okbar i{display:block;height:100%;width:100%;background:#1e8e3e;transform-origin:left;animation:lgBar 3.2s linear forwards}
+@keyframes lgOkIn{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
+@keyframes lgOkPop{from{transform:scale(.4);opacity:0}to{transform:none;opacity:1}}
+@keyframes lgTick{to{stroke-dashoffset:0}}
+@keyframes lgBar{to{transform:scaleX(0)}}
+@keyframes lgOkPulse{0%{box-shadow:0 0 0 0 rgba(30,142,62,.4)}100%{box-shadow:0 0 0 20px rgba(30,142,62,0)}}
+.lg-tick{stroke-dasharray:24;stroke-dashoffset:24;animation:lgTick .35s ease-out .22s forwards}
+@media(max-width:480px){.lg-okfacts{grid-template-columns:1fr}.lg-okfacts div+div{border-left:0;border-top:1px solid #d4e8da;padding-top:6px}}
+@media(prefers-reduced-motion:reduce){.lg-askok,.lg-okico,.lg-okico::after{animation:none}.lg-tick{animation:none;stroke-dashoffset:0}.lg-okbar i{animation-duration:3.2s}}
