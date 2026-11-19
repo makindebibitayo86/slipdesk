@@ -210,6 +210,13 @@ function _fillUserFilter() {
   const sel = document.getElementById('lpUser'); if (!sel || !window.SD_USERS || sel.options.length > 1) return;
   window.SD_USERS.forEach(u => { const o = document.createElement('option'); o.value = u.id; o.textContent = u.name; sel.appendChild(o); });
 }
+// Blank rows keep the Activity log dropdown the same size: it is never shorter than 5 rows, and while a clear is in progress it keeps the height it had.
+function _lpFill(ul, real) {
+  const mk = h => { const li = document.createElement('li'); li.className = 'lp-fill'; li.setAttribute('aria-hidden', 'true'); if (h) li.style.height = h + 'px'; ul.appendChild(li); };
+  for (let i = real; i < 5; i++) mk();
+  const lock = +ul.dataset.lock || 0;
+  if (lock) { const rem = lock - ul.offsetHeight; if (rem > 0) { const full = Math.floor(rem / 56); for (let i = 0; i < full; i++) mk(); const left = rem - full * 56; if (left >= 1) mk(left); } }
+}
 function renderLog(bump) {
   _fillUserFilter();
   renderLogPage();
@@ -227,7 +234,7 @@ function renderLog(bump) {
   const clr = document.getElementById('lpClr'); clr.disabled = !n || !admin;
   clr.title = admin ? '' : 'Only an administrator can clear the log';
   const ul = document.getElementById('lpList'); ul.textContent = '';
-  if (!shown.length) { const li = document.createElement('li'); li.className = 'lp-empty'; li.textContent = n ? 'Nothing matches that filter.' : 'No activity yet. Sign-ins and searches will be recorded here.'; ul.appendChild(li); return; }
+  if (!shown.length) { _lpFill(ul, 0); const li = document.createElement('li'); li.className = 'lp-empty'; li.textContent = n ? 'Nothing matches that filter.' : 'No activity yet. Sign-ins and searches will be recorded here.'; ul.appendChild(li); return; }
   shown.slice(-15).reverse().forEach(r => {
     const li = document.createElement('li');
     const hue = _rowHue(r); if (hue) li.className = hue;
@@ -286,6 +293,7 @@ function renderLog(bump) {
     }
     ul.appendChild(li);
   });
+  _lpFill(ul, Math.min(shown.length, 15));
 }
 function downloadLog(list) {
   list = Array.isArray(list) ? list : SLOG;
@@ -301,7 +309,11 @@ function downloadLog(list) {
 }
 (function () {
   const btn = document.getElementById('logBtn'), pop = document.getElementById('logPop');
-  const close = () => { pop.hidden = true; btn.setAttribute('aria-expanded', 'false'); };
+  const foot = pop.querySelector('.lp-foot'); let hold = 0;   // hold: a click that has just opened the box must not also close it
+  const askOff = () => { clearTimeout(foot._t); foot.classList.remove('asking', 'cleared'); foot.style.height = ''; foot.style.boxSizing = ''; };   // also releases the height lock below
+  const releaseLock = () => { delete document.getElementById('lpList').dataset.lock; };   // the list may change height again
+  const close = () => { releaseLock(); pop.hidden = true; btn.setAttribute('aria-expanded', 'false'); askOff(); };
+  const outClose = () => { if (Date.now() - hold > 300) close(); };
   window.closeLogPop = close;
   // From the slip pages the Activity log tab drops its quick-view panel down; on the log page itself it is already open.
   btn.addEventListener('click', e => {
@@ -309,10 +321,13 @@ function downloadLog(list) {
     if (frames.log.classList.contains('active')) { close(); return; }
     const open = pop.hidden;
     if (!open) { close(); return; }
+    openPop();
+  });
+  function openPop() {
     if (window.closeRecPop) window.closeRecPop();   // only one navbar dropdown open at a time
     if (window.closeAnPop) window.closeAnPop();
     if (window.closeUpPop) window.closeUpPop();
-    renderLog();
+    releaseLock(); renderLog();
     pop.hidden = false; btn.setAttribute('aria-expanded', 'true');
     const nav = document.querySelector('nav').getBoundingClientRect(), bar = document.querySelector('.tabs').getBoundingClientRect(), b = btn.getBoundingClientRect();
     const half = pop.offsetWidth / 2;
@@ -321,20 +336,40 @@ function downloadLog(list) {
     pop.style.top = (bar.bottom - nav.top + 12) + 'px';
     const pr = pop.getBoundingClientRect();
     pop.style.setProperty('--ax', Math.max(24, Math.min(pr.width - 24, b.left + b.width / 2 - pr.left)) + 'px');
-  });
+  }
   window.addEventListener('resize', close);
-  document.addEventListener('click', e => { if (!pop.hidden && !pop.contains(e.target)) close(); });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
-  Object.keys(frames).forEach(k => frames[k].addEventListener('load', () => { try { frames[k].contentDocument.addEventListener('click', close); } catch (e) {} }));
+  document.addEventListener('click', e => { if (!pop.hidden && !pop.contains(e.target)) outClose(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') { if (foot.classList.contains('asking') || foot.classList.contains('cleared')) { askOff(); document.getElementById('lpClr').focus(); } else close(); } });
+  Object.keys(frames).forEach(k => frames[k].addEventListener('load', () => { try { frames[k].contentDocument.addEventListener('click', outClose); } catch (e) {} }));
   document.getElementById('lpDl').addEventListener('click', () => downloadLog());
   document.getElementById('lpOpen').addEventListener('click', () => { close(); show('log'); });
+  // Clear log: asks inside the box itself (the buttons are replaced by the question). The full log page has its own confirmation (pages/log.js).
+  const askText = () => { const n = SLOG.length; document.getElementById('lpAskT').textContent = 'Clear all ' + n.toLocaleString() + (n === 1 ? ' log entry?' : ' log entries?'); const d = document.getElementById('lpAskD'); d.textContent = 'Download the log first if you still need it. This cannot be undone.'; d.style.color = ''; d.style.fontWeight = ''; };
   document.getElementById('lpClr').addEventListener('click', () => {
     if (!(window.SD_USER && window.SD_USER.admin) || !SLOG.length) return;
-    if (confirm('Clear all ' + SLOG.length.toLocaleString() + ' log entries from this station?\n\nDownload the log first if you still need it. This cannot be undone.')) {
-      const cnt = SLOG.length; SLOG = []; _saveLog();
-      logEvent('clear', 'Cleared ' + cnt.toLocaleString() + ' entries from the log');
-    }
+    askText(); const lst = document.getElementById('lpList'); lst.dataset.lock = Math.round(lst.getBoundingClientRect().height);   // clearing leaves blank rows, never a shorter dropdown
+    foot.style.boxSizing = 'border-box'; foot.style.height = foot.getBoundingClientRect().height + 'px';   // the question and the confirmation both live inside the footer's normal height: the dropdown never grows or shrinks
+    foot.classList.add('asking');
+    setTimeout(() => document.getElementById('lpNo').focus({ preventScroll: true }), 30);   // Cancel is the safe default
   });
+  document.getElementById('lpNo').addEventListener('click', () => { askOff(); releaseLock(); const c = document.getElementById('lpClr'); if (!c.disabled) c.focus({ preventScroll: true }); });
+  window.clearLogNow = () => {   // the confirmation (here, or on the full log page) has been answered Yes
+    if (!(window.SD_USER && window.SD_USER.admin) || !SLOG.length) return;
+    const cnt = SLOG.length; SLOG = []; _saveLog();
+    logEvent('clear', 'Cleared ' + cnt.toLocaleString() + (cnt === 1 ? ' entry' : ' entries') + ' from the log');
+  };
+  document.getElementById('lpYes').addEventListener('click', () => {
+    const n = SLOG.length; window.clearLogNow();
+    const last = SLOG[SLOG.length - 1];
+    if (!last || last.type !== 'clear') {   // nothing was cleared: say so, stay on the question
+      const d = document.getElementById('lpAskD'); d.textContent = 'The log could not be cleared. Only an administrator can clear it.'; d.style.color = '#b3261e'; d.style.fontWeight = '600'; return;
+    }
+    document.getElementById('lpOkD').textContent = (n === 1 ? '1 entry was' : n.toLocaleString() + ' entries were') + ' removed. Recorded in the new log.';
+    foot.classList.remove('asking'); foot.classList.add('cleared');   // the footer says "Log cleared", then returns to its buttons by itself
+    document.getElementById('lpOkDone').focus({ preventScroll: true });
+    clearTimeout(foot._t); foot._t = setTimeout(() => { if (foot.classList.contains('cleared')) { askOff(); const c = document.getElementById('lpClr'); if (!c.disabled && !pop.hidden) c.focus({ preventScroll: true }); } }, 3000);
+  });
+  document.getElementById('lpOkDone').addEventListener('click', () => { askOff(); const c = document.getElementById('lpClr'); if (!c.disabled) c.focus({ preventScroll: true }); });
   document.getElementById('lpUser').addEventListener('change', () => renderLog());
   document.getElementById('lpType').addEventListener('change', () => renderLog());
   renderLog();
@@ -349,7 +384,7 @@ function _rowHue(r) { return r.type === 'file' ? 'lg-loaded' : (LG_HUE[r.type] |
 window.sdLogApi = {
   entries: () => SLOG, users: () => window.SD_USERS || [], isAdmin: () => !!(window.SD_USER && window.SD_USER.admin),
   isEvent: _isEvent, cat: _cat, resClass: _resClass, rowHue: _rowHue, roleOf: _roleOf, roleLine: _roleLine, userChip: _userChip, candAv: _candAv,
-  download: downloadLog, clear: () => document.getElementById('lpClr').click(), back: () => show(LASTTAB || 'registration')
+  download: downloadLog, clearNow: () => window.clearLogNow && window.clearLogNow(), back: () => show(LASTTAB || 'registration')
 };
 // Redraw the log page (only when it is the page on screen)
 function renderLogPage() { try { const w = frames.log.contentWindow; if (frames.log.classList.contains('active') && w.renderLogPage) w.renderLogPage(); } catch (e) {} }
@@ -371,7 +406,7 @@ const FOOTER_CONFIG = {
   hours:    '',                     // e.g. 'Mon – Fri, 8:00am – 4:00pm'
   address:  '',                     // e.g. 'Secretariat, Ibadan, Oyo State'
   year:     2026,
-  version:  'v1.20',
+  version:  'v1.26',
   // Social icons under the about text. Paste each full profile link into url; leave url '' to fall back to the site's home page, delete a line to remove the icon.
   // email: uses the email above (mailto) when set; whatsapp: uses the number above.
   social: [
