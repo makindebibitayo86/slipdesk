@@ -168,3 +168,5 @@ body.on-profile main iframe{display:none!important}
 @media(max-width:620px){#profilePage .pf-k{flex-basis:76px}#profilePage .pf-pass{padding:14px 14px 14px}#profilePage .pf-pmain .av{width:56px;height:56px;font-size:20px}#profilePage .pf-prole{padding:3px 8px;font-size:9px;letter-spacing:.08em}#profilePage .pf-pass .pf-ptop{gap:8px}
 @media(max-width:380px){#profilePage .pf-pass .pf-pbrand b{font-size:16px}#profilePage .pf-pass .pf-pbrand span{font-size:8.5px;letter-spacing:.05em}#profilePage .pf-pass .pf-pcrest img{height:24px}#profilePage .pf-pass .pf-ptop{gap:6px}#profilePage .pf-pass .pf-prole{padding:3px 7px;font-size:8.5px;letter-spacing:.05em}}#profilePage .pf-pname{font-size:17px}#profilePage .pf-log time{display:none}#profilePage .pf-dock .msg{display:none}#profilePage .pf-dock{padding-left:7px}}
 @media(prefers-reduced-motion:reduce){#profilePage .pf-overlay,#profilePage .pf-sheet,.pf-toast{animation:none}#profilePage .pf-dock{transition:none}}
+/* the site footer (added to this document by js/app.js) belongs to the Profile page only; the other pages carry their own copy inside their frames */
+body:not(.on-profile)>#slipFooter{display:none}

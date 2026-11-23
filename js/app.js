@@ -22,6 +22,10 @@ let _shT; function queueSyncPanels() { cancelAnimationFrame(_shT); _shT = reques
 window.queueSyncPanels = queueSyncPanels;
 // ── Navigation ──
 function show(page) {
+  if (page === 'school' && !window.sdSchoolPick) {   // the school chosen survives a refresh or a sign-in (this tab only); with none remembered there is nothing to open
+    try { window.sdSchoolPick = JSON.parse(sessionStorage.getItem('sd.schoolPick') || 'null'); } catch (e) { window.sdSchoolPick = null; }
+    if (!window.sdSchoolPick) page = 'print';
+  }
   if (!frames[page]) page = 'registration';
   if (page === 'registration' || page === 'exam') LASTTAB = page;   // the slip page the Back button returns to
   // Switching tabs keeps whatever is on each one (search box, results, slip).
@@ -408,7 +412,7 @@ const FOOTER_CONFIG = {
   hours:    '',                     // e.g. 'Mon – Fri, 8:00am – 4:00pm'
   address:  '',                     // e.g. 'Secretariat, Ibadan, Oyo State'
   year:     2026,
-  version:  'v1.61',
+  version:  'v1.67',
   // Social icons under the about text. Paste each full profile link into url; leave url '' to fall back to the site's home page, delete a line to remove the icon.
   // email: uses the email above (mailto) when set; whatsapp: uses the number above.
   social: [
@@ -775,19 +779,21 @@ function ftUploadError(detail) {
   FT_UP[n].open(false); FT_UP[n].err('Couldn’t read that file. ' + why);
 }
 document.addEventListener('pointerdown', () => { Object.keys(FT_CLOSE).forEach(k => { try { FT_CLOSE[k](); } catch (e) {} }); }, true);
-function addFooter(name) {
+function addFooter(name, onMain) {   // onMain: the footer of the Profile page, which sits in this document rather than in a frame
   try {
-    const d = frames[name].contentDocument;
+    const d = onMain ? document : frames[name].contentDocument;
     if (!d || !d.body || d.getElementById('slipFooter')) return;
-    const hostId = { log: 'logPage', analysis: 'anPage', legal: 'lglPage', print: 'prPage' }[name], isLog = !!hostId, host = isLog ? d.getElementById(hostId) : d.body;   // the log, Analysis and Legal pages scroll inside their own box, so their footer goes in there
+    const hostId = onMain ? '' : { log: 'logPage', analysis: 'anPage', legal: 'lglPage', print: 'prPage' }[name], isLog = !!hostId, host = isLog ? d.getElementById(hostId) : d.body;   // the log, Analysis and Legal pages scroll inside their own box, so their footer goes in there
     if (!host) return;
     const crest = document.querySelector('.brandwrap img').src;
     const st = d.createElement('style'); st.textContent = FOOTER_CSS; d.head.appendChild(st);
     const f = d.createElement('footer'); f.id = 'slipFooter'; f.innerHTML = footerHTML(crest);
     // Run edge to edge: cancel whatever padding the page's body has on the sides and bottom
-    if (isLog) f.style.marginTop = '28px';
+    if (onMain) { f.style.marginTop = '28px'; f.style.flex = 'none'; }
+    else if (isLog) f.style.marginTop = '28px';
     else { const cs = d.defaultView.getComputedStyle(d.body); f.style.margin = '2rem -' + cs.paddingRight + ' -' + cs.paddingBottom + ' -' + cs.paddingLeft; }
-    host.appendChild(f);
+    if (name === 'school') f.style.marginTop = '0';   // the School page is one full-screen block (options + sheet): the footer sits flush under it, no strip of page background between them
+    if (onMain) host.insertBefore(f, d.querySelector('main').nextSibling); else host.appendChild(f);   // the Profile footer goes right under <main>
     // Register box: click the register row and the box swaps to an upload area (nothing opens the explorer yet); only the area itself opens the picker.
     // Drag a file over the box and the same area opens by itself and takes the drop.
     const stBox = f.querySelector('#ftStatus'), stBtn = f.querySelector('#ftBtn');
@@ -863,13 +869,16 @@ function addFooter(name) {
     });
     f.addEventListener('click', e => {
       const t = e.target.closest('[data-go],[data-legal],[data-top]'); if (!t) return;
-      if (t.dataset.an && window.sdGoAn) { window.sdGoAn(t.dataset.an); d.defaultView.scrollTo(0, 0); }   // Report / Analysis / Revenue / Attendances / Others: same jump as the Analytics dropdown
-      else if (t.dataset.go) {
-        show(t.dataset.go); d.defaultView.scrollTo(0, 0);
-        if (t.dataset.tab) try { frames.analysis.contentDocument.getElementById(t.dataset.tab === 'revenue' ? 'tabRv' : 'tabAn').click(); } catch (e) {}   // Analysis | Revenue
-      }
-      else if (t.dataset.top) (isLog ? host : d.defaultView).scrollTo({ top: 0, behavior: 'smooth' });
-      else openLegal(t.dataset.legal);
+      const go = () => {
+        if (t.dataset.an && window.sdGoAn) { window.sdGoAn(t.dataset.an); d.defaultView.scrollTo(0, 0); }   // Report / Analysis / Revenue / Attendances / Others: same jump as the Analytics dropdown
+        else if (t.dataset.go) {
+          show(t.dataset.go); d.defaultView.scrollTo(0, 0);
+          if (t.dataset.tab) try { frames.analysis.contentDocument.getElementById(t.dataset.tab === 'revenue' ? 'tabRv' : 'tabAn').click(); } catch (e) {}   // Analysis | Revenue
+        }
+        else if (t.dataset.top) (isLog ? host : d.defaultView).scrollTo({ top: 0, behavior: 'smooth' });
+        else openLegal(t.dataset.legal);
+      };
+      if (onMain && !t.dataset.top && window.sdProfileLeave) window.sdProfileLeave(go); else go();   // on the Profile page: close it first (js/profile.js asks about unsaved edits)
     });
     // Disconnect register: the box swaps to a confirm panel (Cancel / Disconnect), then a green tick, then the register is cleared from this desk
     const closeConfirm = () => { if (!stBox) return; stBox.classList.remove('asking', 'done'); if (cfMain) cfMain.inert = false; if (cfBox) cfBox.inert = true; };
@@ -1039,7 +1048,7 @@ function idbDo(mode, fn) {
 const idbSave = rec => idbDo('readwrite', st => st.put(rec, 'current')).catch(() => {});
 const idbLoad = () => idbDo('readonly', st => st.get('current')).catch(() => null);
 // Sign-out wipes the stored copy; a refresh or an idle lock keeps it
-window.clearStoredRegister = () => { idbDo('readwrite', st => st.delete('current')).catch(() => {}); };
+window.clearStoredRegister = () => { idbDo('readwrite', st => st.delete('current')).catch(() => {}); try { sessionStorage.removeItem('sd.schoolPick'); sessionStorage.removeItem('sd.schoolState'); } catch (e) {} };
 // Disconnect the register from this desk (the footer's "This station" box): empties both slip pages, Analytics and Print,
 // forgets the stored copy so a refresh does not bring it back, and records it in the activity log. The file itself is not touched.
 function unloadRegister() {
@@ -1463,8 +1472,8 @@ window.sdAnalysis = {
     pop.style.setProperty('--ax', Math.max(24, Math.min(pr.width - 24, b.left + b.width / 2 - pr.left)) + 'px');
     const first = pop.querySelector('.on') || pop.querySelector('[data-an]'); if (first) first.focus();
   });
-  window.sdOpenSchool = pick => { window.sdSchoolPick = pick; show('school'); };   // a school row on Attendances opens that school's own page
-  window.sdBackToSchools = () => { show('print'); try { frames.print.contentWindow.sdBackFromSchool(); } catch (e) {} };   // ...and its Back button returns to the list of schools, zone still chosen
+  window.sdOpenSchool = pick => { window.sdSchoolPick = pick; try { sessionStorage.setItem('sd.schoolPick', JSON.stringify(pick)); sessionStorage.removeItem('sd.schoolState'); } catch (e) {} show('school'); };   // a school row on Attendances opens that school's own page
+  window.sdBackToSchools = () => { window.sdSchoolPick = null; try { sessionStorage.removeItem('sd.schoolPick'); sessionStorage.removeItem('sd.schoolState'); } catch (e) {} show('print'); try { frames.print.contentWindow.sdBackFromSchool(); } catch (e) {} };   // ...and its Back button returns to the list of schools, zone still chosen
   window.sdSchoolInfo = k => { try { return frames.print.contentWindow.sdSchoolInfo(k); } catch (e) { return null; } };   // the school page reads a centre's figures through the shell
   window.sdSchoolSubjects = (k, st, d) => { try { return frames.print.contentWindow.sdSchoolSubjects(k, st, d); } catch (e) { return null; } };   // the papers of a centre, for the school page's subject list
   window.sdSchoolCounts = (k, c, s) => { try { return frames.print.contentWindow.sdSchoolCounts(k, c, s); } catch (e) { return null; } };   // Officers and Sub-Officers for the staff category and paper chosen on the school page
@@ -1485,6 +1494,7 @@ window.sdAnalysis = {
   Object.keys(frames).forEach(k => frames[k].addEventListener('load', () => { try { frames[k].contentDocument.addEventListener('click', close); } catch (e) {} }));
 })();
 
+addFooter('profile', true); updateFooterStatus();   // the Profile page has its own footer in this document (shown only while Profile is open, see css/11-profile.css)
 show(location.hash.slice(1));
 
 // ── Tab switcher: slide the active pill like a drop of water (stretches, then settles) ──

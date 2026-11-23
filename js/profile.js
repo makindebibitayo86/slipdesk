@@ -295,6 +295,8 @@
   });
 
   /* the desk locking (signed out, or 5 minutes idle) shuts everything here at once; unsaved edits are dropped rather than left on screen */
+  /* the footer's links (Registration, Analytics, Legal...) leave this page first: with unsaved edits it asks (Save / Discard / Keep Editing), then goes where the link points */
+  window.sdProfileLeave = function (go) { if (page.hidden) { go(); return; } guard(function () { close(false); go(); }); };
   window.sdOnLock = function () {
     menuClose();
     lastFocus = null; overlay.hidden = true; sheet.textContent = '';
