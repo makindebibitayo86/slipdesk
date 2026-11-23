@@ -8,7 +8,8 @@ const frames = {
   analysis: document.getElementById('f-analysis'),
   legal: document.getElementById('f-legal'),
   print: document.getElementById('f-print'),
-  attendance: document.getElementById('f-attendance')
+  attendance: document.getElementById('f-attendance'),
+  school: document.getElementById('f-school')
 };
 let ROWS = null, HDR = [];
 var LASTTAB = 'registration';
@@ -28,8 +29,9 @@ function show(page) {
   document.body.classList.toggle('on-analysis', page === 'analysis');
   if (page === 'print') { if (window.closeRecPop) window.closeRecPop(); try { frames.print.contentWindow.renderPrint(); } catch (e) {} }   // the Print page reads the loaded register each time it opens
   if (page === 'attendance') { if (window.closeRecPop) window.closeRecPop(); try { frames.attendance.contentWindow.renderAttendance(); frames.attendance.contentWindow.scrollTo(0, 0); } catch (e) {} }   // the Overall attendance page reads the loaded register each time it opens
+  if (page === 'school') { if (window.closeRecPop) window.closeRecPop(); try { frames.school.contentWindow.renderSchool(); frames.school.contentWindow.scrollTo(0, 0); } catch (e) {} }   // the school page reads the school picked on Attendances each time it opens
   if (page === 'analysis') { if (window.closeRecPop) window.closeRecPop(); try { frames.analysis.contentWindow.renderAnalysis(); } catch (e) {} }   // the Analysis page replaces the breakdown dropdown
-  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.page === ((page === 'print' || page === 'attendance') ? 'analysis' : page)));   // the Print page belongs to Analysis, so that tab stays lit
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.page === ((page === 'print' || page === 'attendance' || page === 'school') ? 'analysis' : page)));   // the Print page belongs to Analysis, so that tab stays lit
   if (location.hash !== '#' + page) history.replaceState(null, '', '#' + page);
   document.getElementById('logBtn').classList.toggle('on', page === 'log');
   if (page === 'log') document.getElementById('logBtn').setAttribute('aria-current', 'page'); else document.getElementById('logBtn').removeAttribute('aria-current');
@@ -406,7 +408,7 @@ const FOOTER_CONFIG = {
   hours:    '',                     // e.g. 'Mon – Fri, 8:00am – 4:00pm'
   address:  '',                     // e.g. 'Secretariat, Ibadan, Oyo State'
   year:     2026,
-  version:  'v1.53',
+  version:  'v1.60',
   // Social icons under the about text. Paste each full profile link into url; leave url '' to fall back to the site's home page, delete a line to remove the icon.
   // email: uses the email above (mailto) when set; whatsapp: uses the number above.
   social: [
@@ -1433,7 +1435,7 @@ window.sdAnalysis = {
   const tabOn = (page, id) => { try { const el = frames[page].contentDocument.getElementById(id); return !!(el && el.classList.contains('on')); } catch (e) { return false; } };
   function current() {   // which link matches the page that is open now
     if (frames.analysis.classList.contains('active')) return tabOn('analysis', 'tabRv') ? 'revenue' : 'analysis';
-    if (frames.attendance.classList.contains('active')) return 'attendance';
+    if (frames.attendance.classList.contains('active') || frames.school.classList.contains('active')) return 'attendance';
     if (frames.print.classList.contains('active')) return tabOn('print', 'tabP2') ? 'attendance' : tabOn('print', 'tabP3') ? 'others' : 'breakdown';
     return '';
   }
@@ -1461,6 +1463,14 @@ window.sdAnalysis = {
     pop.style.setProperty('--ax', Math.max(24, Math.min(pr.width - 24, b.left + b.width / 2 - pr.left)) + 'px');
     const first = pop.querySelector('.on') || pop.querySelector('[data-an]'); if (first) first.focus();
   });
+  window.sdOpenSchool = pick => { window.sdSchoolPick = pick; show('school'); };   // a school row on Attendances opens that school's own page
+  window.sdBackToSchools = () => { show('print'); try { frames.print.contentWindow.sdBackFromSchool(); } catch (e) {} };   // ...and its Back button returns to the list of schools, zone still chosen
+  window.sdSchoolInfo = k => { try { return frames.print.contentWindow.sdSchoolInfo(k); } catch (e) { return null; } };   // the school page reads a centre's figures through the shell
+  window.sdSchoolSubjects = (k, st, d) => { try { return frames.print.contentWindow.sdSchoolSubjects(k, st, d); } catch (e) { return null; } };   // the papers of a centre, for the school page's subject list
+  window.sdSchoolCounts = (k, c, s) => { try { return frames.print.contentWindow.sdSchoolCounts(k, c, s); } catch (e) { return null; } };   // Officers and Sub-Officers for the staff category and paper chosen on the school page
+  window.sdSchoolBlank = (k, c, d, g) => { try { return frames.print.contentWindow.sdSchoolBlank(k, c, d, g); } catch (e) { return null; } };   // the empty sheet the school page shows until a subject is chosen
+  window.sdSchoolSheet = (k, c, d, s, g) => { try { return frames.print.contentWindow.sdSchoolSheet(k, c, d, s, g); } catch (e) { return null; } };   // the attendance sheet the school page previews
+  window.sdSchoolDownload = (t, done) => { try { return frames.print.contentWindow.sdSchoolDownload(t, done); } catch (e) { if (done) done(); return false; } };   // ...and downloads as PDF or Excel
   window.sdOpenOverall = () => show('attendance');   // the last card on Attendances opens the Overall attendance page; the register stays loaded
   window.sdGoAn = go;   // the tab strip inside the Analysis and Print pages calls this to hop to a tab on the other page
   pop.addEventListener('click', e => { const b = e.target.closest('[data-an]'); if (!b) return; close(); go(b.dataset.an); });
