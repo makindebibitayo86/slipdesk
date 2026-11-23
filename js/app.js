@@ -408,7 +408,7 @@ const FOOTER_CONFIG = {
   hours:    '',                     // e.g. 'Mon – Fri, 8:00am – 4:00pm'
   address:  '',                     // e.g. 'Secretariat, Ibadan, Oyo State'
   year:     2026,
-  version:  'v1.60',
+  version:  'v1.61',
   // Social icons under the about text. Paste each full profile link into url; leave url '' to fall back to the site's home page, delete a line to remove the icon.
   // email: uses the email above (mailto) when set; whatsapp: uses the number above.
   social: [
@@ -915,7 +915,7 @@ document.addEventListener('touchstart', function () {}, { passive: true });
 
 Object.keys(frames).forEach(name => {
   frames[name].addEventListener('load', () => { addPress(name); addFooter(name); push(name); queueSyncPanels(); try { if (name === 'registration' && window.ResizeObserver) new ResizeObserver(queueSyncPanels).observe(frames[name].contentDocument.getElementById('regFit')); } catch (e) {} });
-  frames[name].srcdoc = DOCS[name];
+  frames[name].srcdoc = DOCS[name].replace('</head>', '<style>*{scrollbar-width:none;-ms-overflow-style:none}*::-webkit-scrollbar{display:none;width:0;height:0}</style></head>');   // hide scrollbars inside every page
 });
 // The Load button is the only status indicator:
 //   empty   -> pulses gold so you know a register must be loaded

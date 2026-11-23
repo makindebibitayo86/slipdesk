@@ -263,3 +263,5 @@ body.up-drag .navdim{pointer-events:none}
 .lp-list{position:relative}
 .lp-list li.lp-fill{height:56px;box-sizing:border-box;padding:0;pointer-events:none}
 .lp-list li.lp-empty{position:absolute;left:0;right:0;top:0;bottom:0;display:flex;align-items:center;justify-content:center;padding:0 16px;border:0;pointer-events:none;font-weight:600}
+/* scrollbars are hidden everywhere; scrolling itself still works */
+*{scrollbar-width:none;-ms-overflow-style:none}*::-webkit-scrollbar{display:none;width:0;height:0}
