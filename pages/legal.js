@@ -1,6 +1,7 @@
 // Legal page: Disclaimer | Privacy & Data Protection | Terms of Use, each with its own scroll-spy contents list.
 // Stored as one HTML string and loaded into the f-legal iframe by slip-desk.html (same pattern as the other pages).
 // To change the wording, edit the text between the <section class="lgl-sec"> tags below.
+// Reviewed against the code of Slip Desk v1.68 (23 Nov 2026). When the app starts storing, sending or exporting data differently, update Privacy sections 2 and 3.
 (window.SD_PAGES = window.SD_PAGES || {}).legal = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,96 +28,144 @@
   </div>
 <div class="lgl-panel" id="panel-disclaimer" role="tabpanel" aria-labelledby="tab-disclaimer" data-tab="disclaimer">
 <div class="lgl-grid">
-<div class="lgl-toc" role="navigation" aria-label="On this page: Disclaimer"><div class="lgl-toc-h">On this page</div><div class="lgl-prog" aria-hidden="true"><i></i></div><ol class="lgl-toc-list"><li><a href="#disc-1" data-sec="disc-1"><span class="n">1</span><span class="t">Restricted, internal tool</span></a></li><li><a href="#disc-2" data-sec="disc-2"><span class="n">2</span><span class="t">Where the information comes from</span></a></li><li><a href="#disc-3" data-sec="disc-3"><span class="n">3</span><span class="t">What a slip is, and is not</span></a></li><li><a href="#disc-4" data-sec="disc-4"><span class="n">4</span><span class="t">Limits of responsibility</span></a></li></ol></div>
+<div class="lgl-toc" role="navigation" aria-label="On this page: Disclaimer"><div class="lgl-toc-h">On this page</div><div class="lgl-prog" aria-hidden="true"><i></i></div><ol class="lgl-toc-list"><li><a href="#disc-1" data-sec="disc-1"><span class="n">1</span><span class="t">Restricted, internal tool</span></a></li><li><a href="#disc-2" data-sec="disc-2"><span class="n">2</span><span class="t">Where the information comes from</span></a></li><li><a href="#disc-3" data-sec="disc-3"><span class="n">3</span><span class="t">What a slip is, and is not</span></a></li><li><a href="#disc-4" data-sec="disc-4"><span class="n">4</span><span class="t">Analysis, lists and attendance sheets</span></a></li><li><a href="#disc-5" data-sec="disc-5"><span class="n">5</span><span class="t">Limits of responsibility</span></a></li></ol></div>
 <article class="lgl-card">
 <section class="lgl-sec" id="disc-1" aria-labelledby="disc-1-h"><h2 id="disc-1-h"><span class="num" aria-hidden="true">1</span>Restricted, internal tool</h2>
-<p>Slip Desk is an <strong>internal administrative tool</strong> for authorised ICT and examination-administration staff of the Oyo State Civil / Public Service. It is not a public service and is not intended for use by candidates or any other person. Access is limited to officers assigned to this work, for the sole purpose of checking registration and payment status and printing candidates’ slips.</p>
+<p>Slip Desk is an <strong>internal administrative tool</strong> for authorised ICT and examination-administration staff of the Oyo State Civil / Public Service. It is not a public service and is not intended for use by candidates or any other person. Access is limited to officers assigned to this work, for the sole purpose of checking registration and payment status, printing candidates’ slips and preparing the analysis and attendance lists the examination needs.</p>
+<p>Slip Desk runs from files held at each station and has no central server of its own. The register file loaded at a station, not Slip Desk, remains the authority’s record.</p>
 </section>
 <section class="lgl-sec" id="disc-2" aria-labelledby="disc-2-h"><h2 id="disc-2-h"><span class="num" aria-hidden="true">2</span>Where the information comes from</h2>
 <ol>
-      <li>Every slip is generated from the <strong>register file loaded at this station</strong>. This desk does not create or change applications, and it does not confirm payments; payment status, examination numbers, zones and centres appear exactly as they are in the register.</li>
-      <li>A slip is only as accurate and as current as the register it was produced from. Before printing, confirm that the register loaded is the latest approved version (the loaded count and time are shown on the Load register button and in the footer status).</li>
-      <li>Where the register conflicts with an official record of the examining authority, <strong>the official record prevails</strong> and the matter must be referred to the supervising officer before any slip is issued.</li>
-    </ol>
+<li>Every slip is generated from the <strong>register file loaded at this station</strong>. This desk does not create or change applications, and it does not confirm payments; payment status, examination numbers, zones and centres appear exactly as they are in the register.</li>
+<li>To decide which slip to open, the desk reads the Payment Status text in the register. Wording that reads as confirmed, cleared, paid, approved, verified or successful is treated as <strong>confirmed</strong>. Anything else, including a blank status or wording such as pending, unpaid, mismatch, cancelled, flagged, rejected or failed, is treated as <strong>pending</strong>. If a status is worded in some other way, check it with the supervising officer before relying on it.</li>
+<li>A slip is only as accurate and as current as the register it was produced from. Before printing, confirm that the register loaded is the latest approved version (the loaded count and time are shown in the footer, and the Activity log records each register load with the file name, size, number of records and whether it differs from the one loaded before).</li>
+<li>A register left loaded on a computer can reappear at the next sign-in on that computer (see Privacy, section 2). Check which file is loaded at the start of every shift.</li>
+<li>Where the register conflicts with an official record of the examining authority, <strong>the official record prevails</strong> and the matter must be referred to the supervising officer before any slip is issued.</li>
+</ol>
 </section>
 <section class="lgl-sec" id="disc-3" aria-labelledby="disc-3-h"><h2 id="disc-3-h"><span class="num" aria-hidden="true">3</span>What a slip is, and is not</h2>
-<p>The slip printed here is identical to the one a candidate holds, and must not be altered in any way. A slip is not, by itself, a guarantee of admission to the examination. Candidates must still present a valid means of identification, and the examining authority may refuse admission where a slip or identity cannot be verified. A slip with a pending payment is greyed out and marked as not valid; it must not be issued.</p>
+<p>The slip printed here is identical to the one a candidate holds, and must not be altered in any way. A slip is not, by itself, a guarantee of admission to the examination. Candidates must still present a valid means of identification, and the examining authority may refuse admission where a slip or identity cannot be verified. A slip with a pending payment is greyed out, marked as not valid and carries no QR code; it must not be issued.</p>
+<p>A confirmed Exam Slip carries a QR code made from the Exam Number, Payment Reference and Full Name printed on it, so that the printed details can be checked against the code. A slip whose QR code does not match its printed details is invalid and must be rejected at the exam centre. The passport photograph and the QR code are fetched from online services when the slip is shown (see Privacy, section 3). If either is missing, refer the slip to the supervising officer before it is issued.</p>
 </section>
-<section class="lgl-sec" id="disc-4" aria-labelledby="disc-4-h"><h2 id="disc-4-h"><span class="num" aria-hidden="true">4</span>Limits of responsibility</h2>
-<p>The Oyo State Government and the officers who operate this tool accept no responsibility for loss or inconvenience caused by errors in the register, an out-of-date register file, incorrect data entry, delayed or unconfirmed payments, power or network interruption, or any use of the tool other than as described here. Nothing in this notice limits any duty or liability that the law does not allow to be limited, including duties under the <strong>Nigeria Data Protection Act 2023</strong>.</p>
+<section class="lgl-sec" id="disc-4" aria-labelledby="disc-4-h"><h2 id="disc-4-h"><span class="num" aria-hidden="true">4</span>Analysis, lists and attendance sheets</h2>
+<p>The Analysis and Print pages summarise the loaded register: counts by payment status, revenue records, breakdowns by zone, centre, MDA and school, and attendance and zone lists. The figures are only as good as the register. Flags such as possible duplicates (the same date of birth and name, in any order), subject mismatches and records with no examination number, photograph or phone number are <strong>prompts to check the register</strong>. They are not findings against a candidate or an officer, and nobody should be turned away or disciplined on a flag alone. Confirm with the supervising officer before acting.</p>
+<p>Lists printed or downloaded from these pages contain personal data and are covered by the Privacy &amp; data protection notice.</p>
 </section>
-<p class="lgl-note">Statutory references on this page are given in summary for the guidance of ICT staff and are not a substitute for the text of the laws or for legal advice. Confirm section numbers against the current consolidated text where it matters.</p>
+<section class="lgl-sec" id="disc-5" aria-labelledby="disc-5-h"><h2 id="disc-5-h"><span class="num" aria-hidden="true">5</span>Limits of responsibility</h2>
+<p>The Oyo State Government and the officers who operate this tool accept no responsibility for loss or inconvenience caused by errors in the register, an out-of-date register file, incorrect data entry, delayed or unconfirmed payments, power or network interruption, the online services behind the QR code and passport photographs being unavailable, a browser that has cleared its stored data, or any use of the tool other than as described here. Nothing in this notice limits any duty or liability that the law does not allow to be limited, including duties under the <strong>Nigeria Data Protection Act 2023</strong>.</p>
+<p>Sign-in, the idle lock and the activity log run inside the browser at each station. They discourage misuse and leave a trail, but they are not a substitute for controlling who can reach the computer and its files.</p>
+</section>
+<p class="lgl-note">Statutory references on this page are given in summary for the guidance of ICT staff and are not a substitute for the text of the laws or for legal advice. Confirm section numbers against the current consolidated text where it matters. These notices were last reviewed on 23 November 2026 against Slip Desk v1.68.</p>
 </article>
 </div>
 </div>
 <div class="lgl-panel" id="panel-privacy" role="tabpanel" aria-labelledby="tab-privacy" data-tab="privacy" hidden>
 <div class="lgl-grid">
-<div class="lgl-toc" role="navigation" aria-label="On this page: Privacy &amp; Data Protection"><div class="lgl-toc-h">On this page</div><div class="lgl-prog" aria-hidden="true"><i></i></div><ol class="lgl-toc-list"><li><a href="#priv-1" data-sec="priv-1"><span class="n">1</span><span class="t">What this desk handles</span></a></li><li><a href="#priv-2" data-sec="priv-2"><span class="n">2</span><span class="t">The law that applies</span></a></li><li><a href="#priv-3" data-sec="priv-3"><span class="n">3</span><span class="t">Rules for staff using this desk</span></a></li></ol></div>
+<div class="lgl-toc" role="navigation" aria-label="On this page: Privacy &amp; Data Protection"><div class="lgl-toc-h">On this page</div><div class="lgl-prog" aria-hidden="true"><i></i></div><ol class="lgl-toc-list"><li><a href="#priv-1" data-sec="priv-1"><span class="n">1</span><span class="t">What this desk handles</span></a></li><li><a href="#priv-2" data-sec="priv-2"><span class="n">2</span><span class="t">Where the data is kept at this station</span></a></li><li><a href="#priv-3" data-sec="priv-3"><span class="n">3</span><span class="t">Online services the desk uses</span></a></li><li><a href="#priv-4" data-sec="priv-4"><span class="n">4</span><span class="t">The law that applies</span></a></li><li><a href="#priv-5" data-sec="priv-5"><span class="n">5</span><span class="t">Rules for staff using this desk</span></a></li><li><a href="#priv-6" data-sec="priv-6"><span class="n">6</span><span class="t">Keeping data and candidates’ requests</span></a></li></ol></div>
 <article class="lgl-card">
 <section class="lgl-sec" id="priv-1" aria-labelledby="priv-1-h"><h2 id="priv-1-h"><span class="num" aria-hidden="true">1</span>What this desk handles</h2>
-<p>Candidate records in the register include names, phone numbers, e-mail addresses, date of birth, gender, passport photographs, ministry / department / agency and grade level, payment references and payment status, examination numbers, centres and, where declared, <strong>disability (PWD) information</strong>. All of this is personal data. Disability information relates to health and is likely to fall under the Act’s stricter rules for <strong>sensitive personal data</strong>, so it calls for extra care.</p>
-    <p>The examining authority is the data controller for these records. Staff using this desk act on its authority and only within the limits of their assignment.</p>
+<p>Candidate records in the register include names, phone numbers, e-mail addresses, date of birth, gender, passport photographs (held as links to images stored online), staff category, cadre, grade level, ministry / department / agency (MDA) or council, preferred local government, subjects entered, payment references, payment status, amounts and dates, examination numbers, zones and centres and, where declared, <strong>disability information</strong>. All of this is personal data. Disability information relates to health, which the Act treats as <strong>sensitive personal data</strong>, so it calls for extra care.</p>
+<p>The desk also holds information about the officers who use it: each officer’s name, job title, phone number, e-mail address, photograph and password (kept only as a one-way hash), together with a record of what each officer does on the desk.</p>
+<p>The examining authority is the data controller for the candidate records. Staff using this desk act on its authority and only within the limits of their assignment.</p>
 </section>
-<section class="lgl-sec" id="priv-2" aria-labelledby="priv-2-h"><h2 id="priv-2-h"><span class="num" aria-hidden="true">2</span>The law that applies</h2>
+<section class="lgl-sec" id="priv-2" aria-labelledby="priv-2-h"><h2 id="priv-2-h"><span class="num" aria-hidden="true">2</span>Where the data is kept at this station</h2>
 <ul>
-      <li><span class="ref">Constitution 1999, s.37</span> The privacy of citizens, their homes, correspondence and communications is guaranteed and protected.</li>
-      <li><span class="ref">NDPA 2023, s.24</span> Personal data must be processed lawfully, fairly and transparently; collected for specified purposes and not used for others; limited to what is necessary; kept accurate; kept no longer than needed; and held securely. The controller must also be able to show that it complies.</li>
-      <li><span class="ref">NDPA 2023, s.25</span> Processing needs a recognised lawful basis, such as consent, a legal obligation, the performance of a contract, vital interests, a task in the public interest or the exercise of official authority, or legitimate interests. Use of this desk must stay within the basis on which the examination records were collected.</li>
-      <li><span class="ref">NDPA 2023, s.39</span> Controllers and processors must put appropriate technical and organisational measures in place to protect the security, integrity and confidentiality of personal data, including protection against loss and misuse and the ability to restore data after an incident.</li>
-      <li><span class="ref">NDPA 2023, s.40</span> A personal data breach that is likely to put people’s rights and freedoms at risk must be reported to the Nigeria Data Protection Commission <strong>within 72 hours</strong> of becoming aware of it, and the people affected must be told where the risk to them is high.</li>
-      <li><span class="ref">NDPA 2023, Part VI</span> Candidates keep their rights as data subjects, including the rights to access, correct and object to the use of their data. Requests must be passed to the Data Protection Officer (see <span class="ref">s.32</span>) and not handled informally at the desk.</li>
-      <li><span class="ref">NDPA 2023, Part VIII</span> Personal data may be transferred outside Nigeria only where the Act’s conditions are met. Do not send register data or slips to services or storage outside Nigeria without clearance from the Data Protection Officer.</li>
-      <li><span class="ref">NDPC GAID 2025</span> The Commission’s General Application and Implementation Directive (March 2025) sets out how the Act is to be applied in practice, and the authority’s compliance arrangements follow it.</li>
-    </ul>
+<li><span class="ref">Register copy</span> When a register is loaded, a full copy is kept in this browser so that a page refresh does not lose it. Closing the window or the automatic 5-minute lock does <strong>not</strong> remove it, and it can come back at the next sign-in on the same computer. It is removed when the officer signs out or uses <strong>Disconnect</strong> in the footer.</li>
+<li><span class="ref">Activity log</span> Kept in this browser. It records sign-ins and sign-outs, failed sign-ins, automatic locks, register loads, prints, downloads and every search, under the officer’s name. A search entry holds what was typed, the candidate’s name, payment reference, examination number and payment status, and which slip was opened. It stays until an administrator clears it. Any signed-in officer can download it as an Excel file, so a downloaded log is a personal-data file too.</li>
+<li><span class="ref">Officer profile and password</span> Name, title, phone, e-mail and photograph (set on the Profile page) and the hash of the officer’s own password are kept in this browser only. A profile file exported from the Profile page holds these details but never the password.</li>
+<li><span class="ref">Downloads</span> Excel and PDF files saved from the Analysis, Print and school pages, the Activity log and the Profile page go wherever the browser saves downloads, outside the control of the desk.</li>
+</ul>
+<p>Each computer holds its own register copy and its own log. There is no shared database behind the desk.</p>
 </section>
-<section class="lgl-sec" id="priv-3" aria-labelledby="priv-3-h"><h2 id="priv-3-h"><span class="num" aria-hidden="true">3</span>Rules for staff using this desk</h2>
+<section class="lgl-sec" id="priv-3" aria-labelledby="priv-3-h"><h2 id="priv-3-h"><span class="num" aria-hidden="true">3</span>Online services the desk uses</h2>
+<p>Slip Desk works from files on the station, but some features call online services. These requests come from the station’s browser, so each service can see the station’s IP address.</p>
+<ul>
+<li><span class="ref">QR code service</span> When a confirmed Exam Slip is shown, the slip’s <strong>Exam Number, Payment Reference and Full Name are sent to a third-party QR service</strong> (api.qrserver.com), which returns the QR code image.</li>
+<li><span class="ref">Google images</span> Passport photographs are fetched from Google (lh3.googleusercontent.com) using the photograph link held in the register, which points to a Google Drive file. The logo on the printed slip is fetched the same way. Google can see which image was requested.</li>
+<li><span class="ref">Connection lookup</span> The footer shows the station’s internet provider and approximate location. The lookup service (ipwho.is, then ipapi.co) sees the station’s IP address, and the provider’s own website and icons.duckduckgo.com may be asked for a logo. No candidate data is sent.</li>
+<li><span class="ref">Weather</span> Weather for Ibadan, from fixed coordinates, comes from api.open-meteo.com. No candidate or officer data is sent.</li>
+<li><span class="ref">Code and fonts</span> The Excel and PDF tools (cdnjs.cloudflare.com) and the fonts (fonts.googleapis.com, fonts.gstatic.com) are loaded when the desk opens. No register data is sent.</li>
+<li><span class="ref">WhatsApp</span> The help-desk link (wa.me) is opened only when an officer clicks it.</li>
+</ul>
+<p>The register file, the activity log and officer profiles are never uploaded by the desk. The QR code service and Google are third parties whose servers may be outside Nigeria. Whether these two transfers meet the Act’s conditions for transfers outside Nigeria (see section 4) is for the Data Protection Officer to confirm, and this notice will be updated to match what the Data Protection Officer decides. Officers must not add, switch on or point the desk at any other online service.</p>
+</section>
+<section class="lgl-sec" id="priv-4" aria-labelledby="priv-4-h"><h2 id="priv-4-h"><span class="num" aria-hidden="true">4</span>The law that applies</h2>
+<ul>
+<li><span class="ref">Constitution 1999, s.37</span> The privacy of citizens, their homes, correspondence and communications is guaranteed and protected.</li>
+<li><span class="ref">NDPA 2023, s.24</span> Personal data must be processed lawfully, fairly and transparently; collected for specified purposes and not used for others; limited to what is necessary; kept accurate; kept no longer than needed; and held securely. The controller must also be able to show that it complies.</li>
+<li><span class="ref">NDPA 2023, s.25</span> Processing needs a recognised lawful basis, such as consent, a legal obligation, the performance of a contract, vital interests, a task in the public interest or the exercise of official authority, or legitimate interests. Use of this desk must stay within the basis on which the examination records were collected.</li>
+<li><span class="ref">NDPA 2023, s.30</span> Sensitive personal data, which includes data about health, may be processed only where the Act’s specific conditions are met, and the Commission may add further categories. Treat disability information with extra care and do not copy or export it beyond what the work needs.</li>
+<li><span class="ref">NDPA 2023, s.39</span> Controllers and processors must put appropriate technical and organisational measures in place to protect the security, integrity and confidentiality of personal data, including protection against loss and misuse and the ability to restore data after an incident.</li>
+<li><span class="ref">NDPA 2023, s.40</span> A personal data breach that is likely to put people’s rights and freedoms at risk must be reported to the Nigeria Data Protection Commission <strong>within 72 hours</strong> of becoming aware of it, and the people affected must be told where the risk to them is high.</li>
+<li><span class="ref">NDPA 2023, Part VI</span> Candidates keep their rights as data subjects, including the rights to access, correct and object to the use of their data. Requests must be passed to the Data Protection Officer (see <span class="ref">s.32</span>) and not handled informally at the desk.</li>
+<li><span class="ref">NDPA 2023, ss.41&ndash;43</span> Personal data may be transferred outside Nigeria only on the bases the Act allows, such as adequate protection in the receiving country or one of the other bases in s.43. Do not send register data or slips to services or storage outside Nigeria without clearance from the Data Protection Officer. The online services in section 3 fall under this rule.</li>
+<li><span class="ref">NDPC GAID 2025</span> The Commission’s General Application and Implementation Directive (20 March 2025) sets out how the Act is to be applied in practice, including cross-border transfers (Article 45 and Schedule 5) and privacy impact assessments (Schedule 4). The authority’s compliance arrangements follow it.</li>
+</ul>
+</section>
+<section class="lgl-sec" id="priv-5" aria-labelledby="priv-5-h"><h2 id="priv-5-h"><span class="num" aria-hidden="true">5</span>Rules for staff using this desk</h2>
 <ol>
-      <li>Search only for candidates you have an official reason to look up. Do not browse the register.</li>
-      <li>Do not photograph, screenshot, copy, forward or share candidate details or slips through WhatsApp, personal e-mail, social media or personal storage.</li>
-      <li>Keep the register file only on authorised devices. Delete downloaded copies when the work is complete.</li>
-      <li>Print only to a printer you control, collect printouts immediately, and give a slip only to the candidate or to a person the authority has approved.</li>
-      <li>Your sign-ins, sign-outs and searches are logged under your name. The log lists candidate names and references, so it is personal data: download it only as instructed, keep it on authorised devices, and never share or edit it.</li>
-      <li>Press <strong>Clear</strong> and close the window when you step away. Do not leave a candidate’s details on screen.</li>
-      <li>Report a lost device, an exposed register file, a misdirected printout or any other suspected breach to your supervising officer <strong>immediately</strong>. The authority has only 72 hours from becoming aware to report to the Commission, so delay is not acceptable.</li>
-    </ol>
+<li>Search only for candidates you have an official reason to look up. Do not browse the register. Every search is recorded under your name.</li>
+<li>Do not photograph, screenshot, copy, forward or share candidate details or slips through WhatsApp, personal e-mail, social media or personal storage, and do not paste them into any other website or online tool.</li>
+<li>Keep the register file only on authorised devices. Delete downloaded copies when the work is complete. Do not leave a register file in the Slip Desk folder: a file named <strong>trial.xlsx</strong> beside slip-desk.html loads by itself when the desk opens, and register files must never be added to the project’s GitHub repository.</li>
+<li>Sign out at the end of your shift and whenever a computer is shared. Closing the window or letting the desk lock does not remove the register copy; signing out or using Disconnect does.</li>
+<li>Print only to a printer you control, collect printouts immediately, and give a slip only to the candidate or to a person the authority has approved. Check that a confirmed Exam Slip shows the photograph and the QR code before you hand it over.</li>
+<li>Your sign-ins, sign-outs, searches, prints and downloads are logged under your name. The log lists candidate names and references, so it is personal data. Lists and files you download from the Activity log, Analysis, Print or school pages also contain personal data: download them only as instructed, keep them on authorised devices, delete them when the work is complete, and never share or edit them.</li>
+<li>The desk locks itself after 5 minutes without activity, but do not rely on it. Press <strong>Clear</strong> and sign out when you step away. Do not leave a candidate’s details on screen.</li>
+<li>Report a lost device, an exposed register file, a misdirected printout or any other suspected breach to your supervising officer <strong>immediately</strong>. The authority has only 72 hours from becoming aware to report to the Commission, so delay is not acceptable.</li>
+</ol>
 </section>
-<p class="lgl-note">Candidate records are retained only as long as the examination process and the authority’s records policy require.</p>
+<section class="lgl-sec" id="priv-6" aria-labelledby="priv-6-h"><h2 id="priv-6-h"><span class="num" aria-hidden="true">6</span>Keeping data and candidates’ requests</h2>
+<p>Candidate records are retained only as long as the examination process and the authority’s records policy require. A register copy at a station is removed at sign-out or Disconnect. The activity log is cleared only by an administrator, and only as the authority directs.</p>
+<p>Requests from candidates to see, correct or object to the use of their data must go to the Data Protection Officer. Officers at the desk must not handle them informally and must not confirm or discuss one person’s details with another.</p>
+</section>
+<p class="lgl-note">This notice describes what Slip Desk does with personal data and the rules that apply to the officers using it. It is not legal advice. These notices were last reviewed on 23 November 2026 against Slip Desk v1.68.</p>
 </article>
 </div>
 </div>
 <div class="lgl-panel" id="panel-terms" role="tabpanel" aria-labelledby="tab-terms" data-tab="terms" hidden>
 <div class="lgl-grid">
-<div class="lgl-toc" role="navigation" aria-label="On this page: Terms of Use"><div class="lgl-toc-h">On this page</div><div class="lgl-prog" aria-hidden="true"><i></i></div><ol class="lgl-toc-list"><li><a href="#terms-1" data-sec="terms-1"><span class="n">1</span><span class="t">Who may use this desk</span></a></li><li><a href="#terms-2" data-sec="terms-2"><span class="n">2</span><span class="t">Permitted use</span></a></li><li><a href="#terms-3" data-sec="terms-3"><span class="n">3</span><span class="t">Not permitted</span></a></li><li><a href="#terms-4" data-sec="terms-4"><span class="n">4</span><span class="t">Legal consequences</span></a></li><li><a href="#terms-5" data-sec="terms-5"><span class="n">5</span><span class="t">General</span></a></li></ol></div>
+<div class="lgl-toc" role="navigation" aria-label="On this page: Terms of Use"><div class="lgl-toc-h">On this page</div><div class="lgl-prog" aria-hidden="true"><i></i></div><ol class="lgl-toc-list"><li><a href="#terms-1" data-sec="terms-1"><span class="n">1</span><span class="t">Who may use this desk</span></a></li><li><a href="#terms-2" data-sec="terms-2"><span class="n">2</span><span class="t">Accounts and passwords</span></a></li><li><a href="#terms-3" data-sec="terms-3"><span class="n">3</span><span class="t">Permitted use</span></a></li><li><a href="#terms-4" data-sec="terms-4"><span class="n">4</span><span class="t">Not permitted</span></a></li><li><a href="#terms-5" data-sec="terms-5"><span class="n">5</span><span class="t">Legal consequences</span></a></li><li><a href="#terms-6" data-sec="terms-6"><span class="n">6</span><span class="t">General</span></a></li></ol></div>
 <article class="lgl-card">
 <section class="lgl-sec" id="terms-1" aria-labelledby="terms-1-h"><h2 id="terms-1-h"><span class="num" aria-hidden="true">1</span>Who may use this desk</h2>
-<p>Only officers authorised by the authority may open or use Slip Desk. Access must not be shared, lent or left open for others. By using the desk you confirm that you are authorised, that you have read these terms and the Privacy &amp; data protection notice, and that you will follow them. Every search run on this desk is recorded in a search log (date and time, what was typed, the candidate record it matched and the result), and the authority may review that log.</p>
+<p>Only officers authorised by the authority may open or use Slip Desk. Access must not be shared, lent or left open for others. By using the desk you confirm that you are authorised, that you have read these terms and the Privacy &amp; data protection notice, and that you will follow them. Your activity on this desk is recorded: sign-ins and sign-outs, failed sign-ins, automatic locks, register loads, searches (date and time, what was typed, the candidate record it matched and the result), prints and downloads. The authority may review that log.</p>
 </section>
-<section class="lgl-sec" id="terms-2" aria-labelledby="terms-2-h"><h2 id="terms-2-h"><span class="num" aria-hidden="true">2</span>Permitted use</h2>
-<p>The desk may be used only to look up a candidate’s registration and payment status and to print that candidate’s slip, as part of the 2026 Compulsory Confirmation Examination. It may not be used for any other purpose.</p>
-</section>
-<section class="lgl-sec" id="terms-3" aria-labelledby="terms-3-h"><h2 id="terms-3-h"><span class="num" aria-hidden="true">3</span>Not permitted</h2>
+<section class="lgl-sec" id="terms-2" aria-labelledby="terms-2-h"><h2 id="terms-2-h"><span class="num" aria-hidden="true">2</span>Accounts and passwords</h2>
 <ol>
-      <li>Changing, re-typing, overlaying or otherwise altering a register entry or a printed slip, or printing a slip that differs from the one the system generates.</li>
-      <li>Issuing, or attempting to issue, a slip for a candidate whose payment is not confirmed, or getting around the pending-payment marking.</li>
-      <li>Looking up, printing or disclosing records for a person who has not asked for them or for whom you have no official duty to act.</li>
-      <li>Trying to reach any system, account or file beyond the access you have been given.</li>
-      <li>Using candidate data for any purpose other than the examination, or handing it to anyone who is not authorised to have it.</li>
-    </ol>
+<li>Each officer has a personal account. The desk signs you in by password alone and identifies you from it, so your password must be your own and must stay private. Do not share it, write it where others can see it, or use anyone else’s.</li>
+<li>Replace a temporary password with your own as soon as the desk asks you to (at sign-in, or later under Profile &gt; Password). A password needs at least 8 characters, is not case-sensitive and may not be one already in use.</li>
+<li>Five wrong passwords in a row pause sign-in, for longer each time it happens, and each is logged. The desk also locks itself after 5 minutes without activity. Do not try to get around the pause or the lock.</li>
+<li>The name, title, contact details and photograph on your Profile page must be your own and true. Do not change them to mislead anyone about who did what.</li>
+</ol>
 </section>
-<section class="lgl-sec" id="terms-4" aria-labelledby="terms-4-h"><h2 id="terms-4-h"><span class="num" aria-hidden="true">4</span>Legal consequences</h2>
+<section class="lgl-sec" id="terms-3" aria-labelledby="terms-3-h"><h2 id="terms-3-h"><span class="num" aria-hidden="true">3</span>Permitted use</h2>
+<p>The desk may be used only to look up a candidate’s registration and payment status, to print that candidate’s slip, and to prepare the analysis, revenue records and attendance lists needed to run the Oyo State 2026 Compulsory Examination. It may not be used for any other purpose.</p>
+</section>
+<section class="lgl-sec" id="terms-4" aria-labelledby="terms-4-h"><h2 id="terms-4-h"><span class="num" aria-hidden="true">4</span>Not permitted</h2>
+<ol>
+<li>Changing, re-typing, overlaying or otherwise altering a register entry or a printed slip, or printing a slip that differs from the one the system generates.</li>
+<li>Issuing, or attempting to issue, a slip for a candidate whose payment is not confirmed, or getting around the pending-payment marking.</li>
+<li>Looking up, printing or disclosing records for a person who has not asked for them or for whom you have no official duty to act.</li>
+<li>Trying to reach any system, account or file beyond the access you have been given.</li>
+<li>Using candidate data for any purpose other than the examination, or handing it to anyone who is not authorised to have it.</li>
+<li>Signing in as another officer, or letting another person use your sign-in.</li>
+<li>Editing, deleting or hiding the activity log or anything the desk has stored in the browser, unless you are an administrator acting as the authority directs.</li>
+<li>Changing the desk’s files, accounts or settings, or pointing it at an online service that is not described in the Privacy &amp; data protection notice.</li>
+</ol>
+</section>
+<section class="lgl-sec" id="terms-5" aria-labelledby="terms-5-h"><h2 id="terms-5-h"><span class="num" aria-hidden="true">5</span>Legal consequences</h2>
 <p>Misuse can lead to disciplinary action under the Public Service Rules and, where the law is broken, to criminal prosecution. Among the laws that apply:</p>
-    <ul>
-      <li><span class="ref">Cybercrimes Act 2015, s.6</span> It is an offence to access a computer or computer system without authority, or to go beyond the authority you have been given.</li>
-      <li><span class="ref">Cybercrimes Act 2015, s.13</span> Computer-related forgery: knowingly entering, changing, deleting or suppressing data so that false or inauthentic data results, intending it to be treated as genuine. A doctored register entry or slip falls here.</li>
-      <li><span class="ref">Cybercrimes Act 2015, s.14</span> Computer-related fraud: causing loss to another, or gaining an advantage, by manipulating computer data. Issuing a slip against an unconfirmed payment may amount to this.</li>
-      <li><span class="ref">Cybercrimes Act 2015, s.16</span> Unauthorised modification of computer systems and network data, and interference with the working of a system.</li>
-      <li><span class="ref">NDPA 2023</span> Unlawful processing or disclosure of personal data and failure to protect it expose the authority, and the individuals responsible, to enforcement by the Nigeria Data Protection Commission, including fines and orders.</li>
-    </ul>
+<ul>
+<li><span class="ref">Cybercrimes Act 2015, s.6</span> It is an offence to access a computer or computer system without authority, or to go beyond the authority you have been given.</li>
+<li><span class="ref">Cybercrimes Act 2015, s.13</span> Computer-related forgery: knowingly entering, changing, deleting or suppressing data so that false or inauthentic data results, intending it to be treated as genuine. A doctored register entry or slip falls here.</li>
+<li><span class="ref">Cybercrimes Act 2015, s.14</span> Computer-related fraud: causing loss to another, or gaining an advantage, by manipulating computer data. Issuing a slip against an unconfirmed payment may amount to this.</li>
+<li><span class="ref">Cybercrimes Act 2015, s.16</span> Unauthorised modification of computer systems and network data, and interference with the working of a system.</li>
+<li><span class="ref">NDPA 2023</span> Unlawful processing or disclosure of personal data and failure to protect it expose the authority, and the individuals responsible, to enforcement by the Nigeria Data Protection Commission, including fines and orders.</li>
+</ul>
 </section>
-<section class="lgl-sec" id="terms-5" aria-labelledby="terms-5-h"><h2 id="terms-5-h"><span class="num" aria-hidden="true">5</span>General</h2>
-<p>These terms are governed by the laws of the Federal Republic of Nigeria and of Oyo State. The authority may update them at any time, and the version shown on this desk is the one that applies. If any part is found unenforceable, the rest remains in force.</p>
+<section class="lgl-sec" id="terms-6" aria-labelledby="terms-6-h"><h2 id="terms-6-h"><span class="num" aria-hidden="true">6</span>General</h2>
+<p>These terms are governed by the laws of the Federal Republic of Nigeria and of Oyo State. The authority may update them at any time, and the version shown on this desk is the one that applies. Slip Desk is updated from time to time; the version number in the footer shows which release you are using. If any part of these terms is found unenforceable, the rest remains in force.</p>
 </section>
-<p class="lgl-note">The Cybercrimes Act has been amended since 2015. Section numbers above follow the 2015 Act and should be confirmed against the current consolidated text.</p>
+<p class="lgl-note">The Cybercrimes (Prohibition, Prevention, etc.) Act 2015 was amended by the Cybercrimes (Prohibition, Prevention, etc.) (Amendment) Act 2024, signed on 28 February 2024. Section numbers above follow the 2015 Act and should be confirmed against the current consolidated text. These notices were last reviewed on 23 November 2026 against Slip Desk v1.68.</p>
 </article>
 </div>
 </div>
@@ -127,7 +176,7 @@
   var P = window.parent, page = document.getElementById('lglPage');
   var tabs = [].slice.call(document.querySelectorAll('.lgl-tab'));
   var sub = document.getElementById('lglSub');
-  var SUBS = {"disclaimer": "What Slip Desk is for, where its information comes from, and the limits of what it can promise.", "privacy": "How candidate records must be handled at this desk, the law behind it, and the rules every officer follows.", "terms": "Who may use the desk, what it may be used for, and what follows if it is misused."};
+  var SUBS = {"disclaimer": "What Slip Desk is for, where its information comes from, and the limits of what it can promise.", "privacy": "What this desk handles, where the data is kept, which online services it contacts, the law behind it, and the rules every officer follows.", "terms": "Who may use the desk, how accounts and passwords work, what it may be used for, and what follows if it is misused."};
   var built = {}, cur = null, lockUntil = 0, ticking = false, endT;
 
   var mobile = function () { return window.matchMedia('(max-width:900px)').matches; };
