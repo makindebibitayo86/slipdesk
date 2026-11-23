@@ -1477,7 +1477,6 @@ window.sdAnalysis = {
   window.sdSchoolInfo = k => { try { return frames.print.contentWindow.sdSchoolInfo(k); } catch (e) { return null; } };   // the school page reads a centre's figures through the shell
   window.sdSchoolSubjects = (k, st, d) => { try { return frames.print.contentWindow.sdSchoolSubjects(k, st, d); } catch (e) { return null; } };   // the papers of a centre, for the school page's subject list
   window.sdSchoolCounts = (k, c, s) => { try { return frames.print.contentWindow.sdSchoolCounts(k, c, s); } catch (e) { return null; } };   // Officers and Sub-Officers for the staff category and paper chosen on the school page
-  window.sdSchoolBlank = (k, c, d, g) => { try { return frames.print.contentWindow.sdSchoolBlank(k, c, d, g); } catch (e) { return null; } };   // the empty sheet the school page shows until a subject is chosen
   window.sdSchoolSheet = (k, c, d, s, g) => { try { return frames.print.contentWindow.sdSchoolSheet(k, c, d, s, g); } catch (e) { return null; } };   // the attendance sheet the school page previews
   window.sdSchoolDownload = (t, done) => { try { return frames.print.contentWindow.sdSchoolDownload(t, done); } catch (e) { if (done) done(); return false; } };   // ...and downloads as PDF or Excel
   window.sdOpenOverall = () => show('attendance');   // the last card on Attendances opens the Overall attendance page; the register stays loaded
