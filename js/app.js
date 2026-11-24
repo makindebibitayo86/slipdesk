@@ -272,7 +272,7 @@ function renderLog(bump) {
     } else {
       // Search: a found candidate is a card (photo | name + verified tick, then Ref / Exam No. stacked beneath); a miss or multiple match stays one line
       if (r.name) {
-        li.className = 'lp-found';
+        li.className = 'lp-found' + (r.flag ? ' lg-h-amber' : '');
         const av = _candAv(r, 36); if (av) li.appendChild(av);
         const col = document.createElement('div'); col.className = 'lp-fcol';
         const nm = document.createElement('div'); nm.className = 'lp-fname';
@@ -288,6 +288,7 @@ function renderLog(bump) {
           ids.forEach((x, i) => { if (i) { const sp = document.createElement('span'); sp.className = 'lp-sep'; sp.textContent = '|'; d.appendChild(sp); } d.appendChild(document.createTextNode(x)); });
           col.appendChild(d);
         }
+        if (r.flag) { const d = document.createElement('div'); d.className = 'lp-fsub'; const fb = document.createElement('span'); fb.className = 'lp-badge ev-esc'; fb.textContent = 'Escalated for review'; d.appendChild(fb); col.appendChild(d); }
         li.appendChild(col); li.appendChild(t);
       } else {
         const c = document.createElement('span'); c.className = 'lp-cand';
@@ -306,7 +307,7 @@ function downloadLog(list) {
   list = Array.isArray(list) ? list : SLOG;
   if (!list.length) return;
   const head = ['No.', 'Date & time', 'User', 'Activity', 'What was typed', 'Matched by', 'Result', 'Candidate', 'Payment ref', 'Exam number', 'Payment status', 'Opened on', 'Details', 'Register file', 'Register version'];
-  const aoa = [head].concat(list.map(r => [r.n, r.time, r.user || '(before accounts)', _isEvent(r) ? r.result : 'Search', r.query, r.method, _isEvent(r) ? '' : r.result, r.name, r.payRef, r.examNo, r.payStatus, r.opened, r.detail || '', r.register, r.regFp || '']));
+  const aoa = [head].concat(list.map(r => [r.n, r.time, r.user || '(before accounts)', _isEvent(r) ? r.result : (r.flag ? 'Search · Escalated for review' : 'Search'), r.query, r.method, _isEvent(r) ? '' : r.result, r.name, r.payRef, r.examNo, r.payStatus, r.opened, r.detail || (r.flag ? 'Tagged for escalated review by ' + (r.flag.by || 'staff') + ' · ' + r.flag.at : ''), r.register, r.regFp || '']));
   const ws = XLSX.utils.aoa_to_sheet(aoa);
   ws['!cols'] = [6, 20, 28, 18, 26, 18, 26, 32, 16, 16, 18, 14, 70, 22, 18].map(w => ({ wch: w }));
   const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'Activity Log');
@@ -392,11 +393,14 @@ const _fkey = r => String(r.payRef || r.examNo || r.name || '').trim().toUpperCa
 function _flags() {
   if (_FM) return _FM;
   const last = new Map();
-  SLOG.forEach(r => { if (r.type === 'escalate' || r.type === 'unflag') { const k = _fkey(r); if (k) last.set(k, r.type === 'escalate' ? r.n : 0); } });
+  SLOG.forEach(r => {
+    if (r.type === 'escalate' || r.type === 'unflag') { const k = _fkey(r); if (k) last.set(k, r.type === 'escalate' ? r.n : 0); }
+    else if (!_isEvent(r) && r.flag) { const k = _fkey(r); if (k) last.set(k, r.n); }   // the usual way: the search entry itself carries the tag
+  });
   const on = new Set(); last.forEach(n => { if (n) on.add(n); });
   _FM = { last: last, on: on }; return _FM;
 }
-const _inCat = (r, c) => c === 'pending' ? (!_isEvent(r) && _resClass(r) === 'pend') : _cat(r) === c;
+const _inCat = (r, c) => c === 'pending' ? (!_isEvent(r) && _resClass(r) === 'pend') : c === 'escalated' ? _flags().on.has(r.n) : _cat(r) === c;
 function _curFlagKey() {
   const c = window.SD_CURRENT, row = c && c.row; if (!row) return '';
   return _fkey({ payRef: String(row[COL.PAY_REF] || ''), examNo: String(row[COL.EXAM_NUM] || ''), name: _nameOf(row) });
@@ -406,7 +410,13 @@ window.sdFlagState = () => { const k = _curFlagKey(); return { has: !!k, on: !!k
 window.sdToggleFlag = () => {
   try {
     const c = window.SD_CURRENT, row = c && c.row, k = _curFlagKey(); if (!row || !k) return false;
-    const on = !!_flags().last.get(k), type = on ? 'unflag' : 'escalate';
+    const cur = _flags().last.get(k), on = !!cur, type = on ? 'unflag' : 'escalate';
+    // One entry, not two: the tag goes on the search that opened this slip, and comes off the same entry. Only when there is no such search is a separate entry written.
+    if (on) { const e = SLOG.find(r => r.n === cur); if (e && !_isEvent(e)) { delete e.flag; _saveLog(); renderLog(true); return false; } }
+    else {
+      let e = null; for (let i = SLOG.length - 1; i >= 0 && !e; i--) { const r = SLOG[i]; if (!_isEvent(r) && r.name && _fkey(r) === k) e = r; }
+      if (e) { e.flag = { by: (window.SD_USER && window.SD_USER.name) || '', uid: (window.SD_USER && window.SD_USER.id) || '', at: _stamp(new Date()) }; _saveLog(); renderLog(true); return true; }
+    }
     const name = _nameOf(row), ref = String(row[COL.PAY_REF] || '').trim(), ex = String(row[COL.EXAM_NUM] || '').trim(), st = String(row[COL.PAY_STATUS] || '').trim();
     const rec = {
       n: (SLOG.length ? SLOG[SLOG.length - 1].n : 0) + 1, time: _stamp(new Date()),
@@ -419,7 +429,7 @@ window.sdToggleFlag = () => {
     return !on;
   } catch (e) { return false; }
 };
-function _rowHue(r) { return r.type === 'file' ? 'lg-loaded' : (LG_HUE[r.type] || (!r.type || r.type === 'search' ? 'lg-h-search' : '')); }
+function _rowHue(r) { return r.flag ? 'lg-h-amber' : r.type === 'file' ? 'lg-loaded' : (LG_HUE[r.type] || (!r.type || r.type === 'search' ? 'lg-h-search' : '')); }
 window.sdLogApi = {
   entries: () => SLOG, users: () => window.SD_USERS || [], isAdmin: () => !!(window.SD_USER && window.SD_USER.admin),
   isEvent: _isEvent, cat: _cat, inCat: _inCat, resClass: _resClass, rowHue: _rowHue, roleOf: _roleOf, roleLine: _roleLine, userChip: _userChip, candAv: _candAv,
@@ -445,7 +455,7 @@ const FOOTER_CONFIG = {
   hours:    '',                     // e.g. 'Mon – Fri, 8:00am – 4:00pm'
   address:  '',                     // e.g. 'Secretariat, Ibadan, Oyo State'
   year:     2026,
-  version:  'v1.82',
+  version:  'v1.84',
   // Social icons under the about text. Paste each full profile link into url; leave url '' to fall back to the site's home page, delete a line to remove the icon.
   // email: uses the email above (mailto) when set; whatsapp: uses the number above.
   social: [

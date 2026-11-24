@@ -104,6 +104,7 @@
 #logPage .lp-badge.multi,#logPage .lp-badge.ev-out,#logPage .lp-badge.ev-sess{background:rgba(60,60,67,.10);color:#4a4a52}
 #logPage .lp-badge.ev-print{background:rgba(10,132,255,.12);color:#0b4fa8}
 #logPage .lp-badge.ev-esc{background:rgba(232,128,36,.2);color:#8a4200}
+#logPage .lg-sub.lg-flag{color:#8a4200;font-weight:600}
 
 /* Buttons: refine the existing glass pills (sizes/order unchanged) */
 #logPage .lg-btn{font-weight:600;letter-spacing:-.005em;border-width:1px}
