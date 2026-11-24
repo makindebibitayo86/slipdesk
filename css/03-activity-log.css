@@ -103,6 +103,7 @@
 #logPage .lp-badge.miss,#logPage .lp-badge.ev-fail,#logPage .lp-badge.ev-clear{background:rgba(214,69,69,.13);color:#a12a2a}
 #logPage .lp-badge.multi,#logPage .lp-badge.ev-out,#logPage .lp-badge.ev-sess{background:rgba(60,60,67,.10);color:#4a4a52}
 #logPage .lp-badge.ev-print{background:rgba(10,132,255,.12);color:#0b4fa8}
+#logPage .lp-badge.ev-esc{background:rgba(232,128,36,.2);color:#8a4200}
 
 /* Buttons: refine the existing glass pills (sizes/order unchanged) */
 #logPage .lg-btn{font-weight:600;letter-spacing:-.005em;border-width:1px}
@@ -134,6 +135,7 @@
 #lpList .lp-badge.ev-lock{background:rgba(225,190,20,.2);color:#7a5f00}
 #lpList .lp-badge.ev-fail,#lpList .lp-badge.ev-clear{background:rgba(214,69,69,.13);color:#a12a2a}
 #lpList .lp-badge.ev-print{background:rgba(10,132,255,.12);color:#0b4fa8}
+#lpList .lp-badge.ev-esc{background:rgba(232,128,36,.2);color:#8a4200}
 
 /* Activity popup: staff rows read differently from candidate cards */
 #lpList li.lp-evt{display:flex;align-items:flex-start;gap:12px;padding:11px 16px}

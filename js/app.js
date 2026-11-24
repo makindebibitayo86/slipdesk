@@ -88,9 +88,9 @@ window.addEventListener('hashchange', () => show(location.hash.slice(1)));
 // came up and what the result was. Kept in this browser (survives refresh and restart) and downloaded as a
 // "Search Log" sheet in its own workbook, so the register file itself is never modified.
 const LOG_KEY = 'slipdesk.searchlog.v1';
-let SLOG = [], REG_NAME = '', REG_FP = null;
+let SLOG = [], REG_NAME = '', REG_FP = null, _FM = null;   // _FM: the escalation flags worked out from the log (cleared whenever the log changes)
 try { SLOG = JSON.parse(localStorage.getItem(LOG_KEY) || '[]'); if (!Array.isArray(SLOG)) SLOG = []; } catch (e) { SLOG = []; }
-function _saveLog() { try { localStorage.setItem(LOG_KEY, JSON.stringify(SLOG)); } catch (e) {} }
+function _saveLog() { _FM = null; try { localStorage.setItem(LOG_KEY, JSON.stringify(SLOG)); } catch (e) {} }
 const _p2 = n => String(n).padStart(2, '0');
 function _stamp(d) { return d.getFullYear() + '-' + _p2(d.getMonth() + 1) + '-' + _p2(d.getDate()) + ' ' + _p2(d.getHours()) + ':' + _p2(d.getMinutes()) + ':' + _p2(d.getSeconds()); }
 const _proper = v => String(v == null ? '' : v).trim().toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
@@ -130,13 +130,13 @@ function logSearch(r) {
 }
 window.logSearch = logSearch;
 const EV_LABEL = { signin: 'Signed in', signout: 'Signed out', lock: 'Auto-locked', fail: 'Failed sign-in', session: 'Session ended', clear: 'Log cleared',
-  file: 'Register loaded', filechg: 'Register changed', fileoff: 'Register disconnected', fileerr: 'Register load failed', print: 'Slip printed', logdl: 'Log downloaded', recdl: 'Records downloaded', resume: 'Session resumed', pwchg: 'Password changed' };
+  file: 'Register loaded', filechg: 'Register changed', fileoff: 'Register disconnected', fileerr: 'Register load failed', print: 'Slip printed', logdl: 'Log downloaded', recdl: 'Records downloaded', resume: 'Session resumed', pwchg: 'Password changed', escalate: 'Escalated for review', unflag: 'Review flag removed' };
 const EV_CLASS = { signin: 'ev-in', signout: 'ev-out', lock: 'ev-lock', fail: 'ev-fail', session: 'ev-sess', clear: 'ev-clear',
-  file: 'ev-in', filechg: 'ev-lock', fileoff: 'ev-lock', fileerr: 'ev-fail', print: 'ev-print', logdl: 'ev-out', recdl: 'ev-out', resume: 'ev-in', pwchg: 'ev-lock' };
+  file: 'ev-in', filechg: 'ev-lock', fileoff: 'ev-lock', fileerr: 'ev-fail', print: 'ev-print', logdl: 'ev-out', recdl: 'ev-out', resume: 'ev-in', pwchg: 'ev-lock', escalate: 'ev-esc', unflag: 'ev-out' };
 // Row tints by event type (session/log-download rows stay plain)
-const LG_HUE = { signin: 'lg-h-in', resume: 'lg-h-in', signout: 'lg-h-out', fail: 'lg-h-red', fileerr: 'lg-h-red', clear: 'lg-h-red', lock: 'lg-h-amber', filechg: 'lg-h-amber', fileoff: 'lg-h-amber', print: 'lg-h-blue', pwchg: 'lg-h-amber', recdl: 'lg-h-violet' };
+const LG_HUE = { signin: 'lg-h-in', resume: 'lg-h-in', signout: 'lg-h-out', fail: 'lg-h-red', fileerr: 'lg-h-red', clear: 'lg-h-red', lock: 'lg-h-amber', filechg: 'lg-h-amber', fileoff: 'lg-h-amber', print: 'lg-h-blue', pwchg: 'lg-h-amber', recdl: 'lg-h-violet', escalate: 'lg-h-amber' };
 const _isEvent = r => !!r.type && r.type !== 'search';
-const _group = r => !_isEvent(r) ? 'search' : /^file/.test(r.type) ? 'file' : r.type === 'print' ? 'print' : 'access';
+const _group = r => !_isEvent(r) || r.type === 'escalate' || r.type === 'unflag' ? 'search' : /^file/.test(r.type) ? 'file' : r.type === 'print' ? 'print' : 'access';
 function _photoId(u) { const m = String(u || '').match(/[-\w]{25,}/); return m ? m[0] : ''; }
 // Candidate avatar: initials first, swapped for the passport photo once it loads (stays on initials if there is none)
 function _candAv(r, px) {
@@ -226,6 +226,7 @@ function _lpFill(ul, real) {
 function renderLog(bump) {
   _fillUserFilter();
   renderLogPage();
+  try { const rf = frames.registration.contentWindow; if (rf.syncFlag) rf.syncFlag(); } catch (e) {}   // the Flag for review button follows the log (a cleared log un-flags everyone)
   const n = SLOG.length, el = document.getElementById('logN');
   const was = el.dataset.n;                                 // undefined on the first render, so loading the page does not pop
   el.textContent = n.toLocaleString(); el.hidden = !n;   // no entries: no badge, like a notifier
@@ -385,11 +386,43 @@ function downloadLog(list) {
 const _cat = r => !_isEvent(r) ? 'search'
   : (r.type === 'signin' || r.type === 'resume') ? 'signin'
   : (r.type === 'signout' || r.type === 'lock' || r.type === 'session') ? 'signout'
-  : r.type === 'fail' ? 'fail' : r.type === 'print' ? 'print' : /^file/.test(r.type) ? 'file' : 'admin';
+  : r.type === 'fail' ? 'fail' : r.type === 'escalate' ? (_flags().on.has(r.n) ? 'escalated' : 'admin') : r.type === 'print' ? 'print' : /^file/.test(r.type) ? 'file' : 'admin';
+// A flag stands from the moment a candidate is tagged until the tag is removed (the last tag or removal for that candidate decides)
+const _fkey = r => String(r.payRef || r.examNo || r.name || '').trim().toUpperCase();
+function _flags() {
+  if (_FM) return _FM;
+  const last = new Map();
+  SLOG.forEach(r => { if (r.type === 'escalate' || r.type === 'unflag') { const k = _fkey(r); if (k) last.set(k, r.type === 'escalate' ? r.n : 0); } });
+  const on = new Set(); last.forEach(n => { if (n) on.add(n); });
+  _FM = { last: last, on: on }; return _FM;
+}
+const _inCat = (r, c) => c === 'pending' ? (!_isEvent(r) && _resClass(r) === 'pend') : _cat(r) === c;
+function _curFlagKey() {
+  const c = window.SD_CURRENT, row = c && c.row; if (!row) return '';
+  return _fkey({ payRef: String(row[COL.PAY_REF] || ''), examNo: String(row[COL.EXAM_NUM] || ''), name: _nameOf(row) });
+}
+window.sdFlagState = () => { const k = _curFlagKey(); return { has: !!k, on: !!k && !!_flags().last.get(k) }; };
+// The Flag for review button on the Registration Slip: tags (or un-tags) the candidate on screen, and the Activity log records it
+window.sdToggleFlag = () => {
+  try {
+    const c = window.SD_CURRENT, row = c && c.row, k = _curFlagKey(); if (!row || !k) return false;
+    const on = !!_flags().last.get(k), type = on ? 'unflag' : 'escalate';
+    const name = _nameOf(row), ref = String(row[COL.PAY_REF] || '').trim(), ex = String(row[COL.EXAM_NUM] || '').trim(), st = String(row[COL.PAY_STATUS] || '').trim();
+    const rec = {
+      n: (SLOG.length ? SLOG[SLOG.length - 1].n : 0) + 1, time: _stamp(new Date()),
+      query: '', method: '', result: EV_LABEL[type], name: name, payRef: ref, examNo: ex, payStatus: st || 'Pending', opened: 'Registration Slip',
+      photo: _photoId(row[COL.PHOTO_URL]), register: REG_NAME, regFp: REG_FP ? REG_FP.id : '', type: type,
+      detail: [name, [ref, ex].filter(Boolean).join(' | '), on ? 'Review flag removed' : 'Payment ' + (st || 'pending').toLowerCase() + ' · tagged for escalated review, to be confirmed'].filter(Boolean).join('\n'),
+      uid: (window.SD_USER && window.SD_USER.id) || '', user: (window.SD_USER && window.SD_USER.name) || ''
+    };
+    SLOG.push(rec); _saveLog(); renderLog(true);
+    return !on;
+  } catch (e) { return false; }
+};
 function _rowHue(r) { return r.type === 'file' ? 'lg-loaded' : (LG_HUE[r.type] || (!r.type || r.type === 'search' ? 'lg-h-search' : '')); }
 window.sdLogApi = {
   entries: () => SLOG, users: () => window.SD_USERS || [], isAdmin: () => !!(window.SD_USER && window.SD_USER.admin),
-  isEvent: _isEvent, cat: _cat, resClass: _resClass, rowHue: _rowHue, roleOf: _roleOf, roleLine: _roleLine, userChip: _userChip, candAv: _candAv,
+  isEvent: _isEvent, cat: _cat, inCat: _inCat, resClass: _resClass, rowHue: _rowHue, roleOf: _roleOf, roleLine: _roleLine, userChip: _userChip, candAv: _candAv,
   download: downloadLog, clearNow: () => window.clearLogNow && window.clearLogNow(), back: () => show(LASTTAB || 'registration')
 };
 // Redraw the log page (only when it is the page on screen)
@@ -412,7 +445,7 @@ const FOOTER_CONFIG = {
   hours:    '',                     // e.g. 'Mon – Fri, 8:00am – 4:00pm'
   address:  '',                     // e.g. 'Secretariat, Ibadan, Oyo State'
   year:     2026,
-  version:  'v1.81',
+  version:  'v1.82',
   // Social icons under the about text. Paste each full profile link into url; leave url '' to fall back to the site's home page, delete a line to remove the icon.
   // email: uses the email above (mailto) when set; whatsapp: uses the number above.
   social: [

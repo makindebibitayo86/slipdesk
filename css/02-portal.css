@@ -203,6 +203,7 @@ button:not(:disabled):hover .arw-u{animation:arwU .7s ease-in-out infinite}
 .lp-badge.ev-in{background:#d4edda;color:#155724}.lp-badge.ev-out{background:#e2e3e5;color:#41464b}
 .lp-badge.ev-lock{background:#f7ecd4;color:#7a5000}.lp-badge.ev-fail{background:#f8d7da;color:#842029}
 .lp-badge.ev-print{background:#dbeafe;color:#1e3a8a}
+.lp-badge.ev-esc{background:#fde8c8;color:#8a4200}
 .lp-badge.ev-sess{background:#e2e3e5;color:#41464b}.lp-badge.ev-clear{background:#f8d7da;color:#842029}
 .lp-q2{font-weight:700;color:#350d18;word-break:break-word;margin-top:3px}
 .lp-cand{display:flex;align-items:center;gap:8px;min-width:0}.lp-cand .lp-q2{margin-top:0}.lp-cand .av{flex-shrink:0}
