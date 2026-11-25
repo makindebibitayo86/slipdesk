@@ -455,7 +455,7 @@ const FOOTER_CONFIG = {
   hours:    '',                     // e.g. 'Mon – Fri, 8:00am – 4:00pm'
   address:  '',                     // e.g. 'Secretariat, Ibadan, Oyo State'
   year:     2026,
-  version:  'v1.89',
+  version:  'v1.92',
   // Social icons under the about text. Paste each full profile link into url; leave url '' to fall back to the site's home page, delete a line to remove the icon.
   // email: uses the email above (mailto) when set; whatsapp: uses the number above.
   social: [
@@ -1521,6 +1521,7 @@ window.sdAnalysis = {
   window.sdSchoolSubjects = (k, st, d) => { try { return frames.print.contentWindow.sdSchoolSubjects(k, st, d); } catch (e) { return null; } };   // the papers of a centre, for the school page's subject list
   window.sdSchoolCounts = (k, c, s) => { try { return frames.print.contentWindow.sdSchoolCounts(k, c, s); } catch (e) { return null; } };   // Officers and Sub-Officers for the staff category and paper chosen on the school page
   window.sdSchoolSheet = (k, c, d, s, g) => { try { return frames.print.contentWindow.sdSchoolSheet(k, c, d, s, g); } catch (e) { return null; } };   // the attendance sheet the school page previews
+  window.sdSchoolRecords = (k, c, d, g, z) => { try { return frames.print.contentWindow.sdSchoolRecords(k, c, d, g, z); } catch (e) { return null; } };   // the records list (names filled in) the school page previews in Records mode
   window.sdSchoolDownload = (t, done) => { try { return frames.print.contentWindow.sdSchoolDownload(t, done); } catch (e) { if (done) done(); return false; } };   // ...and downloads as PDF or Excel
   window.sdOpenOverall = () => show('attendance');   // the last card on Attendances opens the Overall attendance page; the register stays loaded
   window.sdGoAn = go;   // the tab strip inside the Analysis and Print pages calls this to hop to a tab on the other page
