@@ -455,7 +455,7 @@ const FOOTER_CONFIG = {
   hours:    '',                     // e.g. 'Mon – Fri, 8:00am – 4:00pm'
   address:  '',                     // e.g. 'Secretariat, Ibadan, Oyo State'
   year:     2026,
-  version:  'v1.92',
+  version:  'v1.94',
   // Social icons under the about text. Paste each full profile link into url; leave url '' to fall back to the site's home page, delete a line to remove the icon.
   // email: uses the email above (mailto) when set; whatsapp: uses the number above.
   social: [

@@ -14,6 +14,18 @@ Every time you change the app (any edit to `slip-desk.html`, `css/`, `js/` or `p
 3. If you edited a script that `slip-desk.html` loads with a `?v=` number (for example `js/app.js?v=14`), raise that number by one too, so browsers do not keep serving the old cached file.
 4. Tell the owner the new version number in your reply, with a one-line summary of what changed.
 
+## Always give the git steps
+
+At the end of every reply that changes the app, give the owner the git commands to ship it, from `git add .` down to `git push`, ready to copy and paste, with the new version number in the commit message. Example:
+
+```
+git add .
+git commit -m "v1.94: one-line summary of the change"
+git push
+```
+
+Only give the commands; do not run them unless the owner asks.
+
 ## Other conventions
 
 - The app is plain HTML, CSS and JS and must keep working by double-clicking `slip-desk.html` (no build step, no server).
