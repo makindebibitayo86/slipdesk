@@ -130,11 +130,11 @@ function logSearch(r) {
 }
 window.logSearch = logSearch;
 const EV_LABEL = { signin: 'Signed in', signout: 'Signed out', lock: 'Auto-locked', fail: 'Failed sign-in', session: 'Session ended', clear: 'Log cleared',
-  file: 'Register loaded', filechg: 'Register changed', fileoff: 'Register disconnected', fileerr: 'Register load failed', print: 'Slip printed', logdl: 'Log downloaded', recdl: 'Records downloaded', resume: 'Session resumed', pwchg: 'Password changed', escalate: 'Escalated for review', unflag: 'Review flag removed' };
+  file: 'Register loaded', filechg: 'Register changed', fileoff: 'Register disconnected', fileerr: 'Register load failed', print: 'Slip printed', logdl: 'Log downloaded', recdl: 'Records downloaded', resume: 'Session resumed', pwchg: 'Password changed', escalate: 'Escalated for review', unflag: 'Review flag removed', klock: 'Locked' };
 const EV_CLASS = { signin: 'ev-in', signout: 'ev-out', lock: 'ev-lock', fail: 'ev-fail', session: 'ev-sess', clear: 'ev-clear',
-  file: 'ev-in', filechg: 'ev-lock', fileoff: 'ev-lock', fileerr: 'ev-fail', print: 'ev-print', logdl: 'ev-out', recdl: 'ev-out', resume: 'ev-in', pwchg: 'ev-lock', escalate: 'ev-esc', unflag: 'ev-out' };
+  file: 'ev-in', filechg: 'ev-lock', fileoff: 'ev-lock', fileerr: 'ev-fail', print: 'ev-print', logdl: 'ev-out', recdl: 'ev-out', resume: 'ev-in', pwchg: 'ev-lock', escalate: 'ev-esc', unflag: 'ev-out', klock: 'ev-lock' };
 // Row tints by event type (session/log-download rows stay plain)
-const LG_HUE = { signin: 'lg-h-in', resume: 'lg-h-in', signout: 'lg-h-out', fail: 'lg-h-red', fileerr: 'lg-h-red', clear: 'lg-h-red', lock: 'lg-h-amber', filechg: 'lg-h-amber', fileoff: 'lg-h-amber', print: 'lg-h-blue', pwchg: 'lg-h-amber', recdl: 'lg-h-violet', escalate: 'lg-h-amber' };
+const LG_HUE = { signin: 'lg-h-in', resume: 'lg-h-in', signout: 'lg-h-out', fail: 'lg-h-red', fileerr: 'lg-h-red', clear: 'lg-h-red', lock: 'lg-h-amber', filechg: 'lg-h-amber', fileoff: 'lg-h-amber', print: 'lg-h-blue', pwchg: 'lg-h-amber', recdl: 'lg-h-violet', escalate: 'lg-h-amber', klock: 'lg-h-amber' };
 const _isEvent = r => !!r.type && r.type !== 'search';
 const _group = r => !_isEvent(r) || r.type === 'escalate' || r.type === 'unflag' ? 'search' : /^file/.test(r.type) ? 'file' : r.type === 'print' ? 'print' : 'access';
 function _photoId(u) { const m = String(u || '').match(/[-\w]{25,}/); return m ? m[0] : ''; }
@@ -386,7 +386,7 @@ function downloadLog(list) {
 // ── Activity log page: lives in its own file (pages/log.js, shown in the f-log iframe). This page keeps the data and hands the helpers over. ──
 const _cat = r => !_isEvent(r) ? 'search'
   : (r.type === 'signin' || r.type === 'resume') ? 'signin'
-  : (r.type === 'signout' || r.type === 'lock' || r.type === 'session') ? 'signout'
+  : (r.type === 'signout' || r.type === 'lock' || r.type === 'klock' || r.type === 'session') ? 'signout'
   : r.type === 'fail' ? 'fail' : r.type === 'escalate' ? (_flags().on.has(r.n) ? 'escalated' : 'admin') : r.type === 'print' ? 'print' : /^file/.test(r.type) ? 'file' : 'admin';
 // A flag stands from the moment a candidate is tagged until the tag is removed (the last tag or removal for that candidate decides)
 const _fkey = r => String(r.payRef || r.examNo || r.name || '').trim().toUpperCase();
@@ -455,7 +455,7 @@ const FOOTER_CONFIG = {
   hours:    '',                     // e.g. 'Mon – Fri, 8:00am – 4:00pm'
   address:  '',                     // e.g. 'Secretariat, Ibadan, Oyo State'
   year:     2026,
-  version:  'v1.84',
+  version:  'v1.86',
   // Social icons under the about text. Paste each full profile link into url; leave url '' to fall back to the site's home page, delete a line to remove the icon.
   // email: uses the email above (mailto) when set; whatsapp: uses the number above.
   social: [
@@ -1570,7 +1570,7 @@ show(location.hash.slice(1));
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => moveTabDrop(false));
 })();
 
-// ── / , Ctrl+K or Ctrl+Space: jump to the search box of the page you are on ──
+// ── / , Ctrl+K or Ctrl+Space: jump to the search box of the page you are on.  Ctrl+Shift+L: lock the desk back to the sign-in gate ──
 (function () {
   function target() {
     const gate = document.getElementById('gate');
@@ -1581,6 +1581,13 @@ show(location.hash.slice(1));
     try { return f.contentDocument.getElementById(LASTTAB === 'exam' ? 'slipQuery' : 'query'); } catch (e) { return null; }
   }
   function onKey(e) {
+    if (e.ctrlKey && e.shiftKey && !e.altKey && !e.metaKey && (e.key || '').toLowerCase() === 'l') {   // Ctrl+Shift+L: lock now (works from inside any page, and is ignored on the gate itself)
+      const gt = document.getElementById('gate');
+      if (gt && gt.classList.contains('on')) return;
+      e.preventDefault(); e.stopPropagation();
+      try { if (window.sdQuickLock) window.sdQuickLock(); } catch (x) {}
+      return;
+    }
     const ctrl = e.ctrlKey && !e.altKey && !e.metaKey, tg = e.target, typing = tg && (/^(INPUT|TEXTAREA|SELECT)$/.test(tg.tagName) || tg.isContentEditable);
     const hit = (ctrl && (e.code === 'Space' || e.key === ' ' || (e.key || '').toLowerCase() === 'k')) || (e.key === '/' && !e.ctrlKey && !e.altKey && !e.metaKey && !typing);   // Ctrl+Space, Ctrl+K, or / (when you are not already typing in a box)
     if (!hit) return;

@@ -176,7 +176,7 @@
     var u = window.SD_USER;
     try { if (window.sdOnLock) window.sdOnLock(); } catch (e) {}   // closes the account menu and the Profile page (js/profile.js)
     if (u) {
-      if (typeof window.logEvent === 'function') window.logEvent(reason === 'idle' ? 'lock' : 'signout', reason === 'idle' ? 'Locked automatically after 5 minutes idle' : 'Signed out', u);
+      if (typeof window.logEvent === 'function') window.logEvent(reason === 'idle' ? 'lock' : reason === 'manual' ? 'klock' : 'signout', reason === 'idle' ? 'Locked automatically after 5 minutes idle' : reason === 'manual' ? 'Locked with the keyboard shortcut (Ctrl+Shift+L)' : 'Signed out', u);
       try { localStorage.setItem(LASTUSER_KEY, u.id); } catch (e) {}
     }
     window.SD_USER = null; writeSession(null); updateChip();
@@ -448,6 +448,8 @@
 
   // the navbar pill opens the account menu (js/profile.js); its Sign out item calls this
   window.sdSignOut = function () { lock('signout'); };
+  // Ctrl+Shift+L (js/app.js): lock the desk at once, back to this gate. Unlike Sign out, the register stays loaded, so unlocking is quick
+  window.sdQuickLock = function () { if (!locked) lock('manual'); };
 
   // ── start-up ──
   var prev = readSession(), res = readResume(), ru = res && byId(res.uid);

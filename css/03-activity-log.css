@@ -21,6 +21,13 @@
 #logPage .lg-stat.warn::before{background:#d64545}
 #logPage .lg-stat b{margin-top:8px;font-size:28px;font-weight:600;letter-spacing:-.02em}
 #logPage .lg-stat span{font-size:10.5px;font-weight:600;letter-spacing:.06em;color:#7d6c70}
+/* four stat cards: one even row, roomier */
+#logPage .lg-stats{grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:18px}
+#logPage .lg-stat{padding:18px 22px 16px;display:flex;flex-direction:column;gap:2px}
+#logPage .lg-stat::before{left:22px;top:14px}
+#logPage .lg-stat b{margin-top:12px;font-size:34px;line-height:1.05}
+#logPage .lg-stat span{font-size:11px;letter-spacing:.08em}
+@media(max-width:760px){#logPage .lg-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}}
 
 /* Filter toolbar */
 #logPage .lg-tools{
