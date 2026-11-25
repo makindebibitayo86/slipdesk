@@ -448,7 +448,7 @@
 
   // the navbar pill opens the account menu (js/profile.js); its Sign out item calls this
   window.sdSignOut = function () { lock('signout'); };
-  // Ctrl+L or Ctrl+Shift+L (js/app.js): lock the desk at once, back to this gate. Unlike Sign out, the register stays loaded, so unlocking is quick
+  // Ctrl+Shift+L (js/app.js): lock the desk at once, back to this gate. Unlike Sign out, the register stays loaded, so unlocking is quick
   window.sdQuickLock = function () { if (!locked) lock('manual'); };
 
   // ── start-up ──

@@ -455,7 +455,7 @@ const FOOTER_CONFIG = {
   hours:    '',                     // e.g. 'Mon – Fri, 8:00am – 4:00pm'
   address:  '',                     // e.g. 'Secretariat, Ibadan, Oyo State'
   year:     2026,
-  version:  'v1.88',
+  version:  'v1.89',
   // Social icons under the about text. Paste each full profile link into url; leave url '' to fall back to the site's home page, delete a line to remove the icon.
   // email: uses the email above (mailto) when set; whatsapp: uses the number above.
   social: [
@@ -1570,7 +1570,7 @@ show(location.hash.slice(1));
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => moveTabDrop(false));
 })();
 
-// ── / , Ctrl+K or Ctrl+Space: jump to the search box of the page you are on.  Ctrl+L: lock the desk back to the sign-in gate ──
+// ── / , Ctrl+K or Ctrl+Space: jump to the search box of the page you are on.  Ctrl+Shift+L: lock the desk back to the sign-in gate ──
 (function () {
   function target() {
     const gate = document.getElementById('gate');
@@ -1581,7 +1581,7 @@ show(location.hash.slice(1));
     try { return f.contentDocument.getElementById(LASTTAB === 'exam' ? 'slipQuery' : 'query'); } catch (e) { return null; }
   }
   function onKey(e) {
-    if (e.ctrlKey && !e.altKey && !e.metaKey && (e.key || '').toLowerCase() === 'l') {   // Ctrl+L (or Ctrl+Shift+L): lock now (works from inside any page, and is ignored on the gate itself)
+    if (e.ctrlKey && e.shiftKey && !e.altKey && !e.metaKey && (e.key || '').toLowerCase() === 'l') {   // Ctrl+Shift+L: lock now (works from inside any page, and is ignored on the gate itself)
       const gt = document.getElementById('gate');
       if (gt && gt.classList.contains('on')) return;
       e.preventDefault(); e.stopPropagation();
