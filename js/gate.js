@@ -12,15 +12,15 @@
   var USERS = [
     { id: 'makinde',   name: 'Makinde Uthman Bibitayo',     title: 'Computer Engineer', admin: true, hash: '4348362e48c26a3feb6fd2683cb939e1919477cce64556333a95ee4c77ea8676',
       avatar: 'assets/avatars/makinde.jpg' },
-    { id: 'ayinde',    name: 'Tolulope Ayinde',             title: 'System Analyst', temp: true, hash: '8d8b59b31cf946c0a8bfa121388b307e7243ee80c06fd1564cce1c9422e15a25',
+    { id: 'ayinde',    name: 'Tolulope Ayinde',             title: 'System Analyst', admin: true, temp: true, hash: '8d8b59b31cf946c0a8bfa121388b307e7243ee80c06fd1564cce1c9422e15a25',
       avatar: 'assets/avatars/ayinde.jpg' },
-    { id: 'olawoore',  name: 'David Olawoore',              title: 'System Analyst', temp: true, hash: '1db7035dd5eaf158f59aa87d10905ca54b889c773ec71bd98f9114776e6e3117',
+    { id: 'olawoore',  name: 'David Olawoore',              title: 'System Analyst', admin: true, temp: true, hash: '1db7035dd5eaf158f59aa87d10905ca54b889c773ec71bd98f9114776e6e3117',
       avatar: 'assets/avatars/olawoore.jpg' },
-    { id: 'jegede',    name: 'Jegede Kayode Samuel',        title: 'System Analyst', temp: true, hash: '921f8427395585786c9d0cf69437b8a637f8d59ac9b57478dd95fecc8087293d' },
-    { id: 'sangogade', name: 'Sangagade Olabamiji Alaba',    title: 'Programme Officer', temp: true, hash: 'e352ca3802d2ad28ea04bc602be66a9915085f637610f59803e4092249ed8b0a' },
-    { id: 'ogunranti', name: 'Nihinlola Esther',             title: 'System Analyst', temp: true, hash: 'ad3b1aaa78d329b2f7ec40d522b403d5e46126714840929505ef9a4607fc6e97',
+    { id: 'jegede',    name: 'Jegede Kayode Samuel',        title: 'System Analyst', admin: true, temp: true, hash: '921f8427395585786c9d0cf69437b8a637f8d59ac9b57478dd95fecc8087293d' },
+    { id: 'sangogade', name: 'Sangagade Olabamiji Alaba',    title: 'Programme Officer', admin: true, temp: true, hash: 'e352ca3802d2ad28ea04bc602be66a9915085f637610f59803e4092249ed8b0a' },
+    { id: 'ogunranti', name: 'Nihinlola Esther',             title: 'System Analyst', admin: true, temp: true, hash: 'ad3b1aaa78d329b2f7ec40d522b403d5e46126714840929505ef9a4607fc6e97',
       avatar: 'assets/avatars/ogunranti.jpg' },
-    { id: 'ogunleye',  name: 'Ranti Eunice Ogunleye',       title: 'System Analyst', temp: true, hash: 'bd1d6e31ccf7cce536aa88b991619970783ab738539b34d2f2ce24d5a45ba82b',
+    { id: 'ogunleye',  name: 'Ranti Eunice Ogunleye',       title: 'System Analyst', admin: true, temp: true, hash: 'bd1d6e31ccf7cce536aa88b991619970783ab738539b34d2f2ce24d5a45ba82b',
       avatar: 'assets/avatars/ogunleye.jpg' }
   ];
   window.SD_USERS = USERS; window.SD_USER = null;
@@ -176,7 +176,7 @@
     var u = window.SD_USER;
     try { if (window.sdOnLock) window.sdOnLock(); } catch (e) {}   // closes the account menu and the Profile page (js/profile.js)
     if (u) {
-      if (typeof window.logEvent === 'function') window.logEvent(reason === 'idle' ? 'lock' : reason === 'manual' ? 'klock' : 'signout', reason === 'idle' ? 'Locked automatically after 5 minutes idle' : reason === 'manual' ? 'Locked with the keyboard shortcut (Ctrl+Shift+L)' : 'Signed out', u);
+      if (typeof window.logEvent === 'function') window.logEvent(reason === 'idle' ? 'lock' : reason === 'manual' ? 'klock' : 'signout', reason === 'idle' ? 'Locked automatically after 5 minutes idle' : reason === 'manual' ? 'Locked with the keyboard shortcut' : 'Signed out', u);
       try { localStorage.setItem(LASTUSER_KEY, u.id); } catch (e) {}
     }
     window.SD_USER = null; writeSession(null); updateChip();
@@ -448,7 +448,7 @@
 
   // the navbar pill opens the account menu (js/profile.js); its Sign out item calls this
   window.sdSignOut = function () { lock('signout'); };
-  // Ctrl+Shift+L (js/app.js): lock the desk at once, back to this gate. Unlike Sign out, the register stays loaded, so unlocking is quick
+  // Ctrl+L or Ctrl+Shift+L (js/app.js): lock the desk at once, back to this gate. Unlike Sign out, the register stays loaded, so unlocking is quick
   window.sdQuickLock = function () { if (!locked) lock('manual'); };
 
   // ── start-up ──
